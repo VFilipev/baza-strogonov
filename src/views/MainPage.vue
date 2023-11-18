@@ -1,15 +1,15 @@
 <template lang="pug"> 
 div     
-    .header2(:class="{'active' : showHeader}")             
+    .header_sticky(:class="{'active' : showHeader}")             
         .container
-            .header2__container.row.align-items-center
-                .header2__logo.col-5
+            .header_sticky__container.row.align-items-center
+                .header_sticky__logo.col-5
                     img(src="../assets/images/logo2.svg")
-                .col-3.offset-2.d-flex.header2__nav
-                    div дома
-                    div активный отдых
-                    div услуги
-                .header2__icon_feed_back.col-2
+                ul.header_sticky__nav.col-3.offset-2.d-flex
+                    router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
+                    router-link(to="/house" tag="li" class="header_sticky__nav_link") активный отдых
+                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") услуги
+                .header_sticky__icon_feed_back.col-2
                     img(src="../assets/images/telefon2.svg")
                     button забронировать
                                           
@@ -24,10 +24,10 @@ div
                         .row.align-items-center
                             .col-5.logo
                                 img(src="../assets/images/logo.png")
-                            .col-3.offset-2.d-flex.header__nav                                
-                                router-link(to="/house", tag="a",  class="header__nav__link") дома
-                                div.header__nav__link активный отдых
-                                router-link(to="/uslugi", tag="a",  class="header__nav__link") услуги
+                            ul.col-3.offset-2.d-flex.header__nav                                
+                                router-link(to="/house", tag="li",  class="header__nav__link") дома
+                                router-link(to="/house" tag="li" class="header__nav__link") активный отдых
+                                router-link(to="/uslugi", tag="li",  class="header__nav__link") услуги
                             .col-2.d-flex.header__nav                            
                                 img(src='../assets/images/telefon.svg')
                                 button.header__nav__link.header__nav__button забронировать
@@ -416,8 +416,8 @@ export default {
     setup() {
         const photoList = [
             'src/assets/images/main-page-winter.png',
-            'src/assets/images/main-page-winter2.png',
-            'src/assets/images/main-page-winter3.png',
+            'src/assets/images/main-page-winter2-source.png',
+            'src/assets/images/main-page-winter3-source.png',
         ]
         let datePicker = ref({
             dateStart:false,
@@ -587,6 +587,21 @@ export default {
 a.header__nav__link {
     text-decoration: none;
     color: #fff;
+    opacity: .8;
+    &:hover{
+        opacity: 1;
+    }    
+    &:hover:after{
+        transform: scaleX(1);      
+    }
+}
+
+a.header__nav__link:after{
+    display:block;
+    content: '';
+    border-bottom: solid 1px #fff;  
+    transform: scaleX(0);  
+    transition: transform 250ms ease-in-out;
 }
 
 .card__user_photo-form{
@@ -799,28 +814,36 @@ ul {
 .about_as__container_row{
     margin-bottom: 32px;
 }
-.header2__nav{
+.header_sticky__nav_link{
+    text-decoration: none;
+    color: black;
+    font-size: 17px;
+    font-family: 'Lato';
+    font-weight: 300;
+}
+.header_sticky__nav{
     display: flex;
     gap: 11px;
     font-family: 'Lato';
     font-weight: 300;
     font-size: 17px;
-    color: black;    
+    color: black;   
+    margin-bottom: 0; 
 }
-.header2__container{
+.header_sticky__container{
     display: flex;
     justify-content: space-between;
     align-items: center;    
 }
-.header2__icon_feed_back{
+.header_sticky__icon_feed_back{
     display: flex;
     justify-content: flex-end;
     padding-right: 20px;
 }
-.header2__icon_feed_back img {
+.header_sticky__icon_feed_back img {
     margin-right: 8px;
 }
-.header2__icon_feed_back button {
+.header_sticky__icon_feed_back button {
     background-color: rgba(0, 93, 75, 1);
     color: #fff;
     border: 0px;
@@ -868,9 +891,15 @@ ul {
     border: 1px solid #fff;
     color: #fff;
     border-radius: 35px;
+    transition: background-color 0.4s ease-in-out, border 250ms ease-in-out;
+    
+    &:hover{
+        background-color: #003731;
+        border: 0
+    }
 }
 
-.header2 {
+.header_sticky {
     transform: translateY(-160px);
     transition-duration: 1s;
     transition-property: all;
@@ -880,7 +909,7 @@ ul {
     top: 0;
 }
 
-.header2.active {     
+.header_sticky.active {     
     position: fixed;
     background-color: #fff;
     padding-top: 20px;

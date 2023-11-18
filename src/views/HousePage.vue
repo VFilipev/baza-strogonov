@@ -1,87 +1,65 @@
 <template lang="pug">
 div    
-    header.header2.active             
+    header.p-20    
         .container
-            .header2__container.row.align-items-center
-                .header2__logo.col-5
-                    img(src="../assets/images/logo2.svg")
-                ul.col-3.offset-2.d-flex.header2__nav
-                    li дома
-                    li активный отдых
-                    li услуги
-                .header2__icon_feed_back.col-2
+            .row.align-items-center
+                .col-5
+                    router-link(to="/" class="header_sticky__nav_link")
+                        img(src="../assets/images/logo2.svg")
+                ul.header_sticky__nav.col-3.offset-2.d-flex
+                    router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
+                    router-link(to="/house" tag="li" class="header_sticky__nav_link") активный отдых
+                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") услуги
+                .header_sticky__icon_feed_back.col-2
                     img(src="../assets/images/telefon2.svg")
                     button забронировать
-    section.house_typ(style="padding-top: 191px")
+    section.house_typ(style="padding-top: 63px")
         .container 
             .section_row
                 h4.section_name виды домов 
                 .d-flex.container_icon
-                    .circle
+                    .circle(@click="selectHouseIndex--")
                         img.circle__arrow_icon(src="../assets/images-house/arrow-left.svg")
-                    .circle
+                    .circle(@click="selectHouseIndex++")
                         img.circle__arrow_icon(src="../assets/images-house/arrow-right.svg") 
             .row 
-                .col-6 
-                    p.house__name Дом Мельника
-                    .house__image(style="background-image: url(src/assets/images-house/house-2.png)")
+                p.house__name {{ selectHouse.name }}
+            .row 
                 .col-6
-                    .row(style="margin-bottom:64px") 
+                    .row
+                        .col-12
+                            .house__image(:style="{ backgroundImage: `url(${selectHouse.main_photo})` }")
+                    .row(style="margin-top:40px")
+                        .swiper__wrapper(style="position: relative")                  
+                            swiper(:slidesPerView="2" :spaceBetween="40" @slideChange="showSliderIcon = false" :zoom="true")
+                                swiper-slide(v-for="card in selectHouse.galery")
+                                    .swiper-zoom-container
+                                        .photogalery__card 
+                                            .photogalery__image(:style="{ backgroundImage: `url(${card.photo})`}")
+                                            .photogalery__name {{ card.name }}                            
+                            img.slider_icon(v-if="showSliderIcon" src="../assets/images/slider-icon.svg")
+                .col-6
+                    .row(style="margin-bottom:64px")                          
+                        .col-12
+                            .house__name_description Стоимость                            
+                            .row_cost(v-for="cost in selectHouse.cost")                            
+                                .house__text_description {{ cost.name }}
+                                .house__text_description {{ cost.cost }}                            
+                    .row(style="margin-bottom:31px") 
                         .col-6
                             .house__name_description Описание 
-                            .house__text_description двухэтажный деревянный дом, где могут разместиться до 14 человек. 3 просторные комнаты, в которых будет удобно и парам, и семьям с детьми. 
-
-                        .col-6 
-                            .house__name_description Стоимость
-                            .row_cost 
-                                .house__text_description будни (пн-чт)
-                                .house__text_description 10 000 р.
-                            .row_cost 
-                                .house__text_description выходные (пт-сб-вс) <br> и праздничные дни  
-                                .house__text_description 15 000 р.
-                            .row_cost 
-                                .house__text_description Новый год 2024 (с 31 декабря <br> по 2 января) 2-е суток 
-                                .house__text_description 95 000 р.
-                            .row_cost 
-                                .house__text_description с 2 по 7 января 2024 года <br> (сутки)
-                                .house__text_description 30 000 р.
-                            .row_cost 
-                                .house__text_description стоимость при бронирова- <br> нии 2-х и более суток <br> (с 2 по 7 января 2024 года)
-                                .house__text_description 25 000 р.
-                    .row(style="margin-bottom:31px") 
-                        .col-6 
-                            .house__name_description Удобства  
-                            .house__text_description кухня - полный комплект посуды на 14 человек, холодильник, обеденный стол, электроплита с духовым шкафом, микроволновая печь, электрочайник, санузел - горячая и холодная вода, музыкальный центр, 4 телевизора
+                            .house__text_description {{ selectHouse.description }} 
                         .col-6 
                             .house__name_description Доступность
-                            .house__text_description до воды 150 м <br> до бани 50 м <br> до беседки 5 м
-                    .row 
+                            .house__text_description
+                                p(v-for="availability in selectHouse.availability") {{ availability }}
+                    .row(style="padding-bottom: 63px")
+                        .col-6 
+                            .house__name_description Удобства  
+                            .house__text_description {{ selectHouse.conveniences }} 
                         .col-6 
                             .house__name_description Включено в проживание
-                            .house__text_description пользование спортивными и детскими площадками, надувным аквапарком, пользование мангалом и решеткой, охраняемая парковка, охраняемый причал
-                        .col-6 
-                            .house__name_description Факты о доме
-                            .house__text_description В пермских строгановских вотчинах, в начале XX века, действовали более 50 мельниц, которые местную и государственную казну пополняли. Поэтому и дом, названный в честь мельника, отличается особым уютом и добротностью
-            .row 
-                p.photogalery Фотогалерея
-            .row
-                .col-4
-                    .photogalery__card 
-                        .photogalery__image(style="background-image: url(src/assets/images-house/house-1-2.png)")
-                        .photogalery__name спальня
-                .col-4
-                    .photogalery__card 
-                        .photogalery__image(style="background-image: url(src/assets/images-house/house-1-3.png)")
-                        .photogalery__name вторая спальня
-                .col-4
-                    .photogalery__card 
-                        .photogalery__image(style="background-image: url(src/assets/images-house/house-1-4.png)")
-                        .photogalery__name третья спальня
-            .photogalery_next
-                .photogalery_next__text далее
-                .photogalery_next__icon 
-                    img(src="../assets/images-house/arrow-next.svg")
-    section.house_typ_glamping
+                            .house__text_description {{ selectHouse.include }}
         .container
             .section_row
                 h4.section_name глэмпинг
@@ -257,17 +235,66 @@ div
 </template>
 
 <script>
+import { ref, onMounted, watch } from "vue"
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/pagination';
+
+import houseList from '../components/houseList'
+
 export default {
     name: 'house-page',
-    setup () {
-        
-
-        return {}
+    components: {
+      Swiper,
+      SwiperSlide,
+    },
+    setup () {        
+        let selectHouse = ref({})
+        let selectHouseIndex = ref(0)        
+        let showSliderIcon = ref(true)           
+        watch(()=>selectHouseIndex.value,()=>{
+            if(selectHouseIndex.value < 0){
+                selectHouseIndex.value = houseList.length - 1
+            }
+            if(selectHouseIndex.value == houseList.length){
+                selectHouseIndex.value = 0
+            }            
+            selectHouse.value = houseList[selectHouseIndex.value]
+        })     
+        onMounted(() => {
+            selectHouse.value = houseList[selectHouseIndex.value]            
+        })
+        return {
+            showSliderIcon,    
+            selectHouse, 
+            selectHouseIndex,
+            showSliderIcon
+        }
     }
 }
 </script>
 
 <style scoped>
+/* SWIPER */
+.swiper{    
+    position: relative;
+}
+.slider_icon {
+    position: absolute;
+    bottom: -31px;
+    right: 0;
+    z-index: 100;
+    animation:hand-swipe 2s infinite ease;
+}
+@keyframes hand-swipe { 
+    50% {          
+        transform:rotate(-80deg); 
+    } 
+    100%{
+        transform:rotate(0deg); 
+    }
+}
 /* ГЛЭМПИНГ */
 .glamping__photogalery__card{
     background-color: #F5F3F1;
@@ -288,21 +315,32 @@ export default {
     align-items: center;
     justify-content: center;
 }
-
+.circle:hover{
+    cursor: pointer;
+    user-select: none
+}
+.circle__arrow_icon{
+    user-select: none
+}
 .row_cost{
     display: flex;
     justify-content: space-between;    
-    align-items: center;
+    align-items: center;    
 }
 .row_cost:not(:last-child){
     border-bottom: 1px #005D4B solid;
+    padding-bottom: 14px;
+}
+.row_cost:not(:first-child){
+    padding-top: 14px;
 }
 .house__text_description{
     color: black;
     font-size: 15px;
     font-family: 'Lato';
     font-weight: 300;
-    line-height: 20.33px;    
+    line-height: 20.33px; 
+    max-width: 483px;   
 }
 .photogalery{
     color: #003731;
@@ -327,8 +365,8 @@ export default {
 }
 .photogalery__image{
     border-radius: 30px;
-    width: 407px;
-    height: 246px;    
+    width: 291px;
+    height: 204px;    
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -349,7 +387,7 @@ export default {
 .house__image{
     border-radius: 30px;
     width: 621px;
-    height: 641px;    
+    height: 354px;    
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -375,5 +413,8 @@ export default {
 }
 .house_typ{
     background-color: #F5F3F1;
+}
+.p-20{
+    padding: 20px 0px;
 }
 </style>
