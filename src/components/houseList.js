@@ -1,5 +1,6 @@
 const houseList = [
     {
+        id:1,
         name: 'Дом Мельника',
         main_photo: 'src/assets/images-house/house-2.png',
         galery:[
@@ -10,11 +11,11 @@ const houseList = [
             {
                 name:'вторая спальня',
                 photo:'src/assets/images-house/house-1-3.png'
-            },
+            },            
             {
                 name:'третья спальня',
                 photo:'src/assets/images-house/house-1-4.png'
-            }            
+            }                  
         ],
         description:'двухэтажный деревянный дом, где могут разместиться до 14 человек. 3 просторные комнаты, в которых будет удобно и парам, и семьям с детьми.',
         availability: [
@@ -48,6 +49,7 @@ const houseList = [
         ]
     },
     {
+        id:2,
         name: 'Дом Ямщика',
         main_photo: 'src/assets/images-house/house-4.png',
         galery:[
@@ -58,7 +60,7 @@ const houseList = [
             {
                 name:'спальня',
                 photo:'src/assets/images-house/house-4-2.png'
-            },
+            },            
             {
                 name:'вторая спальня',
                 photo:'src/assets/images-house/house-4-3.png'
@@ -94,6 +96,58 @@ const houseList = [
                 cost:'25 000 р.',
             }
         ]
-    }
+    },
+    {
+        id:3,
+        name: 'Дом Рыбака',
+        main_photo: 'src/assets/images-house/house-5.png',
+        galery:[
+            {
+                name:'спальня',
+                photo:'src/assets/images-house/house-5-1.png'
+            },
+            {
+                name:'кухня',
+                photo:'src/assets/images-house/house-5-2.png'
+            },
+            {
+                name:'гостиная',
+                photo:'src/assets/images-house/house-5-3.png'
+            },
+            {
+                name:'санузел',
+                photo:'src/assets/images-house/house-5-4.png'
+            } 
+        ],
+        description:'Рыбацкий дом, рассчитан на 4 человек, поэтому идеально подойдёт для семьи или пары возлюбленных',
+        availability: [
+            'до воды 150 м',
+            'до бани 50 м'            
+        ],
+        conveniences: 'в доме есть всё для вашего уединения и комфорта: кровать, телевизор, горячая и холодная вода, отопление, кухня, оборудованная всем необходимым: холодильник, электроплита, микроволно-вая печь, электрочайник, комплект посуды.',
+        include:'пользование спортивными, детскими площадками, мангалом и решеткой, охраняемая парковка, охраняемый причал',
+        cost:[
+            {
+                name:'будни (пн-чт)',
+                cost:'5 000 р.',
+            },
+            {
+                name:'выходные (пт-сб-вс) и праздничные дни',
+                cost:'8 500 р.',
+            },
+            {
+                name:'Новый год 2024 (с 31 декабря по 2 января) 2-е суток',
+                cost:'45 000 р.',
+            },
+            {
+                name:'с 2 по 7 января 2024 года (сутки)',
+                cost:'15 000 р.',
+            },
+            {
+                name:'стоимость при бронировании 2-х и более суток с 2 по 7 января 2024 года',
+                cost:'12 000 р.',
+            }
+        ]    
+    },
 ]
 export default houseList

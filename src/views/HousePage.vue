@@ -4,11 +4,11 @@ div
         .container
             .row.align-items-center
                 .col-5
-                    router-link(to="/" class="header_sticky__nav_link")
+                    router-link(to="/")
                         img(src="../assets/images/logo2.svg")
-                ul.header_sticky__nav.col-3.offset-2.d-flex
+                ul.header_sticky__nav.col-2.offset-3.d-flex
                     router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
-                    router-link(to="/house" tag="li" class="header_sticky__nav_link") активный отдых
+                    //- router-link(to="/" tag="li" class="header_sticky__nav_link") активный отдых
                     router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") услуги
                 .header_sticky__icon_feed_back.col-2
                     img(src="../assets/images/telefon2.svg")
@@ -18,56 +18,55 @@ div
             .section_row
                 h4.section_name виды домов 
                 .d-flex.container_icon
-                    .circle(@click="selectHouseIndex--")
-                        img.circle__arrow_icon(src="../assets/images-house/arrow-left.svg")
-                    .circle(@click="selectHouseIndex++")
-                        img.circle__arrow_icon(src="../assets/images-house/arrow-right.svg") 
-            .row 
-                p.house__name {{ selectHouse.name }}
-            .row 
-                .col-6
-                    .row
-                        .col-12
-                            .house__image(:style="{ backgroundImage: `url(${selectHouse.main_photo})` }")
-                    .row(style="margin-top:40px")
-                        .swiper__wrapper(style="position: relative")                  
-                            swiper(:slidesPerView="2" :spaceBetween="40" @slideChange="showSliderIcon = false" :zoom="true")
-                                swiper-slide(v-for="card in selectHouse.galery")
-                                    .swiper-zoom-container
-                                        .photogalery__card 
-                                            .photogalery__image(:style="{ backgroundImage: `url(${card.photo})`}")
-                                            .photogalery__name {{ card.name }}                            
-                            img.slider_icon(v-if="showSliderIcon" src="../assets/images/slider-icon.svg")
-                .col-6
-                    .row(style="margin-bottom:64px")                          
-                        .col-12
-                            .house__name_description Стоимость                            
-                            .row_cost(v-for="cost in selectHouse.cost")                            
-                                .house__text_description {{ cost.name }}
-                                .house__text_description {{ cost.cost }}                            
-                    .row(style="margin-bottom:31px") 
-                        .col-6
-                            .house__name_description Описание 
-                            .house__text_description {{ selectHouse.description }} 
-                        .col-6 
-                            .house__name_description Доступность
-                            .house__text_description
-                                p(v-for="availability in selectHouse.availability") {{ availability }}
-                    .row(style="padding-bottom: 63px")
-                        .col-6 
-                            .house__name_description Удобства  
-                            .house__text_description {{ selectHouse.conveniences }} 
-                        .col-6 
-                            .house__name_description Включено в проживание
-                            .house__text_description {{ selectHouse.include }}
+                    .circle-left(@click="selectHouseIndex--")                        
+                    .circle-right(@click="selectHouseIndex++")                         
+            .card_house__wrapper
+                div(v-for="(house, index) in houseList" :key="house.id")                     
+                    Transition(name="fade" mode="out-in")
+                        div.card_house(v-show="selectHouseIndex == index")
+                            .row                         
+                                p.house__name {{ house.name }} 
+                            .row 
+                                .col-6
+                                    .row
+                                        .col-12
+                                            .house__image(:style="{ backgroundImage: `url(${house.main_photo})` }")
+                                    .row(style="margin-top:40px")
+                                        .swiper__wrapper(style="position: relative")                  
+                                            swiper(slidesPerView="2" :spaceBetween="40" @slideChange="showSliderIcon = false")
+                                                swiper-slide(v-for="card in house.galery")
+                                                    .photogalery__card 
+                                                        .photogalery__image(:style="{ backgroundImage: `url(${card.photo})`}")
+                                                        .photogalery__name {{ card.name }}                            
+                                            img.slider_icon(v-if="showSliderIcon" src="../assets/images/slider-icon.svg")
+                                .col-6
+                                    .row(style="margin-bottom:64px")                          
+                                        .col-12
+                                            .house__name_description Стоимость                            
+                                            .row_cost(v-for="cost in house.cost")                            
+                                                .house__text_description {{ cost.name }}
+                                                .house__text_description {{ cost.cost }}                            
+                                    .row(style="margin-bottom:31px") 
+                                        .col-6
+                                            .house__name_description Описание 
+                                            .house__text_description {{ house.description }} 
+                                        .col-6 
+                                            .house__name_description Доступность
+                                            .house__text_description
+                                                p(v-for="availability in house.availability") {{ availability }}
+                                    .row(style="padding-bottom: 63px")
+                                        .col-6 
+                                            .house__name_description Удобства  
+                                            .house__text_description {{ house.conveniences }} 
+                                        .col-6 
+                                            .house__name_description Включено в проживание
+                                            .house__text_description {{ house.include }}
         .container
             .section_row
                 h4.section_name глэмпинг
                 .d-flex.container_icon
-                    .circle
-                        img.circle__arrow_icon(src="../assets/images-house/arrow-left.svg")
-                    .circle
-                        img.circle__arrow_icon(src="../assets/images-house/arrow-right.svg") 
+                    .circle-left                        
+                    .circle-right                        
             .row 
                 .col-6
                     .row(style="margin-bottom:64px")
@@ -235,11 +234,10 @@ div
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue"
+import { ref, watch } from "vue"
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
-import 'swiper/css/free-mode';
-import 'swiper/css/pagination';
+
 
 import houseList from '../components/houseList'
 
@@ -249,34 +247,51 @@ export default {
       Swiper,
       SwiperSlide,
     },
-    setup () {        
-        let selectHouse = ref({})
+    setup () {                
         let selectHouseIndex = ref(0)        
-        let showSliderIcon = ref(true)           
+        let showSliderIcon = ref(true)                   
         watch(()=>selectHouseIndex.value,()=>{
             if(selectHouseIndex.value < 0){
                 selectHouseIndex.value = houseList.length - 1
             }
             if(selectHouseIndex.value == houseList.length){
                 selectHouseIndex.value = 0
-            }            
-            selectHouse.value = houseList[selectHouseIndex.value]
-        })     
-        onMounted(() => {
-            selectHouse.value = houseList[selectHouseIndex.value]            
-        })
+            }                                 
+        })             
         return {
-            showSliderIcon,    
-            selectHouse, 
+            showSliderIcon,                
             selectHouseIndex,
-            showSliderIcon
+            showSliderIcon,
+            houseList 
         }
     }
 }
 </script>
 
 <style scoped>
+/* ANIMATED FOR HOUSECARD */
+.card_house__wrapper{
+    position: relative;  
+    min-height: 770px;  
+}
+.card_house{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+}
+.fade-enter-from,
+.fade-leave-to{
+  opacity: 0;  
+}
+
+.fade-enter-active,
+.fade-leave-active{
+  transition: opacity 1.2s ease-out;
+  
+}
 /* SWIPER */
+
 .swiper{    
     position: relative;
 }
@@ -306,14 +321,35 @@ export default {
 .house_typ_glamping{
     background-color: #fff;
 }
-.circle{
+.circle-left{
     width: 55px;
     height: 55px;
     border-radius: 50%;
     background-color: #005D4B;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-image: url("../assets/images-house/arrow-left.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    &:hover{
+        background-color: #fff;
+        border: 1px #005D4B solid;
+        background-image: url("src/assets/images-house/arrow-left-hover.svg");        
+        cursor: pointer;
+    }
+}
+.circle-right{
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: #005D4B;    
+    background-image: url("../assets/images-house/arrow-right.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    &:hover{
+        background-color: #fff;
+        border: 1px #005D4B solid;        
+        background-image: url("src/assets/images-house/arrow-right-hover.svg");        
+        cursor: pointer;
+    }
 }
 .circle:hover{
     cursor: pointer;

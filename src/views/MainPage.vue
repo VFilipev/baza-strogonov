@@ -7,7 +7,7 @@ div
                     img(src="../assets/images/logo2.svg")
                 ul.header_sticky__nav.col-3.offset-2.d-flex
                     router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
-                    router-link(to="/house" tag="li" class="header_sticky__nav_link") активный отдых
+                    router-link(to="/" tag="li" class="header_sticky__nav_link") активный отдых
                     router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") услуги
                 .header_sticky__icon_feed_back.col-2
                     img(src="../assets/images/telefon2.svg")
@@ -26,7 +26,7 @@ div
                                 img(src="../assets/images/logo.png")
                             ul.col-3.offset-2.d-flex.header__nav                                
                                 router-link(to="/house", tag="li",  class="header__nav__link") дома
-                                router-link(to="/house" tag="li" class="header__nav__link") активный отдых
+                                router-link(to="/" tag="li" class="header__nav__link") активный отдых
                                 router-link(to="/uslugi", tag="li",  class="header__nav__link") услуги
                             .col-2.d-flex.header__nav                            
                                 img(src='../assets/images/telefon.svg')
@@ -88,11 +88,13 @@ div
                 .date_time.date_time__icon.date_time__text.col-3
                     input.date_time__input(@focus="datePicker.dateStart = true, datePicker.dateEnd = false" 
                     v-model="filter.dateStart") 
-                    DatePicker(v-if="datePicker.dateStart" :masks="masks" :color="selectedColor" v-model.string="filter.dateStart")
+                    .date_picker_wrapper
+                        DatePicker(v-if="datePicker.dateStart" :masks="masks" :color="selectedColor" v-model.string="filter.dateStart")
                 .date_time.date_time__icon.date_time_end__text.col-3
                     input.date_time__input(@focus="datePicker.dateEnd = true, datePicker.dateStart = false" 
                     v-model="filter.dateEnd") 
-                    DatePicker(v-if="datePicker.dateEnd" :masks="masks" :color="selectedColor" v-model.string="filter.dateEnd")
+                    .date_picker_wrapper
+                        DatePicker(v-if="datePicker.dateEnd" :masks="masks" :color="selectedColor" v-model.string="filter.dateEnd")
                 .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
                     .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
                         .input_number__prefix
@@ -330,13 +332,18 @@ div
                     .card(style="background: #F5F3F1;")               
                         .card__header
                             .card__user_photo-form
-                                img(src="../assets/images/user_photo-form.svg")
+                                label(class="input-file")
+                                    input(type="file" name="file" @change="handleFileUpload")
+                                    span(:style="[feedback.userPhoto ? {'background-image': 'url(' + previewFilePath + ')', 'background-size': 'cover'} :'']")
                             .card__user_container
-                                .card__user_name ФИО
-                                star-rating(:star-size="13" :animate="true" :show-rating="false")
-                        .card__body.card_form
-                            textarea.card__input(placeholder="Введите текст..." rows="4")
-                            button.card_button оставить отзыв
+                                .card__user_name 
+                                    input.card__input_user_name(v-if="!isCreateFeedBack" placeholder="ФИО" v-model="feedback.userName")
+                                    .card__user_name(v-else) {{ feedback.userName }}
+                                star-rating(:star-size="13" :animate="true" :show-rating="false" @update:rating ="setRating")
+                        .card__body(:class="{card_form : !isCreateFeedBack}")
+                            textarea.card__input(v-if="!isCreateFeedBack" placeholder="Введите текст..." rows="4" v-model="feedback.text")
+                            p.card__text(v-else style="color: black") {{ feedback.text }}
+                            button.card_button(v-if="!isCreateFeedBack" @click="validateFeedBack") оставить отзыв
             .container_map
                 img(src="../assets/images/map.jpg")
                 .container_map_info
@@ -400,7 +407,7 @@ div
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue"
+import { ref, onMounted, watch, computed } from "vue"
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 import StarRating from 'vue-star-rating'
@@ -467,7 +474,35 @@ export default {
         const sliderPhoto = () => {
             incSelPhoto()
             timerId = setTimeout(sliderPhoto, 5000)
-        }        
+        }
+        let feedback = ref({
+            userName:'',
+            userPhoto:null,
+            text:'',
+            rating: 0
+        })
+        const handleFileUpload = (event) => {
+            const file = event.target.files[0]   
+            feedback.value.userPhoto = file
+        }
+        const previewFilePath = computed(() => {            
+            let URL = window.URL || window.webkitURL
+            if(feedback.value.userPhoto){
+                return URL.createObjectURL(feedback.value.userPhoto)
+            }
+            else{
+                return '#'
+            }
+        })
+        let isCreateFeedBack = ref(false)
+        const setRating = (rating) => {
+            feedback.value.rating = rating
+        }
+        const validateFeedBack = () => {            
+            if (feedback.value.userName && feedback.value.text && feedback.value.rating){
+                isCreateFeedBack.value = true
+            }
+        }
         watch(()=>filter.value.dateStart,()=>{
             datePicker.value.dateStart = false
         })
@@ -489,7 +524,13 @@ export default {
             inc,
             dec,
             filter,
-            selPhoto
+            selPhoto,
+            handleFileUpload,
+            previewFilePath,
+            feedback,
+            isCreateFeedBack,
+            validateFeedBack,
+            setRating
         }
     }
 }
@@ -497,6 +538,12 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+.date_picker_wrapper{
+  position: absolute;
+  top: 59px;
+  width: 289px;
+  z-index: 100;
+}
 .input_number__in{
     border: none;
     width: 91px;
@@ -579,9 +626,8 @@ export default {
 }
 
 .vc-container{
-    position: absolute;
-    top: 59px;
-    left: 28px;
+    display: block !important;
+    margin: 0 auto;
 }
 
 a.header__nav__link {
@@ -616,6 +662,36 @@ a.header__nav__link:after{
     width: 22px;
     display: block;
     margin: 0 auto;
+}
+
+.input-file {
+	position: relative;
+	display: inline-block;
+}
+.input-file span {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	outline: none;
+	text-decoration: none;	
+	vertical-align: middle;	
+	border-radius: 30px;
+    background-image: url("../assets/images/user_photo-form.svg");
+    background-repeat: no-repeat;
+    background-position: center;   
+	height: 46px;
+	padding: 22px 23px;
+	box-sizing: border-box;
+	border: none;
+	margin: 0;	
+}
+.input-file input[type=file] {
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+	display: block;
+	width: 0;
+	height: 0;
 }
 
 .container_footer{
@@ -820,6 +896,17 @@ ul {
     font-size: 17px;
     font-family: 'Lato';
     font-weight: 300;
+    &:after{
+        display:block;
+        content: '';
+        border-bottom: solid 1px black;  
+        transform: scaleX(0);  
+        transition: transform 250ms ease-in-out;
+    }
+    &:hover:after{
+        transform: scaleX(1);  
+    }
+    
 }
 .header_sticky__nav{
     display: flex;
@@ -996,23 +1083,6 @@ img.photo.active{
 .container {
     padding: 0;
 }
-@keyframes fade {
-    0% {
-        opacity: 1;
-    }
-
-    30% {
-        opacity: 0;
-    }
-
-    67% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
 
 .service_section{
     background-color: #ECE8E380;
@@ -1118,6 +1188,12 @@ img.card__rating:not(:last-child){
 .card_form{
     border-radius: 30px;
     height: 233px;    
+}
+.card__input_user_name{
+    border: 0px;
+}
+input.card__input_user_name:focus-visible{
+    outline: 0px;
 }
 .container_map{
     margin-top: 183px;
