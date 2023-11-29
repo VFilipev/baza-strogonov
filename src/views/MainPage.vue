@@ -6,9 +6,8 @@ div
                 .header_sticky__logo.col-5
                     img(src="../assets/images/logo2.svg")
                 ul.header_sticky__nav.col-3.offset-2.d-flex
-                    router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
-                    router-link(to="/" tag="li" class="header_sticky__nav_link") активный отдых
-                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") услуги
+                    router-link(to="/house" tag="li" class="header_sticky__nav_link") дома                    
+                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых / услуги
                 .header_sticky__icon_feed_back.col-2
                     img(src="../assets/images/telefon2.svg")
                     button забронировать
@@ -26,8 +25,7 @@ div
                                 img(src="../assets/images/logo.png")
                             .col-3.offset-2.d-flex.header__nav                                
                                 router-link(to="/house", tag="a",  class="header__nav__link") дома
-                                router-link(to="/" tag="a" class="header__nav__link") активный отдых
-                                router-link(to="/uslugi", tag="a",  class="header__nav__link") услуги
+                                router-link(to="/uslugi", tag="a",  class="header__nav__link") активный отдых / услуги
                             .col-2.d-flex.header__nav                            
                                 img(src='../assets/images/telefon.svg')
                                 button.header__nav__link.header__nav__button забронировать
@@ -330,7 +328,43 @@ div
                         button.contact__button отправить 
     footer.footer
         .container
-            .footer_container
+            .row(style="padding-top:32px") 
+                .col-2
+                    ul.footer__item
+                        li.footer__item_bold размещение и проживание 
+                        li дома 
+                        li активный отдых и услуги 
+                        li главная страница 
+                .col-2
+                    ul.footer__item
+                        li.footer__item_bold расчётные часы
+                        li время заезда: с 15:00  
+                        li время выезда: до 13:00                        
+                .col-2
+                    ul.footer__item
+                        li.footer__item_bold адрес
+                        li.footer__item_line-height Пермский край, Ильинский район, п. Ильинский, с. Дмитриевское                         
+                .col-2
+                    ul.footer__item
+                        li.footer__item_bold контакты
+                        li +7 (902) 643-92-94 
+                        li +7 (342) 288-00-89 
+                        li stroganovprostor@gmail.com                
+                .col-2
+                    ul.footer__item
+                        li.footer__item_bold правовые документы
+                        li.footer__item_line-height Согласие на обработку персональных данных  
+                        li Политика конфиденциальности
+                .col-2.d-flex.justify-content-end                    
+                    ul.footer__item
+                        li.footer__item_bold мы в соцсетях
+                        li
+                            .d-flex.gap-2
+                                a(href="https://vk.com/stroganovskie_prostory" target="_blank")
+                                    img.footer__link(src="../assets/images/icon-vk.svg")                        
+                                a(href="https://t.me/stroganovskie_prostory" target="_blank")
+                                    img.footer__link(src="../assets/images/icon-telegram.svg")                        
+            .d-flex.justify-content-between.pb-3(style="margin-top: 50px")
                 div 2023 @ СТРОГАНОВСКИЕ ПРОСТОРЫ
                 div Пермь. Официальный сайт.
     Transition(name="modalBottom")
@@ -1369,7 +1403,7 @@ footer.footer{
     background-color: #F5F3F1;   
     color: rgba(0, 0, 0, 0.40);
     font-size: 20px;
-    font-family: Lato;
+    font-family: 'Lato';
     font-weight: 300; 
 }
 
@@ -1378,5 +1412,20 @@ footer.footer{
     justify-content: space-between;
     padding-top: 182px;
     padding-bottom: 20px;
+}
+ul.footer__item{
+    font-size: 13px;    
+}
+ul.footer__item li {
+    margin-top: 6px;    
+}
+li.footer__item_line-height{
+    line-height: 23px;
+}
+.footer__item_bold{
+    font-weight: 400;
+}
+.footer__link:hover{
+    cursor: pointer;
 }
 </style>
