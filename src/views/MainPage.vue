@@ -9,7 +9,8 @@ div
                     router-link(to="/house" tag="li" class="header_sticky__nav_link") дома                    
                     router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых / услуги
                 .header_sticky__icon_feed_back.col-2
-                    img(src="../assets/images/telefon2.svg")
+                    a(href="tel:+79026439294")
+                        img(src="../assets/images/telefon2.svg")
                     button забронировать
                                           
     section.first_page        
@@ -26,8 +27,9 @@ div
                             .col-3.offset-2.d-flex.header__nav                                
                                 router-link(to="/house", tag="a",  class="header__nav__link") дома
                                 router-link(to="/uslugi", tag="a",  class="header__nav__link") активный отдых / услуги
-                            .col-2.d-flex.header__nav                            
-                                img(src='../assets/images/telefon.svg')
+                            .col-2.d-flex.header__nav     
+                                a(href="tel:+79026439294")                       
+                                    img(src='../assets/images/telefon.svg')
                                 button.header__nav__link.header__nav__button забронировать
                     .row.d-flex.justify-content-between
                         .col-4.first_page__h1 уютные коттеджи 
@@ -1001,7 +1003,7 @@ ul {
     
     &:hover{
         background-color: #003731;
-        border: 0
+        border: 1px solid transparent
     }
 }
 
