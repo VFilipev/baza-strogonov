@@ -6,10 +6,10 @@ div
                 .col-5
                     router-link(to="/")
                         img(src="../assets/images/logo2.svg")
-                ul.header_sticky__nav.col-2.offset-3.d-flex
+                ul.header_sticky__nav.col-3.offset-2.d-flex
                     router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
                     //- router-link(to="/" tag="li" class="header_sticky__nav_link") активный отдых
-                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") услуги
+                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых/услуги
                 .header_sticky__icon_feed_back.col-2
                     img(src="../assets/images/telefon2.svg")
                     button забронировать

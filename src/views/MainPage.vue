@@ -24,10 +24,10 @@ div
                         .row.align-items-center
                             .col-5.logo
                                 img(src="../assets/images/logo.png")
-                            ul.col-3.offset-2.d-flex.header__nav                                
-                                router-link(to="/house", tag="li",  class="header__nav__link") дома
-                                router-link(to="/" tag="li" class="header__nav__link") активный отдых
-                                router-link(to="/uslugi", tag="li",  class="header__nav__link") услуги
+                            .col-3.offset-2.d-flex.header__nav                                
+                                router-link(to="/house", tag="a",  class="header__nav__link") дома
+                                router-link(to="/" tag="a" class="header__nav__link") активный отдых
+                                router-link(to="/uslugi", tag="a",  class="header__nav__link") услуги
                             .col-2.d-flex.header__nav                            
                                 img(src='../assets/images/telefon.svg')
                                 button.header__nav__link.header__nav__button забронировать
@@ -124,91 +124,21 @@ div
                         span.checkbox__label(:class="{ active: filter.isGlamping == true}") глэмпинг                    
                 button.placement__form__button_search найти
             .row.placement__cantainer_card
-                .col-4 
+                .col-4(v-for="(house, index) in houseList")
                     .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house1-1.png)")
+                        .wrapper_img(:style="{ backgroundImage: `url(${house.main_photo})` }")
+                            .btn_house_detail(@click="showModalHouse = true, selectedHouse = house")
                         .container_info-graph
-                            .house_name Дом Кузнеца
+                            .house_name {{ house.name }}
                             .wrapper_cost_capacity
-                                .house_cost ₽ 10000
+                                .house_cost ₽ {{ house.cost[0].cost }}
                                 .house_capacity
                                     .house_capacity__icon 
                                         img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 11 чел
+                                    .house_capacity__text до {{ house.capacity }} чел
                         .container_footer 
-                            .footer_text 2 смежные и 2 изолированые спальни, просторная кухня-гостиная, санузел
-                            .footer_button забронировать
-                .col-4 
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house2-1.png)")
-                        .container_info-graph
-                            .house_name Дом Мельника
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 10000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 11 чел
-                        .container_footer 
-                            .footer_text 3 изолированные спальни, просторная кухня-гостиная с диваном, санузел
-                            .footer_button забронировать
-                .col-4 
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house3-1.png);background-position: 0px -170px")
-                        .container_info-graph
-                            .house_name Дом Ямщика
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 10000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 14 чел
-                        .container_footer 
-                            .footer_text 3 изолированные спальни, просторная кухня-гостиная с диваном и два санузла
-                            .footer_button забронировать
-                            .row.placement__cantainer_card
-                .col-4(style="margin-top: 41px")
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house4-1.png)")
-                        .container_info-graph
-                            .house_name Дом Охотника
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 25000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 40 чел
-                        .container_footer 
-                            .footer_text Дом полностью + большая веранда или половина дома + кафе и малая веранда
-                            .footer_button забронировать
-                .col-4(style="margin-top: 41px")
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house5-1.png)")
-                        .container_info-graph
-                            .house_name Дом Рыбака
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 5500
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 4 чел
-                        .container_footer 
-                            .footer_text 2 изолированные спальни, просторная кухня-гостиная с диваном и два санузел
-                            .footer_button забронировать
-                .col-4(style="margin-top: 41px; margin-bottom:95px")
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house6-1.png);background-position: 0px -114px")
-                        .container_info-graph
-                            .house_name Дом Гончара(1 этаж)
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 5000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 6 чел
-                        .container_footer 
-                            .footer_text  изолированные спальни, просторная кухня-гостиная с диваном и санузел
-                            .footer_button забронировать
+                            .footer_text {{ house.short_description }}
+                            .footer_button забронировать                
     section.service_section
         .container         
             .row.service     
@@ -403,6 +333,9 @@ div
             .footer_container
                 div 2023 @ СТРОГАНОВСКИЕ ПРОСТОРЫ
                 div Пермь. Официальный сайт.
+    Transition(name="modalBottom")
+        div.modal-mask(v-show="showModalHouse" :class="{active : showModalHouse}")  
+            house-detail(:house="selectedHouse" @modalClose="showModalHouse = false")
 
 </template>
 
@@ -412,13 +345,17 @@ import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 import StarRating from 'vue-star-rating'
 
+import houseList from '../components/houseList'
+import houseDetail from "../components/houseDetail.vue";
+
 export default {
     
     name: 'main-page',
     components: {
         Calendar,
         DatePicker,
-        StarRating
+        StarRating,
+        houseDetail
     },
     setup() {
         const photoList = [
@@ -503,6 +440,8 @@ export default {
                 isCreateFeedBack.value = true
             }
         }
+        let selectedHouse = ref({})        
+        let showModalHouse = ref(false)
         watch(()=>filter.value.dateStart,()=>{
             datePicker.value.dateStart = false
         })
@@ -530,7 +469,10 @@ export default {
             feedback,
             isCreateFeedBack,
             validateFeedBack,
-            setRating
+            setRating,
+            houseList,
+            selectedHouse,
+            showModalHouse
         }
     }
 }
@@ -538,6 +480,47 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+.modalBottom-enter-active {
+  animation: animatebottom 1s;
+}
+.modalBottom-leave-active {
+  animation: animatebottom 1s reverse;
+}
+.modal-mask{
+    position: fixed;    
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: #ECE8E3;
+    z-index: 200;    
+}
+@keyframes animatebottom {
+  from {
+    top: 100%;
+    opacity: 0;
+  }
+
+  to {
+    top: 0%;
+    opacity: 1;
+  }
+}
+.btn_house_detail{
+    position: absolute;
+    bottom: 11px;
+    right: 11px;
+    height: 36px;
+    width: 36px;
+    border-radius: 30px;
+    background-color: #005D4B;
+    background-image: url("../assets/images/house_detail.svg");
+    background-repeat: no-repeat;
+    background-position: 12px 10px;
+    &:hover{
+        cursor: pointer;
+    }
+}
+
 .date_picker_wrapper{
   position: absolute;
   top: 59px;
@@ -764,6 +747,7 @@ a.header__nav__link:after{
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    position: relative;
 }
 
 .placement__cantainer_card{
@@ -773,7 +757,8 @@ a.header__nav__link:after{
     height: 399px;
     width: 400px;
     background: #ECE8E3;
-    border-radius: 30px;    
+    border-radius: 30px;  
+    margin-bottom: 40px;  
 }
 .placement__form__button_search{
     width: 180px;
@@ -1048,10 +1033,8 @@ img.photo.active{
     margin-bottom: 384px;
 }
 
-.header__nav {
-    margin-top: -80px;
-    color: #fff;
-    display: flex;
+.header__nav {    
+    color: #fff;    
     gap: 15px;
 }
 

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Booking from '../views/Booking.vue'
+import BookingConfirm from '../views/BookingConfirm.vue'
 import MainPage from '../views/MainPage.vue'
 import UslugiPage from '../views/UslugiPage.vue'
 import HousePage from '../views/HousePage.vue'
@@ -16,7 +17,7 @@ const router = createRouter({
     {
       path: '/booking',
       name: 'booking',
-      component: Booking
+      component: Booking,      
     },
     {
       path: '/uslugi',
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/sandbox',
       name: 'sandbos',
       component: sandBox
+    },
+    {
+      path:'/booking/confirm',        
+      name: 'BookingConfirm',
+      component: BookingConfirm
     },
     // {
     //   path: '/about',

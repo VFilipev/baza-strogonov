@@ -71,15 +71,16 @@ div.container
         .order_item__cost {{ product.cost + 'р' }}
         
   section.confirm(style="margin-top:25px; height: 1080px" )
-    div      
+    div.d-flex.justify-content-between  
       .confirm__checkbox-wrapper
         .confirm__checkbox
             .confirm__checkbox-box-wrapper 
-                .confirm__checkbox-box()
+                .confirm__checkbox-box(@click="isConfirm = !isConfirm" :class="{icon_check : isConfirm}")
                     //- .confirm__checkbox-icon(v-if="filter.isHouse")
                     //-     img(src="../assets/images/checkbox.svg")
         span.confirm__checkbox__label Я согласен с условиями политики конфиденциальности и даю разрешение на обработку персональных данных    
-        
+      button.confirm__btn(:disabled="!isConfirm" @click="toBooking") забронировать
+  
 
 </template>
 
@@ -91,6 +92,8 @@ import moment from 'moment';
 import 'swiper/css';
 
 import controlSwiper from '../components/controlSwiper.vue';
+
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'booking',
@@ -203,6 +206,13 @@ export default {
         return false
       }
     }
+    let isConfirm = ref(false)
+    const router = useRouter()    
+    let toBooking = () => {
+      router.push({
+        name: 'BookingConfirm',        
+      })
+    }
     return {
       order,
       datePicker,
@@ -216,7 +226,9 @@ export default {
       calcCost,
       parserDate,
       productsList,
-      isAdd
+      isAdd,
+      isConfirm,
+      toBooking
     }
   }
 }
@@ -226,9 +238,10 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 .confirm__checkbox__label{
-    font-family: 'Montserrat';
-    font-size: 17px;
-    color: #bdbdbd;
+    font-family: 'Lato';
+    font-weight: 400;
+    font-size: 20px;
+    color: black;
     padding-left: 6px;
 }
 .confirm__checkbox__label.active{
@@ -266,9 +279,16 @@ export default {
     display: inline-block;
     box-sizing: border-box;
     border-radius:8px;
-    background-color: #ffffff;
+    background-color: #fff;    
     border: 1px solid #B3B3B3;
+    &.icon_check{
+      background-color: #005D4B;
+      background-image: url('src/assets/images-booking/icon-check-2.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
 }
+
 .confirm__checkbox-icon{
     position: absolute;
     display: flex;
@@ -279,6 +299,23 @@ export default {
 }
 .confirm__checkbox-box.active{    
     border: 1px solid #005D4B;    
+}
+
+.confirm__btn{
+  width: 144px;
+  height: 36px;
+  border: 0;
+  background-color: #005D4B;
+  border-radius: 36px;
+  color: #FCF2EA;
+  font-size: 15px;
+  font-family: 'Lato';
+  font-weight: 400;
+  &:disabled{
+    background-color: #333333;
+    cursor: not-allowed;
+    opacity: .8;
+  }
 }
 
 .order_item__info{
