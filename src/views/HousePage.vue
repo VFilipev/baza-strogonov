@@ -15,17 +15,18 @@ div
                     button забронировать
     section.house_typ(style="padding-top: 63px")
         .container 
-            .section_row
-                h4.section_name виды домов 
-                .d-flex.container_icon
-                    .circle-left(@click="selectHouseIndex--")                        
-                    .circle-right(@click="selectHouseIndex++")                         
+            .row
+                .col-6
+                    .d-flex.justify-content-between.align-items-center
+                        h4.section_name виды домов 
+                        .d-flex.container_icon.align-items-center
+                            .circle-left(@click="selectHouseIndex--")   
+                            p.house__name {{ houseList[selectHouseIndex].name }}                      
+                            .circle-right(@click="selectHouseIndex++")                         
             .card_house__wrapper
                 div(v-for="(house, index) in houseList" :key="house.id")                     
                     Transition(name="fade" mode="out-in")
-                        div.card_house(v-show="selectHouseIndex == index")
-                            .row                         
-                                p.house__name {{ house.name }} 
+                        div.card_house(v-show="selectHouseIndex == index")                            
                             .row 
                                 .col-6
                                     .row
@@ -273,6 +274,7 @@ export default {
 .card_house__wrapper{
     position: relative;  
     min-height: 770px;  
+    margin-top: 34px;
 }
 .card_house{
     position: absolute;
@@ -429,11 +431,14 @@ export default {
     background-position: center;
 }
 .house__name{
+    width: 130px;
+    display: flex;
+    justify-content: center;
     color: #003731;
     font-size: 17px;
     font-family: Lato;
     font-weight: 400;
-    margin-bottom: 18px;
+    margin-bottom: 0px;
 }
 .section_name{
     color: #003C30;

@@ -122,11 +122,11 @@ div
                                     .checkbox-icon(v-if="filter.isGlamping")
                                         img(src="../assets/images/checkbox.svg")
                         span.checkbox__label(:class="{ active: filter.isGlamping == true}") глэмпинг                    
-                button.placement__form__button_search найти
+                button.placement__form__button_search(@click="getAvailableHouse") найти
             .row.placement__cantainer_card
-                .col-4(v-for="(house, index) in houseList")
+                .col-4(v-for="(house, index) in houseList2")
                     .placement__card 
-                        .wrapper_img(:style="{ backgroundImage: `url(${house.main_photo})` }")
+                        .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
                             .btn_house_detail(@click="showModalHouse = true, selectedHouse = house")
                         .container_info-graph
                             .house_name {{ house.name }}
@@ -135,7 +135,7 @@ div
                                 .house_capacity
                                     .house_capacity__icon 
                                         img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до {{ house.capacity }} чел
+                                    .house_capacity__text до {{ house.maxP }} чел
                         .container_footer 
                             .footer_text {{ house.short_description }}
                             .footer_button забронировать                
@@ -384,6 +384,8 @@ import StarRating from 'vue-star-rating'
 import houseList from '../components/houseList'
 import houseDetail from "../components/houseDetail.vue";
 
+import { Lodge } from '../api'
+
 export default {
     
     name: 'main-page',
@@ -476,6 +478,11 @@ export default {
                 isCreateFeedBack.value = true
             }
         }
+        let houseList2 = ref(houseList)
+        const getAvailableHouse = async() => {
+            let tmp = (await Lodge.get_available_house({'date_start': filter.value.dateStart, 'date_end': filter.value.dateEnd})).data
+            houseList2.value = tmp
+        }
         let selectedHouse = ref({})        
         let showModalHouse = ref(false)
         watch(()=>filter.value.dateStart,()=>{
@@ -506,9 +513,10 @@ export default {
             isCreateFeedBack,
             validateFeedBack,
             setRating,
-            houseList,
+            houseList2,
             selectedHouse,
-            showModalHouse
+            showModalHouse,
+            getAvailableHouse
         }
     }
 }
@@ -867,8 +875,7 @@ input:focus-visible{
     align-items: center;
     top: 0;
     bottom: 0;
-    left: 260px;    
-    
+    left: 260px;        
 }
 .date_time__text::after{
     font-family: 'Montserrat';

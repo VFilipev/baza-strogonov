@@ -2,8 +2,8 @@ const houseList = [
     {
         id:1,
         name: 'Дом Мельника',
-        capacity: 11,
-        main_photo: 'src/assets/images-house/house-2.png',
+        maxP: 11,
+        img: 'src/assets/images-house/house-2.png',
         galery:[
             {
                 name:'спальня',
@@ -53,8 +53,8 @@ const houseList = [
     {
         id:2,
         name: 'Дом Ямщика',
-        capacity: 14,
-        main_photo: 'src/assets/images-house/house-4.png',
+        maxP: 14,
+        img: 'src/assets/images-house/house-4.png',
         galery:[
             {
                 name:'кухня',
@@ -104,8 +104,8 @@ const houseList = [
     {
         id:3,
         name: 'Дом Рыбака',
-        capacity: 4,
-        main_photo: 'src/assets/images-house/house-5.png',
+        maxP: 4,
+        img: 'src/assets/images-house/house-5.png',
         galery:[
             {
                 name:'спальня',
@@ -158,8 +158,8 @@ const houseList = [
     {
         id:4,
         name: 'Дом Кузнеца',
-        capacity: 11,
-        main_photo: 'src/assets/images-house/house-6.png',
+        maxP: 11,
+        img: 'src/assets/images-house/house-6.png',
         galery:[
             {
                 name:'спальня',
