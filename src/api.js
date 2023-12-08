@@ -1,5 +1,6 @@
 export const lodgeUrl= '/api/lodge/'
 export const serviceUrl= '/api/services/'
+export const orderUrl= '/api/order/'
 
 import axios from 'axios'
 
@@ -84,3 +85,4 @@ Lodge.get_available_house = async function(filter){
 }
 
 export let Service = apiConstructor(serviceUrl)
+export let Order = apiConstructor(orderUrl)

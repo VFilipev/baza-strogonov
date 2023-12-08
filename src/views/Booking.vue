@@ -9,22 +9,20 @@ div.container
         input.text-field__input(placeholder="Телефон" type="tel")
         input.text-field__input(placeholder="Email" type="email")
         div.data-time-container
-          .date_time.date_time__icon.date_time__text
-            input.date_time__input(@focus="datePicker.dateStart = true, datePicker.dateEnd = false" 
-            v-model="order.dateStart") 
-            .date_picker_wrapper
-              DatePicker(v-if="datePicker.dateStart" :masks="masks" :color="selectedColor" v-model.string="order.dateStart")
+          .date_time.date_time__icon.date_time__text                       
+            DatePicker(v-model="order.orderlodge_set[0].start_date" :masks="masks" :color="selectedColor")
+              template(#default="{ inputValue, inputEvents }")
+                input.date_time__input(:value="inputValue ? inputValue : order.orderlodge_set[0].start_date" v-on="inputEvents")
           .date_time.date_time__icon.date_time_end__text
-            input.date_time__input(@focus="datePicker.dateEnd = true, datePicker.dateStart = false" 
-            v-model="order.dateEnd") 
-            .date_picker_wrapper
-              DatePicker(v-if="datePicker.dateEnd" :masks="masks" :color="selectedColor" v-model.string="order.dateEnd")
+            DatePicker(v-model="order.orderlodge_set[0].end_date" :masks="masks" :color="selectedColor")
+              template(#default="{ inputValue, inputEvents }")
+                input.date_time__input(:value="inputValue ? inputValue : order.orderlodge_set[0].end_date" v-on="inputEvents")
       .col-6
         .info-card-lodge 
-          .lodge__img(:style="{'background-image': 'url(' + order.lodge.mainPhoto + ')'}")
+          .lodge__img(:style="{'background-image': 'url(' + order.orderlodge_set[0].mainPhoto + ')'}")
           .card_lodge__footer 
             .lodge__name 
-              p {{ order.lodge.name }}
+              p {{ order.orderlodge_set[0].lodge.name }}
             .footer__icon 
               button.footer__btn выбрано                
               .icon__check   
@@ -34,39 +32,73 @@ div.container
     .row 
       .col-12
         .slider_wrapper 
-          swiper(slidesPerView="6" :spaceBetween="40" ref="swiper")
-            swiper-slide(v-for="service in servicesList")
+          swiper(slidesPerView="6" :spaceBetween="40" ref="swiper")  
+            //- ЧАН          
+            swiper-slide
               .col-2 
                 .uslugi_card 
-                  .uslugi_card__img(:style="{ backgroundImage: `url(${service.photo})` }")
+                  .uslugi_card__img(:style="{ backgroundImage: `url(${servicesList[0].photo})` }")
                   .uslugi_card__footer 
-                    .uslugi_card__text {{ service.name }}
+                    .uslugi_card__text {{ servicesList[0].name }}
                     .footer_right 
-                      .uslugi_card__text {{ service.cost }}
-                      .uslugi_card__btn-popup(@click="showPopUp(service.name)" :class="{active:isShowPopUp(service.name)}")                      
+                      .uslugi_card__text {{ servicesList[0].cost }}
+                      .uslugi_card__btn-popup(v-if="!checkServiceInOrder('CH')" @click="showPopUp(servicesList[0].name)" :class="{active:isShowPopUp(servicesList[0].name)}")                     
+                      .uslugi_card__check(v-else) 
                 Transition(name="popUp")
-                  .service_popup(v-if="isShowPopUp(service.name)")
+                  .service_popup(v-if="isShowPopUp(servicesList[0].name)")
                     .row_service_popup.d-flex.justify-content-between.align-items-center
                       .service_popup__item Часы
                       .d-flex.justify-content-between(style="width: 97px")
-                        img(src="../assets/images-booking/icon-remove.svg" @click="preSaunaOrder.prefferedTime--")
-                        input.row_service_popup__input_hours(v-model="preSaunaOrder.prefferedTime")                        
-                        img(src="../assets/images-booking/icon-add-2.svg" @click="preSaunaOrder.prefferedTime++")
+                        img(src="../assets/images-booking/icon-remove.svg" @click="preOrder['CH'].prefferedTime--")
+                        input.row_service_popup__input_hours(v-model="preOrder['CH'].prefferedTime")                        
+                        img(src="../assets/images-booking/icon-add-2.svg" @click="preOrder['CH'].prefferedTime++")
                     .row_service_popup.d-flex.justify-content-between.align-items-center                    
                       .service_popup__item Дата
                       .service_popup__date_time.service_popup__date_time__icon
-                        input.service_popup__date_time__input(@focus="showPopUpCalendar(service.name)" v-model="service.dateStart")
-                        .date_picker_wrapper
-                          DatePicker(v-if="services.datePicker.includes('баня')" :masks="masks" :color="selectedColor" v-model.string="service.dateStart")
+                        DatePicker(:masks="masks" :color="selectedColor" v-model="preOrder['CH'].dateStart" :popover="popover")
+                          template(#default="{ inputValue, inputEvents }")
+                            input.service_popup__date_time__input(:value="inputValue" v-on="inputEvents")
                     .row_service_popup.d-flex.justify-content-between.align-items-center()                    
                       .service_popup__item Время
                       .service_popup__wrapper_time                          
-                        img(v-if="availableTime.length > 0" src="../assets/images-booking/arrow-left-time.svg" @click="decAvailableTimeIndex()")
-                        .available_time(v-if="availableTime.length > 0") {{ stringToHour(availableTime[preSaunaOrder.timeIndex]) }}
-                        img.popup_arrow(v-if="availableTime.length > 0" src="../assets/images-booking/arrow-right-time.svg" @click="incAvailableTimeIndex()")
-
-
-
+                        img(v-if="preOrder['CH'].availableTime.length > 0" src="../assets/images-booking/arrow-left-time.svg" @click="decAvailableTimeIndex('CH')")
+                        .available_time(v-if="preOrder['CH'].availableTime.length > 0") {{ stringToHour(preOrder['CH'].availableTime[preOrder['CH'].timeIndex]) }}
+                        img.popup_arrow(v-if="preOrder['CH'].availableTime.length > 0" src="../assets/images-booking/arrow-right-time.svg" @click="incAvailableTimeIndex('CH')")
+                    .service_popup_footer
+                      .uslugi_card__add(@click="addService('CH')")
+            //- БАНЯ
+            swiper-slide
+              .col-2 
+                .uslugi_card 
+                  .uslugi_card__img(:style="{ backgroundImage: `url(${servicesList[1].photo})` }")
+                  .uslugi_card__footer 
+                    .uslugi_card__text {{ servicesList[1].name }}
+                    .footer_right 
+                      .uslugi_card__text {{ servicesList[1].cost }}
+                      .uslugi_card__btn-popup(v-if="!checkServiceInOrder('SN')" @click="showPopUp(servicesList[1].name)" :class="{active:isShowPopUp(servicesList[1].name)}") 
+                      .uslugi_card__check(v-else)                     
+                Transition(name="popUp")
+                  .service_popup(v-if="isShowPopUp(servicesList[1].name)")
+                    .row_service_popup.d-flex.justify-content-between.align-items-center
+                      .service_popup__item Часы
+                      .d-flex.justify-content-between(style="width: 97px")
+                        img(src="../assets/images-booking/icon-remove.svg" @click="preOrder['SN'].prefferedTime--")
+                        input.row_service_popup__input_hours(v-model="preOrder['SN'].prefferedTime")                        
+                        img(src="../assets/images-booking/icon-add-2.svg" @click="preOrder['SN'].prefferedTime++")
+                    .row_service_popup.d-flex.justify-content-between.align-items-center                    
+                      .service_popup__item Дата
+                      .service_popup__date_time.service_popup__date_time__icon                        
+                        DatePicker(:masks="masks" :color="selectedColor" v-model="preOrder['SN'].dateStart" :popover="popover")
+                          template(#default="{ inputValue, inputEvents }")
+                            input.service_popup__date_time__input(:value="inputValue" v-on="inputEvents")
+                    .row_service_popup.d-flex.justify-content-between.align-items-center
+                      .service_popup__item Время
+                      .service_popup__wrapper_time                          
+                        img(v-if="preOrder['SN'].availableTime.length > 0" src="../assets/images-booking/arrow-left-time.svg" @click="decAvailableTimeIndex('SN')")
+                        .available_time(v-if="preOrder['SN'].availableTime.length > 0") {{ stringToHour(preOrder['SN'].availableTime[preOrder['SN'].timeIndex]) }}
+                        img.popup_arrow(v-if="preOrder['SN'].availableTime.length > 0" src="../assets/images-booking/arrow-right-time.svg" @click="incAvailableTimeIndex('SN')")                    
+                    .service_popup_footer
+                      .uslugi_card__add(@click="addService('SN')")                      
             swiper-slide(v-for="product in productsList")
               .col-2 
                 .uslugi_card 
@@ -82,16 +114,24 @@ div.container
     .row 
       .name_subsection Добавлено:
     .order_item 
-      .order_item__name {{ order.lodge.name }}
+      .order_item__name {{ order.orderlodge_set[0].lodge.name }}
       .order_item__info
         .order_item__cost {{ calcCost }}
-        .order_item__date {{ parserDate(order.dateStart) + '-' + parserDate(order.dateEnd)}}
-    template(v-if="order.products.length > 0")
-      .order_item(v-for="product in order.products") 
+        .order_item__date {{ parserDate(order.orderlodge_set[0].start_date) + '-' + parserDate(order.orderlodge_set[0].end_date)}}
+    template(v-if="order.products_set.length > 0")
+      .order_item(v-for="product in order.products_set") 
         .order_item__name {{ product.name }}
-
-        .order_item__cost {{ product.cost + 'р' }}
-
+        .order_item__info
+          .order_item__cost {{ product.cost + 'р' }}
+          .order_item__date
+    template(v-if="order.services_set.length > 0")
+      .order_item(v-for="service in order.services_set") 
+        .order_item__name {{ preOrder[service.name].name }}
+        .d-flex.justify-content-between(style="width: 500px")
+          .order_item__cost {{ service.cost }}
+          .order_item__duration {{ getDuration(service) }}
+          .order_item__date 06/12/23
+    div {{ totalCost }}
   section.confirm(style="margin-top:25px; height: 1080px" )
     div.d-flex.justify-content-between  
       .confirm__checkbox-wrapper
@@ -104,6 +144,7 @@ div.container
       button.confirm__btn(:disabled="!isConfirm" @click="toBooking") забронировать
   
 
+
 </template>
 
 <script>
@@ -115,9 +156,9 @@ import 'swiper/css';
 
 import controlSwiper from '../components/controlSwiper.vue';
 
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 
-import { Service } from '../api'
+import { Service, Order } from '../api'
 
 export default {
   name: 'booking',
@@ -128,51 +169,60 @@ export default {
     SwiperSlide,
     controlSwiper
   },
-  setup() {
-    let datePicker = ref({
-      dateStart: false,
-      dateEnd: false
+  setup() {      
+    const popover = ref({
+      visibility: 'click',     
     })
     const calcCost = computed(() => {
-      let start = moment(order.value.dateStart, 'DD.MM.YYYY')
-      let end = moment(order.value.dateEnd, 'DD.MM.YYYY')
+      let start = moment(order.value.orderlodge_set[0].start_date, 'DD.MM.YYYY')
+      let end = moment(order.value.orderlodge_set[0].end_date, 'DD.MM.YYYY')
       let diff = moment.duration(end.diff(start)).as('days')
-      return diff * order.value.lodge.cost
+      return diff * order.value.orderlodge_set[0].cost
+    })
+    const totalCost = computed(() => {
+      let serviceCost = order.value.services_set.reduce((s, c) => s + c.cost, 0);
+      let productCost = order.value.products_set.reduce((s, c) => s + c.cost, 0);
+      let total = calcCost.value + serviceCost + productCost
+      return total
     })
     const parserDate = (date) => {
       return moment(date, 'DD.MM.YYYY').format('DD/MM/YY')
     }
     let order = ref({
-      user: {
-        name: '',
-        phone: '',
-        mail: ''
-      },
-      dateStart: '22.11.2023',
-      dateEnd: '25.11.2023',
-      lodge: {
-        name: 'Дом Кузнеца',
-        mainPhoto: 'src/assets/images-booking/lodge.png',
-        cost: 15000
-      },
-      services: [],
-      products: []
+      customer: 'Филипьев Василий Александрович',
+      phone: '89819710592',
+      email: 'mail@mail.ru',           
+      orderlodge_set: [
+        {
+          lodge:1,                              
+          cost: 15000,
+          start_date: '22.11.2023',
+          end_date: '25.11.2023',
+          mainPhoto: 'src/assets/images-booking/lodge.png',
+        }
+      ],
+      // {
+      //   name: 'Дом Кузнеца',
+      //   mainPhoto: 'src/assets/images-booking/lodge.png',
+      //   cost: 15000
+      // },
+      services_set: [],
+      products_set: []
     })
     const selectedColor = ref('green')
     const masks = ref({
       modelValue: 'DD.MM.YYYY',
+      L: 'DD.MM.YYYY'
     })
     let servicesList = ref([
       {
         photo: 'src/assets/images-uslugi/images-2.png',
         name: 'чан',
-        dateStart: '',
         cost: '3000р/2ч',
       },
       {
         photo: 'src/assets/images-uslugi/images-3.png',
         name: 'баня',
-        dateStart: '',
         cost: '2400р/2ч',
       },
     ])
@@ -208,22 +258,16 @@ export default {
         cost: 150,
       },
     ])
-    const addService = (service) => {
-      service.isAdd = true
-    }
-    const removeService = (service) => {
-      service.isAdd = false
-    }
     const addProduct = (product) => {
-      order.value.products.push(product)
+      order.value.products_set.push(product)
     }
     const removeProduct = (product) => {
-      let findIndex = order.value.products.findIndex(x => x.id == product.id)
+      let findIndex = order.value.products_set.findIndex(x => x.id == product.id)
       order.value.products.splice(findIndex, 1)
     }
     const isAdd = (id) => {
-      if (order.value.products.length > 0) {
-        let item = order.value.products.find(x => x.id == id)
+      if (order.value.products_set.length > 0) {
+        let item = order.value.products_set.find(x => x.id == id)
         if (item) {
           return true
         }
@@ -233,26 +277,28 @@ export default {
       }
     }
     let isConfirm = ref(false)
-    const router = useRouter()
-    let toBooking = () => {
-      router.push({
-        name: 'BookingConfirm',
-      })
+    // const router = useRouter()
+    const dateFormat = (date) => {
+      tmp = moment(date, 'DD.MM.YYYY').format('YYYY-MM-DD')
+      return tmp
+    }
+    let toBooking = async() => {
+      order.value.orderlodge_set[0].start_date = order.value.orderlodge_set[0].start_date
+      let ens 
+      await Order.save(order.value)
+      // router.push({
+      //   name: 'BookingConfirm',
+      // })
     }
     let popUpList = ref([])
     const showPopUp = (name) => {
       if (popUpList.value.includes(name)) {
-        closePopUp()
+        closePopUp(name)
       }
       else {
         popUpList.value.push(name)
-        let tmp = { name: name }
-        order.value.services.push(tmp)
       }
-    }
-    const showPopUpCalendar = (name) => {
-      services.value.datePicker.push(name)
-    }
+    }    
     const isShowPopUp = (name) => {
       if (popUpList.value.includes(name)) {
         return true
@@ -263,94 +309,143 @@ export default {
       let findIndex = popUpList.value.findIndex(x => x == name)
       popUpList.value.splice(findIndex, 1)
     }
-    let availableTime = ref([])
-    let availableTimeIndex = ref(0)
-    const incAvailableTimeIndex = () => {
-      if (preSaunaOrder.value.timeIndex < availableTime.value.length - 1) {
-        preSaunaOrder.value.timeIndex++
+    const incAvailableTimeIndex = (name) => {
+      if (preOrder.value[name].timeIndex < preOrder.value[name].availableTime.length - 1) {
+        preOrder.value[name].timeIndex++
       }
       else {
-        preSaunaOrder.value.timeIndex = 0
+        preOrder.value[name].timeIndex = 0
       }
     }
-    const decAvailableTimeIndex = () => {
-      if (preSaunaOrder.value.timeIndex > 0) {
-        preSaunaOrder.value.timeIndex--
-      }      
+    const decAvailableTimeIndex = (name) => {
+      if (preOrder.value[name].timeIndex > 0) {
+        preOrder.value[name].timeIndex--
+      }
     }
     let services = ref({
       datePicker: []
     })
-    let serviceReserv = ref([])
-    let unavailableHours = ref([])    
-    let preSaunaOrder = ref({
-      'prefferedTime': 2,
-      'timeIndex':0,       
+    let serviceReserv = ref({
+      'CH': [],
+      'SN': []
+    })
+    let unavailableHours = ref({
+      'CH': [],
+      'SN': []
     })
 
-    const getAvailableHours = () => {
+    let preOrder = ref({
+      'CH': {
+        'prefferedTime': 2,
+        'timeIndex': 0,
+        'dateStart': '',
+        'availableTime': [],
+        'name': 'Чан',
+        'cost_per_unit': 1500
+      },
+      'SN': {
+        'prefferedTime': 2,
+        'timeIndex': 0,
+        'dateStart': '',
+        'availableTime': [],
+        'name': 'Баня',
+        'cost_per_unit': 1200
+      }
+    })
+
+    const getAvailableHours = (name) => {
       let allHours = [];
       for (let i = 0; i < 24; i++) {
         allHours.push(i);
       }
 
-      for (let i = 0; i < unavailableHours.value.length; i++) {
-        let bookedHour = unavailableHours.value[i];
+      for (let i = 0; i < unavailableHours.value[name].length; i++) {
+        let bookedHour = unavailableHours.value[name][i];
         let index = allHours.indexOf(bookedHour);
 
         if (index !== -1) {
           allHours.splice(index, 1);
         }
       }
-      availableTime.value = allHours
+      preOrder.value[name].availableTime = allHours
     }
     const stringToHour = (str) => {
-      return moment(str,'HH').format('HH:mm')
+      return moment(str, 'HH').format('HH:mm')
     }
-    const getUnavailableHours = () => {
-      unavailableHours.value = []
-      for (let s of serviceReserv.value) {
+    const getUnavailableHours = (name) => {
+      unavailableHours.value[name] = []
+      for (let s of serviceReserv.value[name]) {
 
         let start = moment.utc(s.start_date).utcOffset('UTC');
         let end = moment.utc(s.end_date).utcOffset('UTC');
 
-        let startHour = start.hour() - preSaunaOrder.value.prefferedTime
+        let startHour = start.hour() - preOrder.value[name].prefferedTime
         let endHour = end.hour()
 
         for (let hour = startHour; hour < endHour; hour++) {
-          if (!unavailableHours.value.includes(hour)){
-            unavailableHours.value.push(hour);
+          if (!unavailableHours.value[name].includes(hour)) {
+            unavailableHours.value[name].push(hour);
           }
         }
       }
-      getAvailableHours()
+      getAvailableHours(name)
     }
     const getService = async (filter) => {
-      serviceReserv.value = (await Service.getList(filter)).results
-      getUnavailableHours()
+      serviceReserv.value[filter.name] = (await Service.getList(filter)).results
+      getUnavailableHours(filter.name)
     }
-    watch(() => servicesList.value[1].dateStart, () => {
-      datePicker.value.dateEnd = false
-      let findIndex = services.value.datePicker.findIndex(x => x == 'баня')
-      services.value.datePicker.splice(findIndex, 1)
-      getService({'name': 'SN'})
+    const checkServiceInOrder = (name) => {
+      let tmp = order.value.services_set.find(s => s.name == name)
+      if (tmp) {
+        return true
+      }
+      else { return false }
+    }
+    const addService = (name) => {
+      let tmp = {}
+      tmp.name = name
+      let date = moment(preOrder.value[name].dateStart, 'DD.MM.YYYY').format('YYYY-MM-DD')
+      tmp.start_date = date + 'T' + stringToHour(preOrder.value[name].availableTime[preOrder.value[name].timeIndex])
+      tmp.start_end = date + 'T' + stringToHour(preOrder.value[name].availableTime[preOrder.value[name].timeIndex + preOrder.value[name].prefferedTime])
+      tmp.cost = preOrder.value[name].prefferedTime * preOrder.value[name].cost_per_unit
+      order.value.services_set.push(tmp)
+      closePopUp(name)
+    }
+    const getDuration = (service) => {
+      let start = moment(service.start_date, 'YYYY-MM-DDTHH:mm').format('HH:mm')
+      let end = moment(service.start_end, 'YYYY-MM-DDTHH:mm').format('HH:mm')
+      let str = start + '-' + end
+      return str
+    }
+    const saveOrder = async () => {
+      await Order.objects.save(order.value)
+    }
+    watch(() => preOrder.value['CH'].dateStart, () => {            
+      getService({ 'name': 'CH' })
     })
-    watch(() => preSaunaOrder.value.prefferedTime, () => {
+    watch(() => preOrder.value['SN'].dateStart, () => {      
+      getService({ 'name': 'SN' })
+    })
+    watch(() => preOrder.value['CH'].prefferedTime, () => {
       if (servicesList.value[1].dateStart) {
-        getService({'name': 'SN'})
-      }     
+        getService({ 'name': 'CH' })
+      }
+    })
+    watch(() => preOrder.value['SN'].prefferedTime, () => {
+      if (servicesList.value[1].dateStart) {
+        getService({ 'name': 'SN' })
+      }
     })
     return {
-      order,
-      datePicker,
+      order,      
       selectedColor,
       masks,
       servicesList,
       addService,
-      removeService,
       addProduct,
       removeProduct,
       calcCost,
+      totalCost,
       parserDate,
       productsList,
       isAdd,
@@ -359,14 +454,14 @@ export default {
       showPopUp,
       isShowPopUp,
       closePopUp,
-      availableTimeIndex,
       incAvailableTimeIndex,
-      availableTime,
-      services,
-      showPopUpCalendar,      
-      preSaunaOrder,
+      services,      
       stringToHour,
-      decAvailableTimeIndex
+      decAvailableTimeIndex,
+      preOrder,
+      getDuration,
+      checkServiceInOrder,  
+      popover    
     }
   }
 }
@@ -377,6 +472,10 @@ export default {
 
 .popup_arrow:hover {
   cursor: pointer;
+}
+
+.order_item__date {
+  width: 183px;
 }
 
 .service_popup__wrapper_time {
@@ -425,6 +524,18 @@ export default {
   margin-top: 12px;
 }
 
+.service_popup_footer {
+  padding-left: 13px;
+  padding-right: 8px;
+  margin-top: 6px;
+  display: flex;
+  justify-content: end;
+}
+
+.row_service_popup img {
+  cursor: pointer;
+}
+
 .service_popup__item {
   color: #005D4B;
   font-size: 12px;
@@ -469,7 +580,7 @@ export default {
   width: 180px;
   background-color: #ECE8E3;
   border-radius: 30px;
-  height: 154px;
+  height: 160px;
   z-index: 10;
 }
 
