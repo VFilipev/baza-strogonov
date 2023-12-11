@@ -31,7 +31,7 @@ div
                                 .col-6
                                     .row
                                         .col-12
-                                            .house__image(:style="{ backgroundImage: `url(${house.main_photo})` }")
+                                            .house__image(:style="{ backgroundImage: `url(${house.img})` }")
                                     .row(style="margin-top:40px")
                                         .swiper__wrapper(style="position: relative")                  
                                             swiper(slidesPerView="2" :spaceBetween="40" @slideChange="showSliderIcon = false")
@@ -269,7 +269,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 /* ANIMATED FOR HOUSECARD */
 .card_house__wrapper{
     position: relative;  

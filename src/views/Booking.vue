@@ -5,24 +5,24 @@ div.container
     .row 
       .col-6.info-form
         div.name_subsection Введите данные:
-        input.text-field__input(placeholder="ФИО" type="text")
-        input.text-field__input(placeholder="Телефон" type="tel")
-        input.text-field__input(placeholder="Email" type="email")
-        div.data-time-container
+        input.text-field__input(placeholder="ФИО" type="text" :value="orderStore.customer" @input="inputCustomer($event)")
+        input.text-field__input(placeholder="Телефон" type="tel" v-model="orderStore.phone")
+        input.text-field__input(placeholder="Email" type="email" v-model="orderStore.email")
+        div.data-time-container(v-if="orderStore.orderlodge_set.length > 0")
           .date_time.date_time__icon.date_time__text                       
-            DatePicker(v-model="order.orderlodge_set[0].start_date" :masks="masks" :color="selectedColor")
+            DatePicker(v-model="orderStore.orderlodge_set[0].start_date" :masks="masks" :color="selectedColor")
               template(#default="{ inputValue, inputEvents }")
                 input.date_time__input(:value="inputValue ? inputValue : order.orderlodge_set[0].start_date" v-on="inputEvents")
-          .date_time.date_time__icon.date_time_end__text
-            DatePicker(v-model="order.orderlodge_set[0].end_date" :masks="masks" :color="selectedColor")
+          .date_time.date_time__icon.date_time_end__text(v-if="orderStore.orderlodge_set.length > 0")
+            DatePicker(v-model="orderStore.orderlodge_set[0].end_date" :masks="masks" :color="selectedColor")
               template(#default="{ inputValue, inputEvents }")
                 input.date_time__input(:value="inputValue ? inputValue : order.orderlodge_set[0].end_date" v-on="inputEvents")
-      .col-6
+      .col-6(v-if="orderStore.orderlodge_set.length > 0")
         .info-card-lodge 
-          .lodge__img(:style="{'background-image': 'url(' + order.orderlodge_set[0].mainPhoto + ')'}")
+          .lodge__img(:style="{'background-image': 'url(' + orderStore.orderlodge_set[0].lodge.img + ')'}")
           .card_lodge__footer 
             .lodge__name 
-              p {{ order.orderlodge_set[0].lodge.name }}
+              p {{ orderStore.orderlodge_set[0].lodge.name }}
             .footer__icon 
               button.footer__btn выбрано                
               .icon__check   
@@ -114,24 +114,24 @@ div.container
     .row 
       .name_subsection Добавлено:
     .order_item 
-      .order_item__name {{ order.orderlodge_set[0].lodge.name }}
+      .order_item__name {{ orderStore.orderlodge_set[0].lodge.name }}
       .order_item__info
         .order_item__cost {{ calcCost }}
-        .order_item__date {{ parserDate(order.orderlodge_set[0].start_date) + '-' + parserDate(order.orderlodge_set[0].end_date)}}
-    template(v-if="order.products_set.length > 0")
-      .order_item(v-for="product in order.products_set") 
+        .order_item__date {{ parserDate(orderStore.orderlodge_set[0].start_date) + '-' + parserDate(orderStore.orderlodge_set[0].end_date)}}
+    template(v-if="orderStore.products_set.length > 0")
+      .order_item(v-for="product in orderStore.products_set") 
         .order_item__name {{ product.name }}
         .order_item__info
           .order_item__cost {{ product.cost + 'р' }}
           .order_item__date
-    template(v-if="order.services_set.length > 0")
-      .order_item(v-for="service in order.services_set") 
+    template(v-if="orderStore.services_set.length > 0")
+      .order_item(v-for="service in orderStore.services_set") 
         .order_item__name {{ preOrder[service.name].name }}
         .d-flex.justify-content-between(style="width: 500px")
           .order_item__cost {{ service.cost }}
           .order_item__duration {{ getDuration(service) }}
           .order_item__date 06/12/23
-    div {{ totalCost }}
+    //- div {{ totalCost }}
   section.confirm(style="margin-top:25px; height: 1080px" )
     div.d-flex.justify-content-between  
       .confirm__checkbox-wrapper
@@ -142,7 +142,7 @@ div.container
               //-     img(src="../assets/images/checkbox.svg")
         span.confirm__checkbox__label Я согласен с условиями политики конфиденциальности и даю разрешение на обработку персональных данных    
       button.confirm__btn(:disabled="!isConfirm" @click="toBooking") забронировать
-  
+  div {{ orderStore }}
 
 
 </template>
@@ -155,8 +155,9 @@ import moment from 'moment';
 import 'swiper/css';
 
 import controlSwiper from '../components/controlSwiper.vue';
+import {useOrderStore} from '../stores/orderStore'
 
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 import { Service, Order } from '../api'
 
@@ -169,15 +170,19 @@ export default {
     SwiperSlide,
     controlSwiper
   },
-  setup() {      
+  setup() {    
+    const inputCustomer = (event) => {
+      orderStore.changeCustomer(event.target.value)      
+    }  
+    const orderStore = useOrderStore()
     const popover = ref({
       visibility: 'click',     
     })
     const calcCost = computed(() => {
-      let start = moment(order.value.orderlodge_set[0].start_date, 'DD.MM.YYYY')
-      let end = moment(order.value.orderlodge_set[0].end_date, 'DD.MM.YYYY')
-      let diff = moment.duration(end.diff(start)).as('days')
-      return diff * order.value.orderlodge_set[0].cost
+      let start = moment(orderStore.orderlodge_set[0].start_date, 'DD.MM.YYYY')
+      let end = moment(orderStore.orderlodge_set[0].end_date, 'DD.MM.YYYY')
+      let diff = moment.duration(end.diff(start)).as('days')      
+      return diff * +orderStore.orderlodge_set[0].lodge.cost
     })
     const totalCost = computed(() => {
       let serviceCost = order.value.services_set.reduce((s, c) => s + c.cost, 0);
@@ -194,7 +199,25 @@ export default {
       email: 'mail@mail.ru',           
       orderlodge_set: [
         {
-          lodge:1,                              
+          lodge:{
+            "id": 1,
+            "name": "Дом Кузнеца",
+            "num": "1",
+            "sub_name": "",
+            "description": "двухэтажный деревянный дом, где могут разместиться до 11 человек. 4 просторные комнаты, в которых будет удобно и парам, и семьям с детьми.",
+            "short_description": "2 смежные и 2 изолированные спальни, просторная кухня-гостиная, санузел",
+            "conveniences": "кухня - полный комплект посуды на 11 человек, холодильник, обеденный стол, электроплита с духовым шкафом, микроволновая печь, электро чайник, санузел - горячая и холодная вода, музыкальный центр, 3 телевизора",
+            "include": "пользование спортивными, детскими площадками, мангалом и решеткой, охраняемая парковка, охраняемый причал",
+            "maxP": 11,
+            "img": "http://127.0.0.1:8000/media/img/house-6.png",
+            "img_small": null,
+            "plan1": null,
+            "plan2": null,
+            "uslugi": "1",
+            "slug": "",
+            "avalible": true,
+            "lodge_main": null
+          },                              
           cost: 15000,
           start_date: '22.11.2023',
           end_date: '25.11.2023',
@@ -259,15 +282,15 @@ export default {
       },
     ])
     const addProduct = (product) => {
-      order.value.products_set.push(product)
+      orderStore.products_set.push(product)
     }
     const removeProduct = (product) => {
-      let findIndex = order.value.products_set.findIndex(x => x.id == product.id)
-      order.value.products.splice(findIndex, 1)
+      let findIndex = orderStore.products_set.findIndex(x => x.id == product.id)
+      orderStore.products_set.splice(findIndex, 1)
     }
     const isAdd = (id) => {
-      if (order.value.products_set.length > 0) {
-        let item = order.value.products_set.find(x => x.id == id)
+      if (orderStore.products_set.length > 0) {
+        let item = orderStore.products_set.find(x => x.id == id)
         if (item) {
           return true
         }
@@ -277,18 +300,18 @@ export default {
       }
     }
     let isConfirm = ref(false)
-    // const router = useRouter()
+    const router = useRouter()
     const dateFormat = (date) => {
       tmp = moment(date, 'DD.MM.YYYY').format('YYYY-MM-DD')
       return tmp
     }
-    let toBooking = async() => {
-      order.value.orderlodge_set[0].start_date = order.value.orderlodge_set[0].start_date
-      let ens 
-      await Order.save(order.value)
-      // router.push({
-      //   name: 'BookingConfirm',
-      // })
+    let toBooking = () => {
+      // order.value.orderlodge_set[0].start_date = order.value.orderlodge_set[0].start_date
+      // let ens 
+      // await Order.save(order.value)
+      router.push({
+        name: 'BookingConfirm',
+      })
     }
     let popUpList = ref([])
     const showPopUp = (name) => {
@@ -395,7 +418,7 @@ export default {
       getUnavailableHours(filter.name)
     }
     const checkServiceInOrder = (name) => {
-      let tmp = order.value.services_set.find(s => s.name == name)
+      let tmp = orderStore.services_set.find(s => s.name == name)
       if (tmp) {
         return true
       }
@@ -408,7 +431,8 @@ export default {
       tmp.start_date = date + 'T' + stringToHour(preOrder.value[name].availableTime[preOrder.value[name].timeIndex])
       tmp.start_end = date + 'T' + stringToHour(preOrder.value[name].availableTime[preOrder.value[name].timeIndex + preOrder.value[name].prefferedTime])
       tmp.cost = preOrder.value[name].prefferedTime * preOrder.value[name].cost_per_unit
-      order.value.services_set.push(tmp)
+      // order.value.services_set.push(tmp)
+      orderStore.services_set.push(tmp)
       closePopUp(name)
     }
     const getDuration = (service) => {
@@ -461,7 +485,9 @@ export default {
       preOrder,
       getDuration,
       checkServiceInOrder,  
-      popover    
+      popover,
+      orderStore,
+      inputCustomer   
     }
   }
 }

@@ -12,7 +12,7 @@ div
                     a(href="tel:+79026439294")
                         img(src="../assets/images/telefon2.svg")
                     button забронировать
-                                          
+
     section.first_page        
         .container__first_page
             .overlay
@@ -25,8 +25,8 @@ div
                             .col-5.logo
                                 img(src="../assets/images/logo.png")
                             .col-3.offset-2.d-flex.header__nav                                
-                                router-link(to="/house", tag="a",  class="header__nav__link") дома
-                                router-link(to="/uslugi", tag="a",  class="header__nav__link") активный отдых / услуги
+                                router-link(to="/house", tag="a", class="header__nav__link") дома
+                                router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
                             .col-2.d-flex.header__nav     
                                 a(href="tel:+79026439294")                       
                                     img(src='../assets/images/telefon.svg')
@@ -131,14 +131,14 @@ div
                         .container_info-graph
                             .house_name {{ house.name }}
                             .wrapper_cost_capacity
-                                .house_cost ₽ {{ house.cost[0].cost }}
+                                .house_cost ₽ 10 000
                                 .house_capacity
                                     .house_capacity__icon 
                                         img(src="../assets/images/icon_emoji.svg")
                                     .house_capacity__text до {{ house.maxP }} чел
                         .container_footer 
                             .footer_text {{ house.short_description }}
-                            .footer_button забронировать                
+                            .footer_button(@click="toBooking(house)") забронировать                
     section.service_section
         .container         
             .row.service     
@@ -376,18 +376,21 @@ div
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from "vue"
+import { ref, onMounted, watch, computed, onUnmounted } from "vue"
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 import StarRating from 'vue-star-rating'
 
 import houseList from '../components/houseList'
 import houseDetail from "../components/houseDetail.vue";
+import { useRouter } from 'vue-router'
+
+import { useOrderStore } from "../stores/orderStore";
 
 import { Lodge } from '../api'
 
 export default {
-    
+
     name: 'main-page',
     components: {
         Calendar,
@@ -396,32 +399,48 @@ export default {
         houseDetail
     },
     setup() {
+        const orderStore = useOrderStore()
+        const router = useRouter()
+        let toBooking = (lodge) => {
+            let tmp = {
+                lodge: lodge,
+                start_date: filter.value.dateStart,
+                end_date: filter.value.dateEnd,
+            }
+            orderStore.orderlodge_set.push(tmp)            
+            router.push({
+                name: 'booking',
+            })
+        }
         const photoList = [
             'src/assets/images/main-page-winter.png',
             'src/assets/images/main-page-winter2-source.png',
             'src/assets/images/main-page-winter3-source.png',
         ]
         let datePicker = ref({
-            dateStart:false,
-            dateEnd:false
+            dateStart: false,
+            dateEnd: false
         })
+        let isScroll = ref(false)
         let distance = ref(0)
         let showHeader = ref(false)
         const fil = () => {
-            const el = document.getElementById('aboutUs')
-            distance.value = el.offsetTop - window.scrollY
-            if (distance.value <= 300) {
-                showHeader.value = true
-            }
-            else {
-                showHeader.value = false
+            if (isScroll.value == true) {
+                const el = document.getElementById('aboutUs')
+                distance.value = el.offsetTop - window.scrollY
+                if (distance.value <= 300) {
+                    showHeader.value = true
+                }
+                else {
+                    showHeader.value = false
+                }
             }
         }
-        const au = ref(null)        
+        const au = ref(null)
         const selectedColor = ref('green')
         const masks = ref({
             modelValue: 'DD.MM.YYYY',
-        })                
+        })
 
         const inc = () => {
             filter.value.personQuantity += 1
@@ -430,42 +449,42 @@ export default {
             filter.value.personQuantity > 0 ? filter.value.personQuantity -= 1 : filter.value.personQuantity = 0
         }
         let filter = ref({
-            dateStart:'',
-            dateEnd:'',
-            isHouse:false,
-            isGlamping:false,
-            personQuantity:0
+            dateStart: '',
+            dateEnd: '',
+            isHouse: false,
+            isGlamping: false,
+            personQuantity: 0
         })
         let selPhoto = ref(0)
-        let timerId                
+        let timerId
         const incSelPhoto = () => {
-            if (selPhoto.value < 2 - 1){
+            if (selPhoto.value < 2 - 1) {
                 selPhoto.value += 1
             }
             else {
                 selPhoto.value = 0
             }
-        }                
+        }
         const sliderPhoto = () => {
             incSelPhoto()
             timerId = setTimeout(sliderPhoto, 5000)
         }
         let feedback = ref({
-            userName:'',
-            userPhoto:null,
-            text:'',
+            userName: '',
+            userPhoto: null,
+            text: '',
             rating: 0
         })
         const handleFileUpload = (event) => {
-            const file = event.target.files[0]   
+            const file = event.target.files[0]
             feedback.value.userPhoto = file
         }
-        const previewFilePath = computed(() => {            
+        const previewFilePath = computed(() => {
             let URL = window.URL || window.webkitURL
-            if(feedback.value.userPhoto){
+            if (feedback.value.userPhoto) {
                 return URL.createObjectURL(feedback.value.userPhoto)
             }
-            else{
+            else {
                 return '#'
             }
         })
@@ -473,36 +492,41 @@ export default {
         const setRating = (rating) => {
             feedback.value.rating = rating
         }
-        const validateFeedBack = () => {            
-            if (feedback.value.userName && feedback.value.text && feedback.value.rating){
+        const validateFeedBack = () => {
+            if (feedback.value.userName && feedback.value.text && feedback.value.rating) {
                 isCreateFeedBack.value = true
             }
         }
         let houseList2 = ref(houseList)
-        const getAvailableHouse = async() => {
-            let tmp = (await Lodge.get_available_house({'date_start': filter.value.dateStart, 'date_end': filter.value.dateEnd})).data
+        const getAvailableHouse = async () => {
+            let tmp = (await Lodge.get_available_house({ 'date_start': filter.value.dateStart, 'date_end': filter.value.dateEnd })).data
             houseList2.value = tmp
         }
-        let selectedHouse = ref({})        
+        let selectedHouse = ref({})
         let showModalHouse = ref(false)
-        watch(()=>filter.value.dateStart,()=>{
+        watch(() => filter.value.dateStart, () => {
             datePicker.value.dateStart = false
         })
-        watch(()=>filter.value.dateEnd,()=>{
+        watch(() => filter.value.dateEnd, () => {
             datePicker.value.dateEnd = false
         })
         onMounted(() => {
+            isScroll.value = true
             window.addEventListener('scroll', (event) => { fil() });
             setTimeout(sliderPhoto, 5000)
+        })
+        onUnmounted(() => {
+            isScroll.value = false
+            window.removeEventListener('scroll', (event) => { fil() });
         })
         return {
             photoList,
             au,
             distance,
             showHeader,
-            datePicker,            
+            datePicker,
             masks,
-            selectedColor,            
+            selectedColor,
             inc,
             dec,
             filter,
@@ -516,7 +540,8 @@ export default {
             houseList2,
             selectedHouse,
             showModalHouse,
-            getAvailableHouse
+            getAvailableHouse,
+            toBooking
         }
     }
 }
@@ -524,32 +549,37 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 .modalBottom-enter-active {
-  animation: animatebottom 1s;
+    animation: animatebottom 1s;
 }
+
 .modalBottom-leave-active {
-  animation: animatebottom 1s reverse;
+    animation: animatebottom 1s reverse;
 }
-.modal-mask{
-    position: fixed;    
+
+.modal-mask {
+    position: fixed;
     top: 0;
     height: 100vh;
     width: 100%;
     background-color: #ECE8E3;
-    z-index: 200;    
+    z-index: 200;
 }
-@keyframes animatebottom {
-  from {
-    top: 100%;
-    opacity: 0;
-  }
 
-  to {
-    top: 0%;
-    opacity: 1;
-  }
+@keyframes animatebottom {
+    from {
+        top: 100%;
+        opacity: 0;
+    }
+
+    to {
+        top: 0%;
+        opacity: 1;
+    }
 }
-.btn_house_detail{
+
+.btn_house_detail {
     position: absolute;
     bottom: 11px;
     right: 11px;
@@ -560,32 +590,38 @@ export default {
     background-image: url("../assets/images/house_detail.svg");
     background-repeat: no-repeat;
     background-position: 12px 10px;
-    &:hover{
+
+    &:hover {
         cursor: pointer;
     }
 }
 
-.date_picker_wrapper{
-  position: absolute;
-  top: 59px;
-  width: 289px;
-  z-index: 100;
+.date_picker_wrapper {
+    position: absolute;
+    top: 59px;
+    width: 289px;
+    z-index: 100;
 }
-.input_number__in{
+
+.input_number__in {
     border: none;
     width: 91px;
     text-align: center;
     color: #B3B3B3;
 }
-.input_number__in.active{
+
+.input_number__in.active {
     color: #003731;
 }
-.suffix_btn, .prefix_btn{
+
+.suffix_btn,
+.prefix_btn {
     background-color: inherit;
     border: none;
     padding: 0px 9px;
 }
-.input_number_wrapper{
+
+.input_number_wrapper {
     display: flex;
     align-items: center;
     width: 151px;
@@ -593,24 +629,29 @@ export default {
     border: 1px #B3B3B3 solid;
     border-radius: 10px;
 }
-.input_number_wrapper.active{
+
+.input_number_wrapper.active {
     border: 1px #003B30 solid;
 }
-.checkbox__label{
+
+.checkbox__label {
     font-family: 'Montserrat';
     font-size: 17px;
     color: #bdbdbd;
     padding-left: 6px;
 }
-.checkbox__label.active{
+
+.checkbox__label.active {
     color: #005D4B;
 }
-.checkbox-wrapper{
+
+.checkbox-wrapper {
     display: flex;
     width: 100%;
     align-items: center;
 }
-.checkbox{
+
+.checkbox {
     width: 34px;
     height: 34px;
     display: inline-flex;
@@ -619,28 +660,31 @@ export default {
     align-items: flex-start;
     word-break: break-word;
 }
+
 .checkbox-box-wrapper {
     position: relative;
     width: 34px;
-    height:34px;
+    height: 34px;
     flex-shrink: 0;
     flex-grow: 0;
-    
+
 }
-.checkbox-box{
+
+.checkbox-box {
     position: absolute;
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    height:34px;
+    height: 34px;
     width: 34px;
     display: inline-block;
     box-sizing: border-box;
-    border-radius:8px;
+    border-radius: 8px;
     background-color: #ffffff;
     border: 1px solid #B3B3B3;
 }
-.checkbox-icon{
+
+.checkbox-icon {
     position: absolute;
     display: flex;
     align-items: center;
@@ -648,11 +692,12 @@ export default {
     height: 34px;
     width: 34px;
 }
-.checkbox-box.active{    
-    border: 1px solid #005D4B;    
+
+.checkbox-box.active {
+    border: 1px solid #005D4B;
 }
 
-.vc-container{
+.vc-container {
     display: block !important;
     margin: 0 auto;
 }
@@ -661,23 +706,25 @@ a.header__nav__link {
     text-decoration: none;
     color: #fff;
     opacity: .8;
-    &:hover{
+
+    &:hover {
         opacity: 1;
-    }    
-    &:hover:after{
-        transform: scaleX(1);      
+    }
+
+    &:hover:after {
+        transform: scaleX(1);
     }
 }
 
-a.header__nav__link:after{
-    display:block;
+a.header__nav__link:after {
+    display: block;
     content: '';
-    border-bottom: solid 1px #fff;  
-    transform: scaleX(0);  
+    border-bottom: solid 1px #fff;
+    transform: scaleX(0);
     transition: transform 250ms ease-in-out;
 }
 
-.card__user_photo-form{
+.card__user_photo-form {
     display: flex;
     margin-left: 13px;
     height: 46px;
@@ -685,43 +732,46 @@ a.header__nav__link:after{
     border-radius: 25px;
     background-color: #bdbdbd;
 }
-.card__user_photo-form img{
+
+.card__user_photo-form img {
     width: 22px;
     display: block;
     margin: 0 auto;
 }
 
 .input-file {
-	position: relative;
-	display: inline-block;
-}
-.input-file span {
-	position: relative;
-	display: inline-block;
-	cursor: pointer;
-	outline: none;
-	text-decoration: none;	
-	vertical-align: middle;	
-	border-radius: 30px;
-    background-image: url("../assets/images/user_photo-form.svg");
-    background-repeat: no-repeat;
-    background-position: center;   
-	height: 46px;
-	padding: 22px 23px;
-	box-sizing: border-box;
-	border: none;
-	margin: 0;	
-}
-.input-file input[type=file] {
-	position: absolute;
-	z-index: -1;
-	opacity: 0;
-	display: block;
-	width: 0;
-	height: 0;
+    position: relative;
+    display: inline-block;
 }
 
-.container_footer{
+.input-file span {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    vertical-align: middle;
+    border-radius: 30px;
+    background-image: url("../assets/images/user_photo-form.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 46px;
+    padding: 22px 23px;
+    box-sizing: border-box;
+    border: none;
+    margin: 0;
+}
+
+.input-file input[type=file] {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    display: block;
+    width: 0;
+    height: 0;
+}
+
+.container_footer {
     display: flex;
     width: 373px;
     margin-left: 14px;
@@ -730,7 +780,7 @@ a.header__nav__link:after{
     justify-content: space-between;
 }
 
-.footer_text{
+.footer_text {
     display: flex;
     color: #003731;
     font-size: 15px;
@@ -741,12 +791,12 @@ a.header__nav__link:after{
     height: 60px;
 }
 
-.footer_button{
+.footer_button {
     display: flex;
     color: #FCF2EA;
     font-size: 15px;
     font-family: 'Lato';
-    font-weight: 400;    
+    font-weight: 400;
     line-height: 17.25px;
     background-color: #005D4B;
     border-radius: 26px;
@@ -755,7 +805,8 @@ a.header__nav__link:after{
     align-items: center;
     justify-content: center;
 }
-.container_info-graph{
+
+.container_info-graph {
     font-family: 'Lato';
     font-size: 17px;
     color: #003731;
@@ -767,44 +818,50 @@ a.header__nav__link:after{
     margin-left: 14px;
     justify-content: space-between;
 }
-.wrapper_cost_capacity{
+
+.wrapper_cost_capacity {
     display: flex;
 }
 
-.house_cost{
+.house_cost {
     font-weight: 300;
     margin-right: 38px;
 }
-.house_capacity{
+
+.house_capacity {
     font-weight: 300;
     display: flex;
     align-items: center;
 }
-.house_capacity__icon{
+
+.house_capacity__icon {
     display: flex;
-    margin-right: 9px;    
+    margin-right: 9px;
 }
-.wrapper_img{
+
+.wrapper_img {
     border-radius: 30px;
     width: 400px;
-    height: 248px;    
+    height: 248px;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     position: relative;
 }
 
-.placement__cantainer_card{
+.placement__cantainer_card {
     margin-top: 48px;
 }
-.placement__card{    
+
+.placement__card {
     height: 399px;
     width: 400px;
     background: #ECE8E3;
-    border-radius: 30px;  
-    margin-bottom: 40px;  
+    border-radius: 30px;
+    margin-bottom: 40px;
 }
-.placement__form__button_search{
+
+.placement__form__button_search {
     width: 180px;
     margin-left: 26px;
     color: #005D4B;
@@ -815,22 +872,26 @@ a.header__nav__link:after{
     border-radius: 55px;
     background-color: #fff;
 }
-.checkbox__header{
+
+.checkbox__header {
     font-family: 'Montserrat';
     font-size: 17px;
     color: #bdbdbd;
     margin-top: -12px;
     margin-bottom: 11px;
 }
-.checkbox_container{
+
+.checkbox_container {
     width: 250px;
     margin-left: 40px;
 }
-.quantity_guests{
+
+.quantity_guests {
     position: relative;
     width: 151px;
 }
-.quantity_guests__text::before{
+
+.quantity_guests__text::before {
     font-family: 'Montserrat';
     font-size: 17px;
     content: 'кол-во гостей';
@@ -845,29 +906,35 @@ a.header__nav__link:after{
     padding-left: 5px;
     padding-right: 5px;
 }
-.quantity_guests__text.active::before{
+
+.quantity_guests__text.active::before {
     color: #003B30;
 }
-.quantity_guests__input{
-    border-radius: 10px; 
+
+.quantity_guests__input {
+    border-radius: 10px;
     border: 1px #A4A4A4 solid;
     height: 57px;
     max-width: 151px;
 }
-input:focus-visible{
+
+input:focus-visible {
     outline: 2px #005D4B solid;
 }
-.date_time__input{
-    border-radius: 10px; 
+
+.date_time__input {
+    border-radius: 10px;
     border: 1px #A4A4A4 solid;
     width: 289px;
     height: 57px;
     color: #003731;
 }
-.date_time{
+
+.date_time {
     position: relative;
 }
-.date_time__icon::before{
+
+.date_time__icon::before {
     content: url(../assets/images/calendar.svg);
     color: #bdbdbd;
     position: absolute;
@@ -875,9 +942,10 @@ input:focus-visible{
     align-items: center;
     top: 0;
     bottom: 0;
-    left: 260px;        
+    left: 260px;
 }
-.date_time__text::after{
+
+.date_time__text::after {
     font-family: 'Montserrat';
     font-size: 17px;
     content: 'заезд';
@@ -892,7 +960,8 @@ input:focus-visible{
     padding-left: 5px;
     padding-right: 5px;
 }
-.date_time_end__text::after{
+
+.date_time_end__text::after {
     font-family: 'Montserrat';
     font-size: 17px;
     content: 'выезд';
@@ -907,91 +976,108 @@ input:focus-visible{
     padding-left: 5px;
     padding-right: 5px;
 }
+
 li {
-  list-style-type: none; 
+    list-style-type: none;
 }
 
 ul {
-  margin-left: 0;
-  padding-left: 0;
+    margin-left: 0;
+    padding-left: 0;
 }
-.about_as__container_row{
+
+.about_as__container_row {
     margin-bottom: 32px;
 }
-.header_sticky__nav_link{
+
+.header_sticky__nav_link {
     text-decoration: none;
     color: black;
     font-size: 17px;
     font-family: 'Lato';
     font-weight: 300;
-    &:after{
-        display:block;
+
+    &:after {
+        display: block;
         content: '';
-        border-bottom: solid 1px black;  
-        transform: scaleX(0);  
+        border-bottom: solid 1px black;
+        transform: scaleX(0);
         transition: transform 250ms ease-in-out;
     }
-    &:hover:after{
-        transform: scaleX(1);  
+
+    &:hover:after {
+        transform: scaleX(1);
     }
-    
+
 }
-.header_sticky__nav{
+
+.header_sticky__nav {
     display: flex;
     gap: 11px;
     font-family: 'Lato';
     font-weight: 300;
     font-size: 17px;
-    color: black;   
-    margin-bottom: 0; 
+    color: black;
+    margin-bottom: 0;
 }
-.header_sticky__container{
+
+.header_sticky__container {
     display: flex;
     justify-content: space-between;
-    align-items: center;    
+    align-items: center;
 }
-.header_sticky__icon_feed_back{
+
+.header_sticky__icon_feed_back {
     display: flex;
     justify-content: flex-end;
     padding-right: 20px;
 }
+
 .header_sticky__icon_feed_back img {
     margin-right: 8px;
 }
+
 .header_sticky__icon_feed_back button {
     background-color: rgba(0, 93, 75, 1);
     color: #fff;
     border: 0px;
     border-radius: 35px;
 }
-.about_us__card__img{
+
+.about_us__card__img {
     height: 75px;
     margin-bottom: 13px;
 }
-.about_us__card__header{
+
+.about_us__card__header {
     font-family: 'Lato';
     font-size: 17px;
     color: #003731;
     margin-bottom: 10px;
 }
-.about_us__card__text{
+
+.about_us__card__text {
     font-family: 'Lato';
     font-weight: 300;
     font-size: 15px;
     color: black;
 }
-.container_icon{
+
+.container_icon {
     gap: 23px;
 }
-.first_page__arrow_icon{
+
+.first_page__arrow_icon {
     width: 33px;
 }
-.first_page__h2{
+
+.first_page__h2 {
     font-family: 'Lato';
     font-size: 17px;
     color: #fff;
     line-height: 23px;
 }
+
 .first_page__h1 {
     font-family: 'Apoc Normal';
     font-weight: 400;
@@ -1007,8 +1093,8 @@ ul {
     color: #fff;
     border-radius: 35px;
     transition: background-color 0.4s ease-in-out, border 250ms ease-in-out;
-    
-    &:hover{
+
+    &:hover {
         background-color: #003731;
         border: 1px solid transparent
     }
@@ -1018,21 +1104,21 @@ ul {
     transform: translateY(-160px);
     transition-duration: 1s;
     transition-property: all;
-    opacity: 0;      
+    opacity: 0;
     position: fixed;
     width: 100%;
     top: 0;
 }
 
-.header_sticky.active {     
+.header_sticky.active {
     position: fixed;
     background-color: #fff;
     padding-top: 20px;
     padding-bottom: 20px;
-    top: 0;   
+    top: 0;
     opacity: 1;
     z-index: 150;
-    transform: translateY(0px); 
+    transform: translateY(0px);
 }
 
 .overlay {
@@ -1067,7 +1153,7 @@ img.photo {
     transition: opacity .8s ease-in-out;
 }
 
-img.photo.active{
+img.photo.active {
     opacity: 1;
 }
 
@@ -1076,8 +1162,8 @@ img.photo.active{
     margin-bottom: 384px;
 }
 
-.header__nav {    
-    color: #fff;    
+.header__nav {
+    color: #fff;
     gap: 15px;
 }
 
@@ -1098,38 +1184,41 @@ img.photo.active{
     font-weight: 300;
     font-size: 47px;
     line-height: 49px;
-    color: #003731;    
+    color: #003731;
     margin-bottom: 69px;
 }
-.about_us{
+
+.about_us {
     background-color: #ECE8E380;
     padding-top: 94px;
     padding-bottom: 93px;
 }
+
 .container {
     padding: 0;
 }
 
-.service_section{
+.service_section {
     background-color: #ECE8E380;
     padding-top: 84px;
 }
 
-.service__header{
+.service__header {
     font-family: 'Apoc Normal';
     font-weight: 300;
     font-size: 47px;
     line-height: 49px;
-    color: #003731;    
+    color: #003731;
     margin-bottom: 60px;
 }
-.service__name_typ{
+
+.service__name_typ {
     font-family: 'Lato';
     font-size: 17px;
     font-weight: 400;
 }
 
-.service__item{
+.service__item {
     display: flex;
     justify-content: space-between;
     font-family: 'Lato';
@@ -1138,16 +1227,17 @@ img.photo.active{
     border-bottom: 1px #005D4B solid;
     padding-bottom: 13px;
 }
-.service__item:not(:first-child){
+
+.service__item:not(:first-child) {
     margin-top: 14px;
 }
 
-.section_header{
+.section_header {
     font-family: 'Apoc Normal';
     font-weight: 300;
     font-size: 47px;
     line-height: 49px;
-    color: #003731;    
+    color: #003731;
     margin-bottom: 60px;
 }
 
@@ -1155,14 +1245,14 @@ img.photo.active{
     margin-top: 86px;
 }
 
-.card{
-    background: #005D4B; 
+.card {
+    background: #005D4B;
     border-radius: 30px;
-    height: 233px;    
+    height: 233px;
 }
 
-.card__header{
-    background: white; 
+.card__header {
+    background: white;
     border-radius: 19px;
     height: 60px;
     width: 268px;
@@ -1172,56 +1262,60 @@ img.photo.active{
     align-items: center;
 }
 
-.card__user_photo{
+.card__user_photo {
     display: flex;
     margin-left: 13px;
 }
 
-.card__user_name{
+.card__user_name {
     color: black;
     font-size: 17px;
     font-family: 'Lato';
-    font-weight: 400;    
+    font-weight: 400;
 }
 
-.card__user_container{
+.card__user_container {
     margin-left: 13px;
 }
 
-img.card__rating{
-    height: 11px;    
+img.card__rating {
+    height: 11px;
 }
 
-img.card__rating:not(:last-child){
+img.card__rating:not(:last-child) {
     margin-right: 2px;
 }
 
-.card__text{
+.card__text {
     color: white;
     font-size: 15px;
     font-family: Lato;
     font-weight: 300;
 }
 
-.card__body{
+.card__body {
     margin-top: 9px;
     margin-left: 14px;
 }
 
-.card.rotate:hover{
+.card.rotate:hover {
     transform: rotate(10deg);
 }
-.card_form{
+
+.card_form {
     border-radius: 30px;
-    height: 233px;    
+    height: 233px;
 }
-.card__input_user_name{
+
+.card__input_user_name {
     border: 0px;
 }
-input.card__input_user_name:focus-visible{
+
+input.card__input_user_name:focus-visible {
     outline: 0px;
 }
-.container_map{
+
+.container_map {
     margin-top: 183px;
     width: 840px;
     display: flex;
@@ -1230,53 +1324,53 @@ input.card__input_user_name:focus-visible{
     margin-bottom: 183px;
 }
 
-.info_header{
+.info_header {
     font-family: 'Apoc Normal';
     font-weight: 300;
     font-size: 47px;
 }
 
-.container_adress{
+.container_adress {
     margin-top: 57px;
 }
 
 .adress__header,
-.attention__header{
+.attention__header {
     font-size: 17px;
     font-family: 'Lato';
-    font-weight: 400; 
+    font-weight: 400;
 }
 
 .adress__text,
-.attention__text{
+.attention__text {
     font-size: 15px;
     font-family: 'Lato';
-    font-weight: 300; 
+    font-weight: 300;
 }
 
-.container_attention{
+.container_attention {
     margin-top: 36px;
 }
 
-.info__button{
+.info__button {
     width: 220px;
     border: 1px #005D4B solid;
     border-radius: 35px;
     background: transparent;
     font-size: 17px;
     font-family: 'Lato';
-    font-weight: 400; 
+    font-weight: 400;
     color: #005D4B;
     padding: 12px 30px;
     margin-top: 43px;
 }
 
-.container_questions{
+.container_questions {
     margin-top: 61px;
     margin-bottom: 179px;
 }
 
-.faq__questions{
+.faq__questions {
     background: #F5F3F1;
     border-radius: 30px;
     display: flex;
@@ -1284,57 +1378,57 @@ input.card__input_user_name:focus-visible{
     padding: 29px 0px;
     font-size: 17px;
     font-family: 'Lato';
-    font-weight: 400; 
+    font-weight: 400;
 }
 
-.faq__reply{
+.faq__reply {
     background: #005D4B;
     border-radius: 30px;
     padding: 0px 19px;
     color: white;
     font-size: 15px;
     font-family: 'Lato';
-    font-weight: 300; 
+    font-weight: 300;
     height: 170px;
     display: flex;
     align-items: center;
 }
 
-.contact__container{
+.contact__container {
     margin-top: 51px;
     font-size: 15px;
     font-family: 'Lato';
-    font-weight: 300; 
+    font-weight: 300;
     margin-bottom: 94px;
 }
 
-.container__phone{
+.container__phone {
     display: flex;
-    gap: 27px;    
+    gap: 27px;
     margin-top: 18px;
     margin-bottom: 22px;
 }
 
-a.contact__phone{
+a.contact__phone {
     text-decoration: none;
     color: #005D4B;
     border-bottom: 1px #005D4B solid;
 }
 
-.container__social_network{
+.container__social_network {
     display: flex;
 }
 
-.social_network__name{
+.social_network__name {
     margin-right: 3px;
 }
 
-.social_network__link{
+.social_network__link {
     color: #005D4B;
     text-decoration: none;
 }
 
-.contact__form{
+.contact__form {
     background: #F5F3F1;
     border-radius: 30px;
     width: 620px;
@@ -1342,35 +1436,37 @@ a.contact__phone{
     padding: 24px 14px;
 }
 
-.form__label{
+.form__label {
     margin-bottom: 10px;
 }
 
-.form__input{
+.form__input {
     border-radius: 10px;
     border: 1px #A4A4A4 solid;
     width: 594px;
-    height: 57px;    
-}
-.card__input{
-    border-radius: 10px;
-    border: 1px #A4A4A4 solid;
-    width: 268px;        
+    height: 57px;
 }
 
-textarea.card__input::placeholder{
+.card__input {
+    border-radius: 10px;
+    border: 1px #A4A4A4 solid;
+    width: 268px;
+}
+
+textarea.card__input::placeholder {
     padding-left: 10px;
     color: #919191;
     font-size: 15px;
     font-family: Lato;
     font-weight: 300;
 }
-.card_button{
+
+.card_button {
     display: flex;
     color: black;
     font-size: 17px;
     font-family: 'Lato';
-    font-weight: 400;        
+    font-weight: 400;
     background-color: #fff;
     border-radius: 19px;
     width: 149px;
@@ -1380,7 +1476,7 @@ textarea.card__input::placeholder{
     justify-content: center;
 }
 
-.card__body.card_form{
+.card__body.card_form {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -1389,7 +1485,7 @@ textarea.card__input::placeholder{
 
 }
 
-input.form__input::placeholder{
+input.form__input::placeholder {
     padding-left: 19px;
     color: #CCCCCC;
     font-size: 15px;
@@ -1397,7 +1493,7 @@ input.form__input::placeholder{
     font-weight: 300;
 }
 
-button.contact__button{
+button.contact__button {
     display: block;
     margin-left: auto;
     width: 196px;
@@ -1408,33 +1504,38 @@ button.contact__button{
     color: #005D4B;
 }
 
-footer.footer{
-    background-color: #F5F3F1;   
+footer.footer {
+    background-color: #F5F3F1;
     color: rgba(0, 0, 0, 0.40);
     font-size: 20px;
     font-family: 'Lato';
-    font-weight: 300; 
+    font-weight: 300;
 }
 
-.footer_container{
+.footer_container {
     display: flex;
     justify-content: space-between;
     padding-top: 182px;
     padding-bottom: 20px;
 }
-ul.footer__item{
-    font-size: 13px;    
+
+ul.footer__item {
+    font-size: 13px;
 }
+
 ul.footer__item li {
-    margin-top: 6px;    
+    margin-top: 6px;
 }
-li.footer__item_line-height{
+
+li.footer__item_line-height {
     line-height: 23px;
 }
-.footer__item_bold{
+
+.footer__item_bold {
     font-weight: 400;
 }
-.footer__link:hover{
+
+.footer__link:hover {
     cursor: pointer;
 }
 </style>
