@@ -130,7 +130,7 @@ div.container
         .d-flex.justify-content-between(style="width: 500px")
           .order_item__cost {{ service.cost }}
           .order_item__duration {{ getDuration(service) }}
-          .order_item__date 06/12/23
+          .order_item__date {{ parserDate(service.start_date) }}
     //- div {{ totalCost }}
   section.confirm(style="margin-top:25px; height: 1080px" )
     div.d-flex.justify-content-between  
@@ -149,17 +149,17 @@ div.container
 
 <script>
 import { Calendar, DatePicker } from 'v-calendar';
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import moment from 'moment';
 import 'swiper/css';
 
 import controlSwiper from '../components/controlSwiper.vue';
-import {useOrderStore} from '../stores/orderStore'
+import { useOrderStore } from '../stores/orderStore'
 
 import { useRouter } from 'vue-router'
 
-import { Service, Order } from '../api'
+import { Service, Order, SpecialPrice } from '../api'
 
 export default {
   name: 'booking',
@@ -170,36 +170,48 @@ export default {
     SwiperSlide,
     controlSwiper
   },
-  setup() {    
+  setup() {
     const inputCustomer = (event) => {
-      orderStore.changeCustomer(event.target.value)      
-    }  
+      orderStore.changeCustomer(event.target.value)
+    }
     const orderStore = useOrderStore()
     const popover = ref({
-      visibility: 'click',     
+      visibility: 'click',
     })
     const calcCost = computed(() => {
-      let start = moment(orderStore.orderlodge_set[0].start_date, 'DD.MM.YYYY')
-      let end = moment(orderStore.orderlodge_set[0].end_date, 'DD.MM.YYYY')
-      let diff = moment.duration(end.diff(start)).as('days')      
-      return diff * +orderStore.orderlodge_set[0].lodge.cost
+      let dateStart = moment(orderStore.orderlodge_set[0].start_date).format('YYYY-MM-DD')
+      let dateEnd = moment(orderStore.orderlodge_set[0].end_date).format('YYYY-MM-DD')
+      let dateListOrder = getDateList(dateStart, dateEnd)
+      let totalPrice = 0
+      for(let day of dateListSpecialPrice.value){
+        for (let dayOrder of dateListOrder){
+          if (day.day.includes(dayOrder)){
+            totalPrice += day.cost
+          }
+          else{
+            let indexOfWeek = moment(dayOrder, 'DD-MM-YYYY').isoWeekday()
+            totalPrice += orderStore.orderlodge_set[0].lodge.price[indexOfWeek]
+          }
+        }
+      }
+      return totalPrice
     })
     const totalCost = computed(() => {
-      let serviceCost = order.value.services_set.reduce((s, c) => s + c.cost, 0);
-      let productCost = order.value.products_set.reduce((s, c) => s + c.cost, 0);
+      let serviceCost = orderStore.services_set.reduce((s, c) => s + c.cost, 0);
+      let productCost = orderStore.products_set.reduce((s, c) => s + c.cost, 0);
       let total = calcCost.value + serviceCost + productCost
       return total
     })
     const parserDate = (date) => {
-      return moment(date, 'DD.MM.YYYY').format('DD/MM/YY')
+      return moment(date).format('DD/MM/YY')
     }
     let order = ref({
       customer: 'Филипьев Василий Александрович',
       phone: '89819710592',
-      email: 'mail@mail.ru',           
+      email: 'mail@mail.ru',
       orderlodge_set: [
         {
-          lodge:{
+          lodge: {
             "id": 1,
             "name": "Дом Кузнеца",
             "num": "1",
@@ -217,7 +229,7 @@ export default {
             "slug": "",
             "avalible": true,
             "lodge_main": null
-          },                              
+          },
           cost: 15000,
           start_date: '22.11.2023',
           end_date: '25.11.2023',
@@ -309,6 +321,7 @@ export default {
       // order.value.orderlodge_set[0].start_date = order.value.orderlodge_set[0].start_date
       // let ens 
       // await Order.save(order.value)
+      orderStore.cost = totalCost.value
       router.push({
         name: 'BookingConfirm',
       })
@@ -321,7 +334,7 @@ export default {
       else {
         popUpList.value.push(name)
       }
-    }    
+    }
     const isShowPopUp = (name) => {
       if (popUpList.value.includes(name)) {
         return true
@@ -403,7 +416,7 @@ export default {
         let end = moment.utc(s.end_date).utcOffset('UTC');
 
         let startHour = start.hour() - preOrder.value[name].prefferedTime
-        let endHour = end.hour()
+        let endHour = end.hour() + 1
 
         for (let hour = startHour; hour < endHour; hour++) {
           if (!unavailableHours.value[name].includes(hour)) {
@@ -411,7 +424,35 @@ export default {
           }
         }
       }
+      console.log(unavailableHours.value['SN']);
       getAvailableHours(name)
+    }
+    const getDateList = (start, end) => {
+      let dateList = []      
+      let current = moment(start, 'YYYY-MM-DD');
+      let endDate = moment(end, 'YYYY-MM-DD')
+      while (current.isBefore(endDate)) {
+        dateList.push(current.format('DD-MM-YYYY'));
+        current.add(1, 'days');
+      }
+      return dateList
+    }
+    let dateListSpecialPrice = ref([])
+    const getSpecialPrice = async () => {
+      let res = (await SpecialPrice.getList({ 'lodge': orderStore.orderlodge_set[0].lodge.id, 'active': true })).results
+      let index = 0
+      for (let spec of res){
+        let tmp = {'name': spec.name, 'cost': spec.cost, 'day':[]}
+        dateListSpecialPrice.value.push(tmp)
+        let list = getDateList(spec.date, spec.date_end)        
+        for (let day of list){
+          dateListSpecialPrice.value[index].day.push(day)
+        }
+        index++
+      }
+      // console.log(totalSpecPrice);
+      // console.log(dateListSpecialPrice);
+      
     }
     const getService = async (filter) => {
       serviceReserv.value[filter.name] = (await Service.getList(filter)).results
@@ -429,26 +470,30 @@ export default {
       tmp.name = name
       let date = moment(preOrder.value[name].dateStart, 'DD.MM.YYYY').format('YYYY-MM-DD')
       tmp.start_date = date + 'T' + stringToHour(preOrder.value[name].availableTime[preOrder.value[name].timeIndex])
-      tmp.start_end = date + 'T' + stringToHour(preOrder.value[name].availableTime[preOrder.value[name].timeIndex + preOrder.value[name].prefferedTime])
-      tmp.cost = preOrder.value[name].prefferedTime * preOrder.value[name].cost_per_unit
-      // order.value.services_set.push(tmp)
+      tmp.end_date = date + 'T' + stringToHour(preOrder.value[name].availableTime[preOrder.value[name].timeIndex + preOrder.value[name].prefferedTime])
+      tmp.cost = preOrder.value[name].prefferedTime * preOrder.value[name].cost_per_unit      
       orderStore.services_set.push(tmp)
       closePopUp(name)
     }
     const getDuration = (service) => {
       let start = moment(service.start_date, 'YYYY-MM-DDTHH:mm').format('HH:mm')
-      let end = moment(service.start_end, 'YYYY-MM-DDTHH:mm').format('HH:mm')
+      let end = moment(service.end_date, 'YYYY-MM-DDTHH:mm').format('HH:mm')
       let str = start + '-' + end
       return str
     }
     const saveOrder = async () => {
       await Order.objects.save(order.value)
     }
-    watch(() => preOrder.value['CH'].dateStart, () => {            
-      getService({ 'name': 'CH' })
+    onMounted(() => {
+      getSpecialPrice()
     })
-    watch(() => preOrder.value['SN'].dateStart, () => {      
-      getService({ 'name': 'SN' })
+    watch(() => preOrder.value['CH'].dateStart, () => {
+      let dateStart = moment(preOrder.value['CH'].dateStart).format('YYYY-MM-DD')
+      getService({ 'name': 'CH', 'start_date': dateStart })
+    })
+    watch(() => preOrder.value['SN'].dateStart, () => {
+      let dateStart = moment(preOrder.value['SN'].dateStart).format('YYYY-MM-DD')
+      getService({ 'name': 'SN', 'start_date': dateStart })
     })
     watch(() => preOrder.value['CH'].prefferedTime, () => {
       if (servicesList.value[1].dateStart) {
@@ -461,7 +506,7 @@ export default {
       }
     })
     return {
-      order,      
+      order,
       selectedColor,
       masks,
       servicesList,
@@ -479,15 +524,15 @@ export default {
       isShowPopUp,
       closePopUp,
       incAvailableTimeIndex,
-      services,      
+      services,
       stringToHour,
       decAvailableTimeIndex,
       preOrder,
       getDuration,
-      checkServiceInOrder,  
+      checkServiceInOrder,
       popover,
       orderStore,
-      inputCustomer   
+      inputCustomer
     }
   }
 }
@@ -898,4 +943,5 @@ button.footer__btn {
 
 .date-time-out {
   width: 275px;
-}</style>
+}
+</style>

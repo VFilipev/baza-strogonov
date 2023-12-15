@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 export const useOrderStore = defineStore('orderStore', {
   state: () => ({
     customer: '',
+    cost:'',
     email: '',
     phone: '',
     orderlodge_set: [],
@@ -16,6 +17,6 @@ export const useOrderStore = defineStore('orderStore', {
       this.customer = newName
     }
   },
-  // persist: true,
+  persist: true,
   
 })

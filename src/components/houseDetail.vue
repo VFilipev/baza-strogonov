@@ -3,7 +3,7 @@ div
     .container 
         .row.d-flex.justify-content-between.align-items-center(style="padding-top:63px")
             .col-4.house_name {{ house.name }}
-            btn.btn_close.d-flex(@click="$emit('modalClose')")        
+            button.btn_close.d-flex(@click="$emit('modalClose')")        
         .row 
             .col-6
                 .row
@@ -133,13 +133,14 @@ export default {
     background-position: center;
 }
 
-.btn_close {
+button.btn_close {
     background-image: url('src/assets/images/btn-close.svg');
     background-repeat: no-repeat;
     background-position: center;
     height: 40px;
     width: 40px;
-
+    border: 0;
+    background-color: transparent;
     &:hover {
         cursor: pointer;
         background-image: url('src/assets/images/btn-close-active.svg');

@@ -1,45 +1,32 @@
 <template lang="pug"> 
 div     
-    .header_sticky(:class="{'active' : showHeader}")             
-        .container
-            .header_sticky__container.row.align-items-center
-                .header_sticky__logo.col-5
-                    img(src="../assets/images/logo2.svg")
-                ul.header_sticky__nav.col-3.offset-2.d-flex
-                    router-link(to="/house" tag="li" class="header_sticky__nav_link") дома                    
-                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых / услуги
-                .header_sticky__icon_feed_back.col-2
-                    a(href="tel:+79026439294")
-                        img(src="../assets/images/telefon2.svg")
-                    button забронировать
-
+    header-sticky
     section.first_page        
-        .container__first_page
+        .first_page__wrapper
             .overlay
             template(v-for="(photo, index) in photoList" ) 
                 img.photo(:src="photo" :class="{ active : index == selPhoto }")                
-            .container__header
+            .first_page__header
                 .container
-                    .header
+                    div(style="padding-top: 42px;margin-bottom: 384px;")
                         .row.align-items-center
-                            .col-5.logo
+                            .logo.col-5
                                 img(src="../assets/images/logo.png")
-                            .col-3.offset-2.d-flex.header__nav                                
+                            .header__nav.d-flex.col-3.offset-2
                                 router-link(to="/house", tag="a", class="header__nav__link") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
-                            .col-2.d-flex.header__nav     
+                            .header__nav.d-flex.col-2     
                                 a(href="tel:+79026439294")                       
                                     img(src='../assets/images/telefon.svg')
                                 button.header__nav__link.header__nav__button забронировать
                     .row.d-flex.justify-content-between
-                        .col-4.first_page__h1 уютные коттеджи 
+                        .first_page__h1.col-4 уютные коттеджи 
                             |и глемпинг хвойном лесу
                             |на берегу камского моря
-                        .col-4.first_page__h2 Уединеный отдых в уютном историческом месте Пермского края. 
+                        .first_page__h2.col-4 Уединеный отдых в уютном историческом месте Пермского края. 
                             |Насладитесь первозданой природой и европейским уровнем комфорта размещения в уютных коттеджах и номерах. 
-                            |Зарядитесь эмоциямиот прогулки на квадроциклах, а после отдахните душой и телом в традиционной русской бане.                       
-    .container_bg_gray            
-    section.about_us(ref="au" id="aboutUs")
+                            |Зарядитесь эмоциямиот прогулки на квадроциклах, а после отдахните душой и телом в традиционной русской бане.                                     
+    section.about_us(id="aboutUs")
         .container
             h4.about_us__header нас выбирают, <br> потому что 
             .row.about_as__container_row
@@ -86,23 +73,22 @@ div
             h4.about_us__header размещение
             .placement__form.row
                 .date_time.date_time__icon.date_time__text.col-3
-                    input.date_time__input(@focus="datePicker.dateStart = true, datePicker.dateEnd = false" 
-                    v-model="filter.dateStart") 
-                    .date_picker_wrapper
-                        DatePicker(v-if="datePicker.dateStart" :masks="masks" :color="selectedColor" v-model.string="filter.dateStart")
+                    DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
+                        template(#default="{ inputValue, inputEvents }")                        
+                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input")
                 .date_time.date_time__icon.date_time_end__text.col-3
-                    input.date_time__input(@focus="datePicker.dateEnd = true, datePicker.dateStart = false" 
-                    v-model="filter.dateEnd") 
+                    DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
+                        template(#default="{ inputValue, inputEvents }")                        
+                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input") 
                     .date_picker_wrapper
-                        DatePicker(v-if="datePicker.dateEnd" :masks="masks" :color="selectedColor" v-model.string="filter.dateEnd")
                 .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
                     .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
                         .input_number__prefix
                             button.prefix_btn(@click="dec")
-                                img(v-if="filter.personQuantity == 0" src="../assets/images/prefix.svg")
-                                img(v-else src="../assets/images/prefix-active.svg")
+                                img(v-if="filter.personQuantity == 0" alt="" src="../assets/images/prefix.svg")
+                                img(v-else alt="" src="../assets/images/prefix-active.svg")
                         .input_number__input 
-                            input.input_number__in(type="text" :class="{active : filter.personQuantity > 0}" v-model="filter.personQuantity")
+                            input.input_number__in(type="text" :class="{active : filter.personQuantity > 0}" v-model="filter.personQuantity" name="person_quantity")
                         .input_number__suffix
                             button.suffix_btn(@click="inc") 
                                 img(v-if="filter.personQuantity == 0" src="../assets/images/suffix.svg")
@@ -127,7 +113,7 @@ div
                 .col-4(v-for="(house, index) in houseList2")
                     .placement__card 
                         .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
-                            .btn_house_detail(@click="showModalHouse = true, selectedHouse = house")
+                            .btn_house_detail(@click="showModalHouse(house)")
                         .container_info-graph
                             .house_name {{ house.name }}
                             .wrapper_cost_capacity
@@ -267,11 +253,12 @@ div
                                     span(:style="[feedback.userPhoto ? {'background-image': 'url(' + previewFilePath + ')', 'background-size': 'cover'} :'']")
                             .card__user_container
                                 .card__user_name 
-                                    input.card__input_user_name(v-if="!isCreateFeedBack" placeholder="ФИО" v-model="feedback.userName")
+                                    input.card__input_user_name(v-if="!isCreateFeedBack" placeholder="ФИО" v-model="feedback.userName" name="user_name")
                                     .card__user_name(v-else) {{ feedback.userName }}
                                 star-rating(:star-size="13" :animate="true" :show-rating="false" @update:rating ="setRating")
                         .card__body(:class="{card_form : !isCreateFeedBack}")
-                            textarea.card__input(v-if="!isCreateFeedBack" placeholder="Введите текст..." rows="4" v-model="feedback.text")
+                            textarea.card__input(v-if="!isCreateFeedBack" placeholder="Введите текст..." rows="4" v-model="feedback.text"
+                            name="card_text")
                             p.card__text(v-else style="color: black") {{ feedback.text }}
                             button.card_button(v-if="!isCreateFeedBack" @click="validateFeedBack") оставить отзыв
             .container_map
@@ -324,9 +311,9 @@ div
                 .col-6 
                     .contact__form 
                         .form__label Задать вопрос менеджеру
-                        input.form__input(placeholder="Напишите что-нибудь" type="text" style="margin-bottom: 37px")
+                        input.form__input(placeholder="Напишите что-нибудь" type="text" style="margin-bottom: 37px" name="contact_form")
                         .form__label Номер телефона или адрес электронной почты, куда направить ответ:
-                        input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px")
+                        input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px" name="contact_form")
                         button.contact__button отправить 
     footer.footer
         .container
@@ -370,14 +357,17 @@ div
                 div 2023 @ СТРОГАНОВСКИЕ ПРОСТОРЫ
                 div Пермь. Официальный сайт.
     Transition(name="modalBottom")
-        div.modal-mask(v-show="showModalHouse" :class="{active : showModalHouse}")  
-            house-detail(:house="selectedHouse" @modalClose="showModalHouse = false")
+        div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
+            house-detail(:house="selectedHouse" @modalClose="closeModal")
 
 </template>
 
 <script>
 import { ref, onMounted, watch, computed, onUnmounted } from "vue"
 import { Calendar, DatePicker } from 'v-calendar';
+
+import headerSticky from "../components/headerSticky.vue";
+
 import 'v-calendar/style.css';
 import StarRating from 'vue-star-rating'
 
@@ -388,7 +378,7 @@ import { useRouter } from 'vue-router'
 import { useOrderStore } from "../stores/orderStore";
 
 import { Lodge } from '../api'
-
+import moment from "moment";
 export default {
 
     name: 'main-page',
@@ -396,12 +386,16 @@ export default {
         Calendar,
         DatePicker,
         StarRating,
-        houseDetail
+        houseDetail,
+        headerSticky
     },
     setup() {
         const orderStore = useOrderStore()
         const router = useRouter()
         let toBooking = (lodge) => {
+            if (orderStore.orderlodge_set.length > 0){
+                orderStore.orderlodge_set = []
+            }
             let tmp = {
                 lodge: lodge,
                 start_date: filter.value.dateStart,
@@ -435,11 +429,11 @@ export default {
                     showHeader.value = false
                 }
             }
-        }
-        const au = ref(null)
+        }        
         const selectedColor = ref('green')
         const masks = ref({
             modelValue: 'DD.MM.YYYY',
+            L: 'DD.MM.YYYY'
         })
 
         const inc = () => {
@@ -498,12 +492,23 @@ export default {
             }
         }
         let houseList2 = ref(houseList)
-        const getAvailableHouse = async () => {
-            let tmp = (await Lodge.get_available_house({ 'date_start': filter.value.dateStart, 'date_end': filter.value.dateEnd })).data
+        const getAvailableHouse = async () => {            
+            let start = moment(filter.value.dateStart).format('DD.MM.YYYY')
+            let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')            
+            let tmp = (await Lodge.get_available_house({ 'date_start': start, 'date_end': end })).data
             houseList2.value = tmp
         }
         let selectedHouse = ref({})
-        let showModalHouse = ref(false)
+        let isShowModalHouse = ref(false)
+        const showModalHouse = (lodge) =>{
+            document.body.classList.add('modal-open')
+            isShowModalHouse.value = true
+            selectedHouse.value = lodge
+        }
+        const closeModal = () => {
+            document.body.classList.remove('modal-open')
+            isShowModalHouse.value = false            
+        }
         watch(() => filter.value.dateStart, () => {
             datePicker.value.dateStart = false
         })
@@ -520,8 +525,7 @@ export default {
             window.removeEventListener('scroll', (event) => { fil() });
         })
         return {
-            photoList,
-            au,
+            photoList,            
             distance,
             showHeader,
             datePicker,
@@ -540,6 +544,8 @@ export default {
             houseList2,
             selectedHouse,
             showModalHouse,
+            closeModal,
+            isShowModalHouse,
             getAvailableHouse,
             toBooking
         }
@@ -804,6 +810,9 @@ a.header__nav__link:after {
     height: 35px;
     align-items: center;
     justify-content: center;
+    &:hover{
+        cursor: pointer;
+    }
 }
 
 .container_info-graph {
@@ -990,60 +999,6 @@ ul {
     margin-bottom: 32px;
 }
 
-.header_sticky__nav_link {
-    text-decoration: none;
-    color: black;
-    font-size: 17px;
-    font-family: 'Lato';
-    font-weight: 300;
-
-    &:after {
-        display: block;
-        content: '';
-        border-bottom: solid 1px black;
-        transform: scaleX(0);
-        transition: transform 250ms ease-in-out;
-    }
-
-    &:hover:after {
-        transform: scaleX(1);
-    }
-
-}
-
-.header_sticky__nav {
-    display: flex;
-    gap: 11px;
-    font-family: 'Lato';
-    font-weight: 300;
-    font-size: 17px;
-    color: black;
-    margin-bottom: 0;
-}
-
-.header_sticky__container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header_sticky__icon_feed_back {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 20px;
-}
-
-.header_sticky__icon_feed_back img {
-    margin-right: 8px;
-}
-
-.header_sticky__icon_feed_back button {
-    background-color: rgba(0, 93, 75, 1);
-    color: #fff;
-    border: 0px;
-    border-radius: 35px;
-}
-
 .about_us__card__img {
     height: 75px;
     margin-bottom: 13px;
@@ -1100,26 +1055,7 @@ ul {
     }
 }
 
-.header_sticky {
-    transform: translateY(-160px);
-    transition-duration: 1s;
-    transition-property: all;
-    opacity: 0;
-    position: fixed;
-    width: 100%;
-    top: 0;
-}
 
-.header_sticky.active {
-    position: fixed;
-    background-color: #fff;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    top: 0;
-    opacity: 1;
-    z-index: 150;
-    transform: translateY(0px);
-}
 
 .overlay {
     background-color: rgb(0, 0, 0, 0.6);
@@ -1131,12 +1067,12 @@ ul {
     z-index: 10;
 }
 
-.container__header {
+.first_page__header {
     position: relative;
     z-index: 100;
 }
 
-.container__first_page {
+.first_page__wrapper {
     height: 100vh;
     width: 100%;
     position: relative;
@@ -1155,11 +1091,6 @@ img.photo {
 
 img.photo.active {
     opacity: 1;
-}
-
-.header {
-    padding-top: 42px;
-    margin-bottom: 384px;
 }
 
 .header__nav {

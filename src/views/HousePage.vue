@@ -1,18 +1,6 @@
 <template lang="pug">
 div    
-    header.p-20    
-        .container
-            .row.align-items-center
-                .col-5
-                    router-link(to="/")
-                        img(src="../assets/images/logo2.svg")
-                ul.header_sticky__nav.col-3.offset-2.d-flex
-                    router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
-                    //- router-link(to="/" tag="li" class="header_sticky__nav_link") активный отдых
-                    router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых/услуги
-                .header_sticky__icon_feed_back.col-2
-                    img(src="../assets/images/telefon2.svg")
-                    button забронировать
+    header-main
     section.house_typ(style="padding-top: 63px")
         .container 
             .row
@@ -241,12 +229,14 @@ import 'swiper/css';
 
 
 import houseList from '../components/houseList'
+import headerMain from "../components/headerMain.vue";
 
 export default {
     name: 'house-page',
     components: {
       Swiper,
       SwiperSlide,
+      headerMain
     },
     setup () {                
         let selectHouseIndex = ref(0)        

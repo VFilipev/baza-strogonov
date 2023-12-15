@@ -26,3 +26,12 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+*settings.py
+*.pyc
+*.swp
+
+*settings_local.py
+*migrations/
+*media/
+*strogonov/env
