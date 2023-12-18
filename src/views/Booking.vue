@@ -88,9 +88,9 @@ div.container
                     .row_service_popup.d-flex.justify-content-between.align-items-center                    
                       .service_popup__item Дата
                       .service_popup__date_time.service_popup__date_time__icon                        
-                        DatePicker(:masks="masks" :color="selectedColor" v-model="preOrder['SN'].dateStart" :popover="popover")
-                          template(#default="{ inputValue, inputEvents }")
-                            input.service_popup__date_time__input(:value="inputValue" v-on="inputEvents")
+                        input.service_popup__date_time__input(@focus="showPopUpCalendar('баня')" v-model="preOrder['SN'].dateStart")
+                        .date_picker_wrapper
+                          DatePicker(v-if="services.datePicker.includes('баня')" :masks="masks" :color="selectedColor" v-model.string="preOrder['SN'].dateStart")
                     .row_service_popup.d-flex.justify-content-between.align-items-center
                       .service_popup__item Время
                       .service_popup__wrapper_time                          
@@ -100,15 +100,15 @@ div.container
                     .service_popup_footer
                       .uslugi_card__add(@click="addService('SN')")                      
             swiper-slide(v-for="product in productsList")
-              .col-2 
-                .uslugi_card 
-                  .uslugi_card__img(:style="{ backgroundImage: `url(${product.photo})` }")
-                  .uslugi_card__footer 
-                    .uslugi_card__text {{ product.name }}
-                    .footer_right 
-                      .uslugi_card__text {{ product.cost + 'р/1ч'}}
-                      .uslugi_card__add(v-if="!isAdd(product.id)" @click="addProduct(product)")
-                      .uslugi_card__check(v-else @click="removeProduct(product)")
+              
+              .uslugi_card(style="z-index:1")
+                .uslugi_card__img(:style="{ backgroundImage: `url(${product.photo})` }")
+                .uslugi_card__footer 
+                  .uslugi_card__text {{ product.name }}
+                  .footer_right 
+                    .uslugi_card__text {{ product.cost + 'р/1ч'}}
+                    .uslugi_card__add(v-if="!isAdd(product.id)" @click="addProduct(product)")
+                    .uslugi_card__check(v-else @click="removeProduct(product)")
             controlSwiper
   section.order(style="margin-top: 10px")
     .row 
@@ -140,7 +140,7 @@ div.container
             .confirm__checkbox-box(@click="isConfirm = !isConfirm" :class="{icon_check : isConfirm}")
               //- .confirm__checkbox-icon(v-if="filter.isHouse")
               //-     img(src="../assets/images/checkbox.svg")
-        span.confirm__checkbox__label Я согласен с условиями политики конфиденциальности и даю разрешение на обработку персональных данных    
+        span.confirm__checkbox__label Я согласен с условиями <a style="color:#005D4B" href="./src/assets/politica.pdf" target="_blank"> политики конфиденциальности</a> и даю разрешение на обработку персональных данных    
       button.confirm__btn(:disabled="!isConfirm" @click="toBooking") забронировать
   div {{ orderStore }}
 
@@ -176,7 +176,8 @@ export default {
     }
     const orderStore = useOrderStore()
     const popover = ref({
-      visibility: 'click',
+      visibility: 'click',      
+      
     })
     const calcCost = computed(() => {
       let dateStart = moment(orderStore.orderlodge_set[0].start_date).format('YYYY-MM-DD')
@@ -481,17 +482,21 @@ export default {
       let str = start + '-' + end
       return str
     }
-    const saveOrder = async () => {
-      await Order.objects.save(order.value)
-    }
+    const showPopUpCalendar = (name) => {
+      services.value.datePicker.push(name)
+    }    
     onMounted(() => {
       getSpecialPrice()
     })
     watch(() => preOrder.value['CH'].dateStart, () => {
+      let findIndex = services.value.datePicker.findIndex(x => x == 'чан')
+      services.value.datePicker.splice(findIndex, 1)
       let dateStart = moment(preOrder.value['CH'].dateStart).format('YYYY-MM-DD')
       getService({ 'name': 'CH', 'start_date': dateStart })
     })
     watch(() => preOrder.value['SN'].dateStart, () => {
+      let findIndex = services.value.datePicker.findIndex(x => x == 'баня')
+      services.value.datePicker.splice(findIndex, 1)
       let dateStart = moment(preOrder.value['SN'].dateStart).format('YYYY-MM-DD')
       getService({ 'name': 'SN', 'start_date': dateStart })
     })
@@ -532,7 +537,8 @@ export default {
       checkServiceInOrder,
       popover,
       orderStore,
-      inputCustomer
+      inputCustomer,
+      showPopUpCalendar
     }
   }
 }
@@ -541,6 +547,13 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
+.date_picker_wrapper{
+  left: -122px;
+  top: 30px;
+}
+.vc-popover-content-wrapper.is-interactive{
+  z-index: 100;
+}
 .popup_arrow:hover {
   cursor: pointer;
 }
@@ -652,7 +665,7 @@ export default {
   background-color: #ECE8E3;
   border-radius: 30px;
   height: 160px;
-  z-index: 10;
+  z-index: 9;
 }
 
 .confirm__checkbox__label {
@@ -844,7 +857,10 @@ export default {
   width: 180px;
   background-color: #ECE8E3;
   border-radius: 30px;
-  z-index: 100;
+  z-index: 10;
+}
+.swiper-slide.swiper-slide-next{
+  z-index: 10;
 }
 
 .info-card-lodge {

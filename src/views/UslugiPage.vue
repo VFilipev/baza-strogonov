@@ -8,14 +8,14 @@ div.color_bg
                 .container
                     .header
                         .row.align-items-center
-                            .col-5.logo
+                            .logo.col-5
                                 img(src="../assets/images/logo.png")
-                            .col-3.offset-2.d-flex.header__nav
-                                div.header__nav__link дома
-                                div.header__nav__link активный отдых
-                                router-link(to="/uslugi", tag="a",  class="header__nav__link") услуги                                    
-                            .col-2.d-flex.header__nav                            
-                                img(src='../assets/images/telefon.svg')
+                            .header__nav.d-flex.col-3.offset-2
+                                router-link(to="/house", tag="a", class="header__nav__link") дома
+                                router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
+                            .header__nav.d-flex.col-2     
+                                a(href="tel:+79026439294")                       
+                                    img(src='../assets/images/telefon.svg')
                                 button.header__nav__link.header__nav__button забронировать
                     .row.d-flex.justify-content-between(style="margin-top: 11px")
                         .col-4.first_page__h1 зимние <br> развлечения
@@ -229,6 +229,10 @@ export default {
 </script>
 
 <style scoped>
+.container__header{
+    position: relative;
+    z-index: 100;
+}
 .service_section{
     background-color: #fff;
 }

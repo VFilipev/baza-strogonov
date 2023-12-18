@@ -12,18 +12,21 @@ div
                 .row(style="margin-top:40px")
                     .swiper__wrapper(style="position: relative")                  
                         swiper(slidesPerView="2" :spaceBetween="40" @slideChange="showSliderIcon = false")
-                            swiper-slide(v-for="card in house.galery")
+                            swiper-slide(v-for="card in house.photo_gallery_set")
                                 .photogalery__card 
-                                    .photogalery__image(:style="{ backgroundImage: `url(${card.photo})`}")
+                                    .photogalery__image(:style="{ backgroundImage: `url(${card.img})`}")
                                     .photogalery__name {{ card.name }}                            
                         img.slider_icon(v-if="showSliderIcon" src="../assets/images/slider-icon.svg")
             .col-6
                 .row(style="margin-bottom:64px")                          
                     .col-12
                         .house__name_description Стоимость                            
-                        .row_cost(v-for="cost in house.cost")                            
+                        .row_cost(v-for="cost in house.price_set")                            
                             .house__text_description {{ cost.name }}
-                            .house__text_description {{ cost.cost }}                            
+                            .house__text_description {{ formatNumber(cost.cost) + ' р.' }}
+                        .row_cost(v-for="cost in house.special_price_set")                            
+                            .house__text_description {{ cost.name }}
+                            .house__text_description {{ formatNumber(cost.cost) + ' р.'}}
                 .row(style="margin-bottom:31px") 
                     .col-6
                         .house__name_description Описание 
@@ -31,7 +34,7 @@ div
                     .col-6 
                         .house__name_description Доступность
                         .house__text_description
-                            p(v-for="availability in house.availability") {{ availability }}
+                            p(v-for="availability in house.availability_set") {{ availability.name }}
                 .row(style="padding-bottom: 63px")
                     .col-6 
                         .house__name_description Удобства  
@@ -43,6 +46,7 @@ div
 
 <script>
 import { ref } from "vue"
+import { formatNumber } from './formatNumber'
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
@@ -56,7 +60,8 @@ export default {
     setup() {
         let showSliderIcon = ref(true)
         return {
-            showSliderIcon
+            showSliderIcon,
+            formatNumber
         }
     }
 }

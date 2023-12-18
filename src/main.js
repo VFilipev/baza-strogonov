@@ -7,7 +7,6 @@ import App from './App.vue'
 import router from './router'
 import axios from "axios"
 
-
 import { setupCalendar } from 'v-calendar';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken"

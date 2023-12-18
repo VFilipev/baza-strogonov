@@ -67,7 +67,7 @@ div
                     .about_us__card__text отдых в Строгановских Просторах оставит множество положительных впечатлений: об уникальной природе, спокойствии 
                         |и уединении с ней, комфорте, развлечениях и релаксе, а также о драгоценном времени, проведённом друг с другом
                 .col-4.offset-1 
-                    img(src="../assets/images/about-as-winter-3.png" style="border-radius: 30px")
+                    .about_us__wrapper_img                     
     section.placement 
         .container           
             h4.about_us__header размещение
@@ -75,7 +75,7 @@ div
                 .date_time.date_time__icon.date_time__text.col-3
                     DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
                         template(#default="{ inputValue, inputEvents }")                        
-                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input")
+                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" id="inputDateStart")
                 .date_time.date_time__icon.date_time_end__text.col-3
                     DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
                         template(#default="{ inputValue, inputEvents }")                        
@@ -117,7 +117,7 @@ div
                         .container_info-graph
                             .house_name {{ house.name }}
                             .wrapper_cost_capacity
-                                .house_cost ₽ 10 000
+                                .house_cost {{ '₽ ' + formatNumber(house.cost_per_unit) }}
                                 .house_capacity
                                     .house_capacity__icon 
                                         img(src="../assets/images/icon_emoji.svg")
@@ -183,73 +183,22 @@ div
         .container
             .section_header ваши отзывы
             .row 
-                .col-3
-                    .card.rotate                   
+                .col-3(v-for="(comment, index) in commentList")
+                    .card.rotate(:class="{ 'feedback_card_background' : isEval(index + 1)}")
                         .card__header
                             .card__user_photo
-                                img(src="../assets/images/user_photo1.png")
+                                img(:src="comment.img")
                             .card__user_container
-                                .card__user_name Екатерина Малинина
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
+                                .card__user_name {{ comment.user_name }}
+                                star-rating(:star-size="13" :rating="comment.rating" :show-rating="false")                                
                         .card__body
-                            p.card__text Отдых в загородном клубе в Пермском крае был незабываемым. Мы оценили внимательный персонал, который
-                                |был всегда готов помочь нам в любых вопросах. Обязательно приедем ещё!
-                .col-3
-                    .card.rotate(style="background: #F5F3F1")              
-                        .card__header
-                            .card__user_photo
-                                img(src="../assets/images/user_photo2.jpg")
-                            .card__user_container
-                                .card__user_name Сергей Карпов
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                        .card__body
-                            p.card__text(style="color: black") Загородный клуб обладает отличной инфраструктурой как для активного отдыха, так и для релакса. Мы попро-бовали множество развлечений, дети особенно оценили верёвочный парк, 
-                                |их было не вытащить оттуда
-                .col-3
-                    .card.rotate         
-                        .card__header
-                            .card__user_photo
-                                img(src="../assets/images/user_photo3.jpg")
-                            .card__user_container
-                                .card__user_name Виктория Минаева
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                                span
-                                    img.card__rating(src="../assets/images/star.svg")
-                        .card__body
-                            p.card__text Мы провели незабываемое время 
-                                |в Строгановских просторах. В домике было все необходимое для комфорт-ного проживания, мы наслаждались прекрасным видом и уединением 
-                                |с природой.
+                            p.card__text(:class="{'text_black' : isEval(index + 1)}") {{ comment.text }}
                 .col-3
                     .card(style="background: #F5F3F1;")               
                         .card__header
                             .card__user_photo-form
                                 label(class="input-file")
-                                    input(type="file" name="file" @change="handleFileUpload")
+                                    input(type="file" name="file" @change="handleFileUpload" id="user_img" ref="user_img")
                                     span(:style="[feedback.userPhoto ? {'background-image': 'url(' + previewFilePath + ')', 'background-size': 'cover'} :'']")
                             .card__user_container
                                 .card__user_name 
@@ -260,7 +209,7 @@ div
                             textarea.card__input(v-if="!isCreateFeedBack" placeholder="Введите текст..." rows="4" v-model="feedback.text"
                             name="card_text")
                             p.card__text(v-else style="color: black") {{ feedback.text }}
-                            button.card_button(v-if="!isCreateFeedBack" @click="validateFeedBack") оставить отзыв
+                            button.card_button(v-if="!isCreateFeedBack" @click="saveFeedBack") оставить отзыв
             .container_map
                 img(src="../assets/images/map.jpg")
                 .container_map_info
@@ -365,19 +314,19 @@ div
 <script>
 import { ref, onMounted, watch, computed, onUnmounted } from "vue"
 import { Calendar, DatePicker } from 'v-calendar';
+import { formatNumber } from '../components/formatNumber'
 
 import headerSticky from "../components/headerSticky.vue";
 
 import 'v-calendar/style.css';
 import StarRating from 'vue-star-rating'
 
-import houseList from '../components/houseList'
 import houseDetail from "../components/houseDetail.vue";
-import { useRouter } from 'vue-router'
 
+import { useRouter } from 'vue-router'
 import { useOrderStore } from "../stores/orderStore";
 
-import { Lodge } from '../api'
+import { Lodge, Comment } from '../api'
 import moment from "moment";
 export default {
 
@@ -389,10 +338,13 @@ export default {
         houseDetail,
         headerSticky
     },
-    setup() {
+    setup() {        
         const orderStore = useOrderStore()
         const router = useRouter()
+
         let toBooking = (lodge) => {
+            // const input = document.getElementById('inputDateStart')
+            // input.focus()
             if (orderStore.orderlodge_set.length > 0){
                 orderStore.orderlodge_set = []
             }
@@ -429,7 +381,7 @@ export default {
                     showHeader.value = false
                 }
             }
-        }        
+        }
         const selectedColor = ref('green')
         const masks = ref({
             modelValue: 'DD.MM.YYYY',
@@ -489,25 +441,61 @@ export default {
         const validateFeedBack = () => {
             if (feedback.value.userName && feedback.value.text && feedback.value.rating) {
                 isCreateFeedBack.value = true
+            }else{
+                return false
             }
+            
         }
-        let houseList2 = ref(houseList)
-        const getAvailableHouse = async () => {            
+        const saveFeedBack = async() => {
+            validateFeedBack()
+            if(feedback.value.userPhoto){
+                let formData = new FormData();
+                formData.append('user_name', feedback.value.userName)
+                formData.append('rating', feedback.value.rating)
+                formData.append('img', feedback.value.userPhoto)
+                formData.append('text', feedback.value.text)
+                await Comment.save(formData)
+            }else{
+                let tmp = {}
+                tmp.user_name = feedback.value.userName
+                tmp.rating = feedback.value.rating
+                tmp.text = feedback.value.text
+                await Comment.save(tmp)
+            }
+            
+            
+        }
+        let houseList2 = ref([])
+        const getAvailableHouse = async () => {
             let start = moment(filter.value.dateStart).format('DD.MM.YYYY')
-            let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')            
+            let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')
             let tmp = (await Lodge.get_available_house({ 'date_start': start, 'date_end': end })).data
             houseList2.value = tmp
         }
         let selectedHouse = ref({})
         let isShowModalHouse = ref(false)
-        const showModalHouse = (lodge) =>{
+        const showModalHouse = (lodge) => {
             document.body.classList.add('modal-open')
             isShowModalHouse.value = true
             selectedHouse.value = lodge
         }
         const closeModal = () => {
             document.body.classList.remove('modal-open')
-            isShowModalHouse.value = false            
+            isShowModalHouse.value = false
+        }
+        const getLodgeList = async () => {
+            let tmp = (await Lodge.getList()).results
+            houseList2.value = tmp
+        }
+        const commentList = ref([])
+        const getComment = async() => {
+            commentList.value = (await Comment.getList({'avalible': true})).results
+        }
+        const isEval = (index) => {
+            if (index % 2 == 0) {
+                console.log(index % 2 == 0);
+                return true
+            }
         }
         watch(() => filter.value.dateStart, () => {
             datePicker.value.dateStart = false
@@ -516,6 +504,8 @@ export default {
             datePicker.value.dateEnd = false
         })
         onMounted(() => {
+            getLodgeList()
+            getComment()
             isScroll.value = true
             window.addEventListener('scroll', (event) => { fil() });
             setTimeout(sliderPhoto, 5000)
@@ -525,7 +515,7 @@ export default {
             window.removeEventListener('scroll', (event) => { fil() });
         })
         return {
-            photoList,            
+            photoList,
             distance,
             showHeader,
             datePicker,
@@ -539,7 +529,7 @@ export default {
             previewFilePath,
             feedback,
             isCreateFeedBack,
-            validateFeedBack,
+            saveFeedBack,
             setRating,
             houseList2,
             selectedHouse,
@@ -547,7 +537,11 @@ export default {
             closeModal,
             isShowModalHouse,
             getAvailableHouse,
-            toBooking
+            toBooking,
+            formatNumber,  
+            getComment,
+            commentList,
+            isEval         
         }
     }
 }
@@ -555,6 +549,14 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+p.card__text.text_black{
+    color: #000;
+}
+
+.card.feedback_card_background{
+    background-color: #F5F3F1;
+}
 
 .modalBottom-enter-active {
     animation: animatebottom 1s;
@@ -810,7 +812,8 @@ a.header__nav__link:after {
     height: 35px;
     align-items: center;
     justify-content: center;
-    &:hover{
+
+    &:hover {
         cursor: pointer;
     }
 }
@@ -993,6 +996,16 @@ li {
 ul {
     margin-left: 0;
     padding-left: 0;
+}
+
+.about_us__wrapper_img{
+    width: 400px;
+    height: 272px;
+    border-radius: 30px;
+    background-image: url(../assets/images/diana.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0px -135px;
 }
 
 .about_as__container_row {

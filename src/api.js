@@ -3,6 +3,7 @@ export const serviceUrl= '/api/services/'
 export const orderUrl= '/api/order/'
 export const specialPriceUrl= '/api/specialPrice/'
 export const priceUrl= '/api/price/'
+export const commentUrl= '/api/comment/'
 
 import axios from 'axios'
 
@@ -90,3 +91,4 @@ export let Service = apiConstructor(serviceUrl)
 export let Order = apiConstructor(orderUrl)
 export let SpecialPrice = apiConstructor(specialPriceUrl)
 export let Price = apiConstructor(priceUrl)
+export let Comment = apiConstructor(commentUrl)
