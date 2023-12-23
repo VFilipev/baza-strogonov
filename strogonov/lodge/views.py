@@ -28,12 +28,12 @@ class LodgeViewSet(viewsets.ModelViewSet):
         de = request.GET.get('date_end', '')
         firstDay = datetime.datetime.strptime(ds, '%d.%m.%Y')
         lastDate = datetime.datetime.strptime(de, '%d.%m.%Y')                
-        queryset = self.model.objects.all()
+        queryset = self.model.objects.all().filter(avalible=True)
         lodge_list = []
         order_list = Order_lodge.objects.all()
         availList = []            
         for l in queryset:
-            order_list_for_l = order_list.filter(lodge=l.id, available=True)
+            order_list_for_l = order_list.filter(lodge=l.id)
             for o in order_list_for_l:                
                 if o.start_date > lastDate.date() or o.end_date < firstDay.date():
                     availList.append(True)
