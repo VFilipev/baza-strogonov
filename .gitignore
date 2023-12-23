@@ -33,5 +33,6 @@ coverage
 
 *settings_local.py
 *migrations/
-*media/
+*strogonov/feedback/static
+*strogonov/feedback/templates/index.html
 *strogonov/env
