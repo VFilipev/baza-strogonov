@@ -8,9 +8,12 @@ div
                     .d-flex.justify-content-between.align-items-center
                         h4.section_name виды домов 
                         .d-flex.container_icon.align-items-center
-                            .circle-left(@click="selectHouseIndex--")   
-                            p.house__name {{ houseList[selectHouseIndex].name }}                      
-                            .circle-right(@click="selectHouseIndex++")                         
+                            .circle-left(@click="decSelectHouseIndex")   
+                            div(style="display:flex; flex-direction: column; align-items: center" )
+                                p.house__name {{ houseList[selectHouseIndex]?.name }}                      
+                                .d-flex.gap-2
+                                    .house_point(v-for="(house, index) in houseList" :class="{active : index == selectHouseIndex}" @click="selectHouseIndex = index")
+                            .circle-right(@click="addSelectHouseIndex")                         
             .card_house__wrapper
                 div(v-for="(house, index) in houseList" :key="house.id")                     
                     Transition(name="fade" mode="out-in")
@@ -22,19 +25,22 @@ div
                                             .house__image(:style="{ backgroundImage: `url(${house.img})` }")
                                     .row(style="margin-top:40px")
                                         .swiper__wrapper(style="position: relative")                  
-                                            swiper(slidesPerView="2" :spaceBetween="40" @slideChange="showSliderIcon = false")
-                                                swiper-slide(v-for="card in house.galery")
+                                            swiper(slidesPerView="2" :spaceBetween="40")
+                                                swiper-slide(v-for="card in house.photo_gallery_set")
                                                     .photogalery__card 
-                                                        .photogalery__image(:style="{ backgroundImage: `url(${card.photo})`}")
+                                                        .photogalery__image(:style="{ backgroundImage: `url(${card.img})`}")
                                                         .photogalery__name {{ card.name }}                            
                                             img.slider_icon(v-if="showSliderIcon" src="../assets/images/slider-icon.svg")
                                 .col-6
                                     .row(style="margin-bottom:64px")                          
                                         .col-12
                                             .house__name_description Стоимость                            
-                                            .row_cost(v-for="cost in house.cost")                            
-                                                .house__text_description {{ cost.name }}
-                                                .house__text_description {{ cost.cost }}                            
+                                                .row_cost(v-for="cost in house.price_set")                            
+                                                    .house__text_description {{ cost.name }}
+                                                    .house__text_description {{ formatNumber(cost.cost) + ' р.' }}
+                                                .row_cost(v-for="cost in house.special_price_set")                            
+                                                    .house__text_description {{ cost.name }}
+                                                    .house__text_description {{ formatNumber(cost.cost) + ' р.'}}
                                     .row(style="margin-bottom:31px") 
                                         .col-6
                                             .house__name_description Описание 
@@ -42,7 +48,7 @@ div
                                         .col-6 
                                             .house__name_description Доступность
                                             .house__text_description
-                                                p(v-for="availability in house.availability") {{ availability }}
+                                                p(v-for="availability in house.availability_set") {{ availability.name }}
                                     .row(style="padding-bottom: 63px")
                                         .col-6 
                                             .house__name_description Удобства  
@@ -50,216 +56,132 @@ div
                                         .col-6 
                                             .house__name_description Включено в проживание
                                             .house__text_description {{ house.include }}
-        .container
-            .section_row
-                h4.section_name глэмпинг
-                .d-flex.container_icon
-                    .circle-left                        
-                    .circle-right                        
-            .row 
-                .col-6
-                    .row(style="margin-bottom:64px")
-                        .col-6
-                            .house__name_description Описание 
-                            .house__text_description двухэтажный деревянный дом, где могут разместиться до 14 человек. 3 просторные комнаты, в которых будет удобно и парам, и семьям с детьми.
-                        .col-6
-                            .house__name_description Стоимость
-                            .row_cost 
-                                .house__text_description будни (пн-чт)
-                                .house__text_description 10 000 р.
-                            .row_cost 
-                                .house__text_description выходные (пт-сб-вс) <br> и праздничные дни  
-                                .house__text_description 15 000 р.
-                            .row_cost 
-                                .house__text_description Новый год 2024 (с 31 декабря <br> по 2 января) 2-е суток 
-                                .house__text_description 95 000 р.
-                            .row_cost 
-                                .house__text_description с 2 по 7 января 2024 года <br> (сутки)
-                                .house__text_description 30 000 р.
-                            .row_cost 
-                                .house__text_description стоимость при бронирова- <br> нии 2-х и более суток <br> (с 2 по 7 января 2024 года)
-                                .house__text_description 25 000 р.
-                    .row(style="margin-bottom:31px") 
-                        .col-6 
-                            .house__name_description Удобства  
-                            .house__text_description кухня - полный комплект посуды на 14 человек, холодильник, обеденный стол, электроплита с духовым шкафом, микроволновая печь, электрочайник, санузел - горячая и холодная вода, музыкальный центр, 4 телевизора
-                        .col-6 
-                            .house__name_description Доступность
-                            .house__text_description до воды 150 м <br> до бани 50 м <br> до беседки 5 м
-                    .row 
-                        .col-6 
-                            .house__name_description Включено в проживание
-                            .house__text_description пользование спортивными и детскими площадками, надувным аквапарком, пользование мангалом и решеткой, охраняемая парковка, охраняемый причал                        
-                .col-6
-                    p.house__name Для двоих
-                    .house__image(style="background-image: url(src/assets/images-house/house-3.png)")
-            .row 
-                p.photogalery Фотогалерея
-            .row
-                .col-4
-                    .glamping__photogalery__card
-                        .photogalery__image(style="background-image: url(src/assets/images-house/house-1-2.png)")
-                        .photogalery__name веранда
-                .col-4
-                    .glamping__photogalery__card 
-                        .photogalery__image(style="background-image: url(src/assets/images-house/house-1-3.png)")
-                        .photogalery__name внутри
-                .col-4
-                    .glamping__photogalery__card 
-                        .photogalery__image(style="background-image: url(src/assets/images-house/house-1-4.png)")
-                        .photogalery__name спальные места
-            .photogalery_next
-                .photogalery_next__text далее
-                .photogalery_next__icon 
-                    img(src="../assets/images-house/arrow-next.svg")
+                                            .house__text_description {{ house.include }}        
     section.placement 
         .container           
-            h4.about_us__header бронирование
-            .placement__form.row
-                .date_time.date_time__icon.date_time__text.col-3
-                    input.date_time__input
-                .date_time.date_time__icon.date_time_end__text.col-3
-                    input.date_time__input
-                .quantity_guests.quantity_guests__text  
-                    input.quantity_guests__input
-                .checkbox_container
-                    div.checkbox__header показать свободные:
-                    input.checkbox__input(type="checkbox" id="house")
-                    label.checkbox__name(for="house") дома
-                    input.checkbox__input(type="checkbox" id="glamping")
-                    label.checkbox__name(for="glamping" style="margin-left:10px") глемпинг
-                button.placement__form__button_search найти
-            .row.placement__cantainer_card
-                .col-4 
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house1-1.png)")
-                        .container_info-graph
-                            .house_name Дом Кузнеца
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 10000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 11 чел
-                        .container_footer 
-                            .footer_text 2 смежные и 2 изолированые спальни, просторная кухня-гостиная, санузел
-                            .footer_button забронировать
-                .col-4 
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house2-1.png)")
-                        .container_info-graph
-                            .house_name Дом Мельника
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 10000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 11 чел
-                        .container_footer 
-                            .footer_text 3 изолированные спальни, просторная кухня-гостиная с диваном, санузел
-                            .footer_button забронировать
-                .col-4 
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house3-1.png);background-position: 0px -170px")
-                        .container_info-graph
-                            .house_name Дом Ямщика
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 10000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 14 чел
-                        .container_footer 
-                            .footer_text 3 изолированные спальни, просторная кухня-гостиная с диваном и два санузла
-                            .footer_button забронировать
-                            .row.placement__cantainer_card
-                .col-4(style="margin-top: 41px")
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house4-1.png)")
-                        .container_info-graph
-                            .house_name Дом Охотника
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 25000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 40 чел
-                        .container_footer 
-                            .footer_text Дом полностью + большая веранда или половина дома + кафе и малая веранда
-                            .footer_button забронировать
-                .col-4(style="margin-top: 41px")
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house5-1.png)")
-                        .container_info-graph
-                            .house_name Дом Рыбака
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 5500
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 4 чел
-                        .container_footer 
-                            .footer_text 2 изолированные спальни, просторная кухня-гостиная с диваном и два санузел
-                            .footer_button забронировать
-                .col-4(style="margin-top: 41px; margin-bottom:95px")
-                    .placement__card 
-                        .wrapper_img(style="background-image:url(src/assets/images/house6-1.png);background-position: 0px -114px")
-                        .container_info-graph
-                            .house_name Дом Гончара(1 этаж)
-                            .wrapper_cost_capacity
-                                .house_cost ₽ 5000
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до 6 чел
-                        .container_footer 
-                            .footer_text  изолированные спальни, просторная кухня-гостиная с диваном и санузел
-                            .footer_button забронировать
-    footer.footer
-        .container
-            .footer_container
-                div 2023 @ СТРОГАНОВСКИЕ ПРОСТОРЫ
-                div Пермь. Официальный сайт.
+            booking-house(@selLodge='selLodge')
+    footerComponent
+    Transition(name="modalBottom")
+        div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
+            house-detail(:house="selectLodge" @modalClose="closeModal")
 </template>
 
 <script>
-import { ref, watch } from "vue"
+import { formatNumber } from '../components/formatNumber'
+import { ref, watch, onMounted } from "vue"
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
-
-
-import houseList from '../components/houseList'
+import bookingHouse from "../components/bookingHouse.vue";
+import houseDetail from "../components/houseDetail.vue";
+import footerComponent from "../components/footerComponent.vue";
+// import houseList from '../components/houseList'
 import headerMain from "../components/headerMain.vue";
+import { Lodge } from '../api'
+
 
 export default {
     name: 'house-page',
     components: {
       Swiper,
       SwiperSlide,
-      headerMain
+      headerMain,
+      bookingHouse,
+      houseDetail,
+      footerComponent
     },
     setup () {                
         let selectHouseIndex = ref(0)        
-        let showSliderIcon = ref(true)                   
-        watch(()=>selectHouseIndex.value,()=>{
-            if(selectHouseIndex.value < 0){
-                selectHouseIndex.value = houseList.length - 1
+        let showSliderIcon = ref(true)   
+        let selectLodge = ref({})
+        let isShowModalHouse = ref(false)
+        let selLodge = (lodge) =>{
+            selectLodge.value = lodge
+            isShowModalHouse.value = true
+        }               
+        let houseList = ref([])
+        const getLodgeList = async () => {
+            let tmp = (await Lodge.getList({'avalible': true})).results
+            houseList.value = tmp
+        }
+        const closeModal = () => {
+            document.body.classList.remove('modal-open')
+            isShowModalHouse.value = false
+        }
+        const decSelectHouseIndex = () =>{
+            if(selectHouseIndex.value > 0){
+                selectHouseIndex.value--
+            }else {
+                selectHouseIndex.value = houseList.value.length - 1
             }
-            if(selectHouseIndex.value == houseList.length){
+        }
+        const addSelectHouseIndex = () =>{
+            if(selectHouseIndex.value == houseList.value.length - 1){
                 selectHouseIndex.value = 0
-            }                                 
+            }else{
+                selectHouseIndex.value++
+            }
+        }        
+        onMounted(() => {
+            getLodgeList()
         })             
-        return {
-            showSliderIcon,                
+        return {        
             selectHouseIndex,
             showSliderIcon,
-            houseList 
+            selLodge,
+            houseList,
+            closeModal,
+            isShowModalHouse,
+            selectLodge,
+            formatNumber,
+            decSelectHouseIndex,
+            addSelectHouseIndex
+                      
         }
     }
 }
 </script>
 
 <style>
+.house_point{
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 1px #005D4B solid ;
+    &.active{
+        background-color: #005D4B;
+    }
+    &:hover{
+        cursor: pointer;
+    }
+}
+.modal-mask {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: #ECE8E3;
+    z-index: 200;
+}
+/* HOUSE DETAIL */
+.modalBottom-enter-active {
+    animation: animatebottom 1s;
+}
+
+.modalBottom-leave-active {
+    animation: animatebottom 1s reverse;
+}
+@keyframes animatebottom {
+    from {
+        top: 100%;
+        opacity: 0;
+    }
+
+    to {
+        top: 0%;
+        opacity: 1;
+    }
+}
 /* ANIMATED FOR HOUSECARD */
 .card_house__wrapper{
     position: relative;  
@@ -421,7 +343,7 @@ export default {
     background-position: center;
 }
 .house__name{
-    width: 130px;
+    width: 160px;
     display: flex;
     justify-content: center;
     color: #003731;

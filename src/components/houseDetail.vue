@@ -3,7 +3,7 @@ div
     .container 
         .row.d-flex.justify-content-between.align-items-center(style="padding-top:63px")
             .col-4.house_name {{ house.name }}
-            button.btn_close.d-flex(@click="$emit('modalClose')")        
+            button.btn_close.d-flex(@click="$emit('modalClose'),showSliderIcon = true")        
         .row 
             .col-6
                 .row
@@ -58,7 +58,7 @@ export default {
         SwiperSlide,
     },
     setup() {
-        let showSliderIcon = ref(true)
+        let showSliderIcon = ref(true)        
         return {
             showSliderIcon,
             formatNumber

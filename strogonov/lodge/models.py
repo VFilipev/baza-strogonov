@@ -16,6 +16,7 @@ class Lodge(models.Model):
     description = models.TextField(
                             verbose_name=u'Описание',
                             blank=True,
+                            null=True
                             )    
     short_description = models.TextField(
                             verbose_name=u'Короткое описание',
@@ -25,13 +26,7 @@ class Lodge(models.Model):
     conveniences = models.TextField(
                             verbose_name=u'Удобства',
                             blank=True,
-                            )
-    
-    availability = models.TextField(
-                            verbose_name=u'Удобства',
-                            blank=True,
-                            null=True
-                            )
+                            )    
     
     include = models.TextField(
                             verbose_name=u'Включено в проживание',

@@ -1,6 +1,6 @@
 #! -*- coding=utf-8 -*-
 from django.shortcuts import render
-from lodge.models import Lodge, UslugiGroup, Photogroup, Price, Special_price
+from lodge.models import Lodge, UslugiGroup, Photos, Price, Special_price
 from order.models import Order_lodge
 from . serializers import LodgeSerializer, PriceSerializer, SpecialPriceSerializer
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,7 +13,7 @@ from rest_framework.response import Response
 class LodgeSetFilter(FilterSet):
     class Meta:
         model = Lodge
-        fields = ['name']
+        fields = ['name', 'avalible']
 
 class LodgeViewSet(viewsets.ModelViewSet):
     queryset = Lodge.objects.all()
@@ -33,30 +33,27 @@ class LodgeViewSet(viewsets.ModelViewSet):
         order_list = Order_lodge.objects.all()
         availList = []            
         for l in queryset:
-            order_list_for_l = order_list.filter(lodge=l.id)
+            order_list_for_l = order_list.filter(lodge=l.id, available=True)
             for o in order_list_for_l:                
                 if o.start_date > lastDate.date() or o.end_date < firstDay.date():
                     availList.append(True)
                 else:
                     availList.append(False)
             if all(availList):
-                p = Price.objects.filter(lodge=l.id).values('days', 'cost')
-                tmp = {}
-                for k in p:
-                    for d in k['days']:
-                        if d.isdigit():
-                            tmp[d] = k['cost']    
-                lodge_list.append({
-                    'name':l.name,
-                    'id':l.id,
-                    'description':l.description,
-                    'short_description':l.short_description,
-                    'conveniences':l.conveniences,
-                    'include':l.include,
-                    'img':l.img.url,
-                    'cost_per_unit': l.cost_per_unit,
-                    'price':tmp
-                    }) 
+                # p = Price.objects.filter(lodge=l.id).values('days', 'cost')
+                # tmp = {}
+                # for k in p:
+                #     for d in k['days']:
+                #         if d.isdigit():
+                #             tmp[d] = k['cost'] 
+                serializer = self.get_serializer(l)
+                serializer_lodge = serializer.data
+                # return (Response(serializer.data))                
+                # price_set = Special_price.objects.filter(lodge=l.id).values('name','cost')                
+                # photo_gallery_set = Photos.objects.filter(lodge=l.id).values('img','name')                
+                lodge_list.append(
+                    serializer_lodge
+                    ) 
             availList = []    
         return Response(lodge_list)
     

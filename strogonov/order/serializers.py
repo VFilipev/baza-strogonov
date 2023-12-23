@@ -98,7 +98,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
         from . views import DogovorView2
-        dogovor_pdf = DogovorView2({}, 1)        
+        order = Order.objects.get(pk=1)
+        dogovor_pdf = DogovorView2({}, order)        
         order = {}
         subject = 'Тема письма'
         message = 'Текст сообщения'

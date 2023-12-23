@@ -7,6 +7,9 @@ import vue from '@vitejs/plugin-vue'
 const HOST = 'http://127.0.0.1:8000/'
 // https://vitejs.dev/config/
 export default defineConfig({
+  build:{
+    assetsDir:'static'
+  },
   server: {
     port: 8080,
     proxy: {

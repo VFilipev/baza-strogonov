@@ -9,7 +9,8 @@ div.color_bg
                     .header
                         .row.align-items-center
                             .logo.col-5
-                                img(src="../assets/images/logo.png")
+                                router-link(to="/")
+                                    img(src="../assets/images/logo.png")
                             .header__nav.d-flex.col-3.offset-2
                                 router-link(to="/house", tag="a", class="header__nav__link") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
@@ -19,10 +20,7 @@ div.color_bg
                                 button.header__nav__link.header__nav__button забронировать
                     .row.d-flex.justify-content-between(style="margin-top: 11px")
                         .col-4.first_page__h1 зимние <br> развлечения
-                        .col-4.first_page__h2 {{ photoWinterList[selPhoto].text }} 
-                    .d-flex.container_icon
-                        img.first_page__arrow_icon(src="../assets/images-uslugi/arrow-left.svg" style="position: relative; z-index: 100")
-                        img.first_page__arrow_icon(src="../assets/images-uslugi/arrow-right.svg" style="position: relative; z-index: 100" @click="changeSelPhotoInc") 
+                        .col-4.first_page__h2 {{ photoWinterList[selPhoto].text }}                     
     section.uslugi_list
         .container(style="margin-top:93px; padding-bottom: 95px")
             .row                
@@ -41,10 +39,7 @@ div.color_bg
                         .row.d-flex.justify-content-between(style="margin-top: 0px")
                             .col-4.first_page__h2 {{ photoSummerList[selPhotoSummer].text }} 
                             .col-4
-                                .first_page__h1 летние <br> развлечения
-                                .d-flex.container_icon
-                                    img.first_page__arrow_icon(src="../assets/images-uslugi/arrow-left.svg" style="position: relative; z-index: 100")
-                                    img.first_page__arrow_icon(src="../assets/images-uslugi/arrow-right.svg" style="position: relative; z-index: 100" @click="incSelPhotoSummer") 
+                                .first_page__h1 летние <br> развлечения                                
     section.uslugi_list
         .container(style="margin-top:93px; padding-bottom: 95px")
             .row                
@@ -60,70 +55,33 @@ div.color_bg
             .row(style="padding-bottom: 94px") 
                 .col-6
                     p.service__name_typ Активный отдых                    
-                    .service__item 
-                        .service__name настольный теннис
-                        .service__cost 200
-                    .service__item 
-                        .service__name прокат лыж (1 час)
-                        .service__cost 150
-                    .service__item 
-                        .service__name входной билет
-                        .service__cost 250
-                    .service__item 
-                        .service__name аренда квадроцикла (30 мин)
-                        .service__cost 1600
-                    .service__item
-                        .service__name аренда квадроцикла (1 час)
-                        .service__cost 3200
-                    .service__item
-                        .service__name аренда снегохода (30 мин)
-                        .service__cost 1600
-                    .service__item
-                        .service__name аренда снегохода (1 час)
-                        .service__cost 3200
-                    .service__item
-                        .service__name доплата за пассажира
-                        .service__cost 20%
-                    .service__item
-                        .service__name прицепные санки к снегоходу (не более 4-х человек)
-                        .service__cost 40%
+                    .service__item(v-for="item in recreation")
+                        .service__name {{ item.name }}
+                        .service__cost {{ item.cost }}                    
                 .col-6
                     p Банные процедуры
-                    .service__item 
-                        .service__name баня на дровах (2 часа/пихтовый веник/травяной чай)
-                        .service__cost 2400
-                    .service__item
-                        .service__name веник берёзовый
-                        .service__cost 150
-                    .service__item
-                        .service__name банное полотенце
-                        .service__cost 50
-                    .service__item
-                        .service__name халат
-                        .service__cost 150
-                    .service__item
-                        .service__name тапочки
-                        .service__cost 50
-                    .service__item
-                        .service__name чан (2 часа до 6 человек)
-                        .service__cost 3000
-    footer.footer
-        .container
-            .footer_container
-                div 2023 @ СТРОГАНОВСКИЕ ПРОСТОРЫ
-                div Пермь. Официальный сайт.
+                    .service__item(v-for="item in bathProcedures") 
+                        .service__name {{ item.name }}
+                        .service__cost {{ item.cost }}    
+    footerComponent
 </template>
 
 <script>
 import { ref, onMounted } from "vue"
+import footerComponent from "../components/footerComponent.vue"
+import { recreation, bathProcedures } from "../components/serviceList";
+
 export default {
     name: 'uslugi-page',
+    components: {
+        footerComponent
+    },
     setup() {
         const photoWinterList = [
             {photo: 'src/assets/images-uslugi/main-page-1.png',
             text: 'по заснеженным полям тут и там: получите незабываемые впечатления от зимнего катания — аренда снегохода от 30 минут'
             },
-            {photo: 'src/assets/images-uslugi/main-page-2.png',
+            {photo: 'src/assets/images-uslugi/main-page-7.png',
             text: 'чан — идеальный вариант для расслабления и рефреша в сердце природы после трудовых будней'
             },
             {photo: 'src/assets/images-uslugi/main-page-3.png',
@@ -222,7 +180,9 @@ export default {
             selPhotoSummer,
             photoSummerList,
             incSelPhotoSummer,
-            uslugiSummerList
+            uslugiSummerList,
+            recreation, 
+            bathProcedures
         }
     }
 }
@@ -241,7 +201,7 @@ export default {
     bottom: 100px;
 }
 .container__second_page{
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
     position: relative;
 }
@@ -281,8 +241,8 @@ a.header__nav__link {
     margin-bottom: 481px;
 }
 .container__first_page {
-height: 100vh;
-width: 100%;
+min-height: 100vh;
+min-width: 100%;
 position: relative;
 }
 .overlay {

@@ -16,9 +16,10 @@ div
                                 router-link(to="/house", tag="a", class="header__nav__link") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
                             .header__nav.d-flex.col-2     
-                                a(href="tel:+79026439294")                       
+                                a(@click="toRefContact" style="cursor:pointer")                       
                                     img(src='../assets/images/telefon.svg')
-                                button.header__nav__link.header__nav__button забронировать
+                                button.header__nav__button 
+                                    a(@click="toRefBooking") забронировать
                     .row.d-flex.justify-content-between
                         .first_page__h1.col-4 уютные коттеджи 
                             |и глемпинг хвойном лесу
@@ -68,7 +69,7 @@ div
                         |и уединении с ней, комфорте, развлечениях и релаксе, а также о драгоценном времени, проведённом друг с другом
                 .col-4.offset-1 
                     .about_us__wrapper_img                     
-    section.placement 
+    section.placement(id="booking")
         .container           
             h4.about_us__header размещение
             .placement__form.row
@@ -108,9 +109,9 @@ div
                                     .checkbox-icon(v-if="filter.isGlamping")
                                         img(src="../assets/images/checkbox.svg")
                         span.checkbox__label(:class="{ active: filter.isGlamping == true}") глэмпинг                    
-                button.placement__form__button_search(@click="getAvailableHouse") найти
+                button.placement__form__button_search(@click="getAvailableLodge") найти
             .row.placement__cantainer_card
-                .col-4(v-for="(house, index) in houseList2")
+                .col-4(v-for="(house, index) in houseList")
                     .placement__card 
                         .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
                             .btn_house_detail(@click="showModalHouse(house)")
@@ -132,53 +133,14 @@ div
             .row(style="padding-bottom: 94px") 
                 .col-6
                     p.service__name_typ Активный отдых                    
-                    .service__item 
-                        .service__name настольный теннис
-                        .service__cost 200
-                    .service__item 
-                        .service__name прокат лыж (1 час)
-                        .service__cost 150
-                    .service__item 
-                        .service__name входной билет
-                        .service__cost 250
-                    .service__item 
-                        .service__name аренда квадроцикла (30 мин)
-                        .service__cost 1600
-                    .service__item
-                        .service__name аренда квадроцикла (1 час)
-                        .service__cost 3200
-                    .service__item
-                        .service__name аренда снегохода (30 мин)
-                        .service__cost 1600
-                    .service__item
-                        .service__name аренда снегохода (1 час)
-                        .service__cost 3200
-                    .service__item
-                        .service__name доплата за пассажира
-                        .service__cost 20%
-                    .service__item
-                        .service__name прицепные санки к снегоходу (не более 4-х человек)
-                        .service__cost 40%
+                    .service__item(v-for="item in recreation")
+                        .service__name {{ item.name }}
+                        .service__cost {{ item.cost }}                    
                 .col-6
                     p Банные процедуры
-                    .service__item 
-                        .service__name баня на дровах (2 часа/пихтовый веник/травяной чай)
-                        .service__cost 2400
-                    .service__item
-                        .service__name веник берёзовый
-                        .service__cost 150
-                    .service__item
-                        .service__name банное полотенце
-                        .service__cost 50
-                    .service__item
-                        .service__name халат
-                        .service__cost 150
-                    .service__item
-                        .service__name тапочки
-                        .service__cost 50
-                    .service__item
-                        .service__name чан (2 часа до 6 человек)
-                        .service__cost 3000
+                    .service__item(v-for="item in bathProcedures") 
+                        .service__name {{ item.name }}
+                        .service__cost {{ item.cost }}                              
     section.feedback_section(style="height: 1080px")
         .container
             .section_header ваши отзывы
@@ -190,7 +152,7 @@ div
                                 img(:src="comment.img")
                             .card__user_container
                                 .card__user_name {{ comment.user_name }}
-                                star-rating(:star-size="13" :rating="comment.rating" :show-rating="false")                                
+                                star-rating(:star-size="13" :readOnly="true" :rating="comment.rating" :show-rating="false")                                
                         .card__body
                             p.card__text(:class="{'text_black' : isEval(index + 1)}") {{ comment.text }}
                 .col-3
@@ -221,7 +183,8 @@ div
                         .attention__header Внимание!
                         .attention__text в связи с ремонтными работами путь 
                             |к нашей базе теперь пролегает через село Мироны.
-                    .info__button построить маршрут
+                    button.info__button 
+                        a(href="https://yandex.ru/maps/-/CDq0rB9Q" target="_blank") построить маршрут
     section.faq__section
         .container
             .section_header FAQ - часто задаваемые вопросы
@@ -240,7 +203,7 @@ div
                     .faq__questions Можно ли со своим питомцем?
                     .faq__reply У нас разрешено проживать со своим питомцем, 
                         |однако существуют некоторые ограничения по размеру, породе или числу питомцев, а также важно наличие прививочных сертификатов и соблюдение правил поведения.
-    section.contact__section 
+    section.contact__section(id="contact") 
         .container 
             .section_header контакты
             .row.contact__container
@@ -264,47 +227,7 @@ div
                         .form__label Номер телефона или адрес электронной почты, куда направить ответ:
                         input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px" name="contact_form")
                         button.contact__button отправить 
-    footer.footer
-        .container
-            .row(style="padding-top:32px") 
-                .col-2
-                    ul.footer__item
-                        li.footer__item_bold размещение и проживание 
-                        li дома 
-                        li активный отдых и услуги 
-                        li главная страница 
-                .col-2
-                    ul.footer__item
-                        li.footer__item_bold расчётные часы
-                        li время заезда: с 15:00  
-                        li время выезда: до 13:00                        
-                .col-2
-                    ul.footer__item
-                        li.footer__item_bold адрес
-                        li.footer__item_line-height Пермский край, Ильинский район, п. Ильинский, с. Дмитриевское                         
-                .col-2
-                    ul.footer__item
-                        li.footer__item_bold контакты
-                        li +7 (902) 643-92-94 
-                        li +7 (342) 288-00-89 
-                        li stroganovprostor@gmail.com                
-                .col-2
-                    ul.footer__item
-                        li.footer__item_bold правовые документы
-                        li.footer__item_line-height Согласие на обработку персональных данных  
-                        li Политика конфиденциальности
-                .col-2.d-flex.justify-content-end                    
-                    ul.footer__item
-                        li.footer__item_bold мы в соцсетях
-                        li
-                            .d-flex.gap-2
-                                a(href="https://vk.com/stroganovskie_prostory" target="_blank")
-                                    img.footer__link(src="../assets/images/icon-vk.svg")                        
-                                a(href="https://t.me/stroganovskie_prostory" target="_blank")
-                                    img.footer__link(src="../assets/images/icon-telegram.svg")                        
-            .d-flex.justify-content-between.pb-3(style="margin-top: 50px")
-                div 2023 @ СТРОГАНОВСКИЕ ПРОСТОРЫ
-                div Пермь. Официальный сайт.
+    footerComponent
     Transition(name="modalBottom")
         div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
             house-detail(:house="selectedHouse" @modalClose="closeModal")
@@ -322,11 +245,12 @@ import 'v-calendar/style.css';
 import StarRating from 'vue-star-rating'
 
 import houseDetail from "../components/houseDetail.vue";
-
+import footerComponent from "../components/footerComponent.vue";
 import { useRouter } from 'vue-router'
 import { useOrderStore } from "../stores/orderStore";
 
 import { Lodge, Comment } from '../api'
+import { recreation, bathProcedures } from "../components/serviceList";
 import moment from "moment";
 export default {
 
@@ -336,15 +260,14 @@ export default {
         DatePicker,
         StarRating,
         houseDetail,
-        headerSticky
+        headerSticky,
+        footerComponent
     },
     setup() {        
         const orderStore = useOrderStore()
         const router = useRouter()
 
-        let toBooking = (lodge) => {
-            // const input = document.getElementById('inputDateStart')
-            // input.focus()
+        let toBooking = (lodge) => {            
             if (orderStore.orderlodge_set.length > 0){
                 orderStore.orderlodge_set = []
             }
@@ -359,9 +282,9 @@ export default {
             })
         }
         const photoList = [
-            'src/assets/images/main-page-winter.png',
-            'src/assets/images/main-page-winter2-source.png',
-            'src/assets/images/main-page-winter3-source.png',
+            '/static/main-page-winter.png',
+            '/static/main-page-winter2-source.png',
+            '/static/main-page-winter3-source.png',
         ]
         let datePicker = ref({
             dateStart: false,
@@ -465,12 +388,12 @@ export default {
             
             
         }
-        let houseList2 = ref([])
-        const getAvailableHouse = async () => {
+        let houseList = ref([])
+        const getAvailableLodge = async () => {
             let start = moment(filter.value.dateStart).format('DD.MM.YYYY')
             let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')
             let tmp = (await Lodge.get_available_house({ 'date_start': start, 'date_end': end })).data
-            houseList2.value = tmp
+            houseList.value = tmp
         }
         let selectedHouse = ref({})
         let isShowModalHouse = ref(false)
@@ -484,8 +407,8 @@ export default {
             isShowModalHouse.value = false
         }
         const getLodgeList = async () => {
-            let tmp = (await Lodge.getList()).results
-            houseList2.value = tmp
+            let tmp = (await Lodge.getList({'avalible': true})).results
+            houseList.value = tmp
         }
         const commentList = ref([])
         const getComment = async() => {
@@ -496,6 +419,14 @@ export default {
                 console.log(index % 2 == 0);
                 return true
             }
+        }
+        const toRefBooking = () => {
+            const el = document.getElementById('booking')
+            el.scrollIntoView({ behavior: 'smooth' })
+        }
+        const toRefContact = () => {
+            const el = document.getElementById('contact')
+            el.scrollIntoView({ behavior: 'smooth' })
         }
         watch(() => filter.value.dateStart, () => {
             datePicker.value.dateStart = false
@@ -531,17 +462,21 @@ export default {
             isCreateFeedBack,
             saveFeedBack,
             setRating,
-            houseList2,
+            houseList,
             selectedHouse,
             showModalHouse,
             closeModal,
             isShowModalHouse,
-            getAvailableHouse,
+            getAvailableLodge,
             toBooking,
             formatNumber,  
             getComment,
             commentList,
-            isEval         
+            isEval,
+            recreation,
+            bathProcedures,
+            toRefBooking,
+            toRefContact
         }
     }
 }
@@ -549,6 +484,14 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+section.placement:before {
+  display: block;
+  content: " ";
+  margin-top: -100px;
+  height: 100px;
+  visibility: hidden;
+}
 
 p.card__text.text_black{
     color: #000;
@@ -1055,19 +998,22 @@ ul {
     letter-spacing: 2px;
 }
 
-.header__nav__button {
+button.header__nav__button {
     background-color: transparent;
     border: 1px solid #fff;
     color: #fff;
     border-radius: 35px;
     transition: background-color 0.4s ease-in-out, border 250ms ease-in-out;
-
+    text-decoration: none;
     &:hover {
         background-color: #003731;
         border: 1px solid transparent
-    }
+    } 
 }
-
+button.header__nav__button a{
+    color: #fff;
+    text-decoration: none;
+}
 
 
 .overlay {
@@ -1296,7 +1242,7 @@ input.card__input_user_name:focus-visible {
     margin-top: 36px;
 }
 
-.info__button {
+button.info__button {
     width: 220px;
     border: 1px #005D4B solid;
     border-radius: 35px;
@@ -1307,8 +1253,12 @@ input.card__input_user_name:focus-visible {
     color: #005D4B;
     padding: 12px 30px;
     margin-top: 43px;
+    cursor: default;
 }
-
+button.info__button a{
+    text-decoration: none;
+    color: #005D4B;
+}
 .container_questions {
     margin-top: 61px;
     margin-bottom: 179px;

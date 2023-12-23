@@ -82,7 +82,7 @@ class Order(models.Model):
 
 class Service(models.Model):
     order = models.ForeignKey(Order,
-                              verbose_name='Сауна',
+                            #   verbose_name='Сауна',
                               on_delete = models.CASCADE,
                               null = True,
                               blank = True,
@@ -97,6 +97,7 @@ class Service(models.Model):
                                         blank = True)
     end_date = models.DateTimeField(null = True,
                                     blank = True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     def __str__(self):
         return self.name

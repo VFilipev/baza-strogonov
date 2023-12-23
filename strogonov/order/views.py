@@ -3,7 +3,8 @@ locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 import datetime as dt
 from django.urls import reverse
 from . models import Order, Order_lodge, Product, Uslugi, Service
-
+# from django.db.models import Sum
+import decimal
 try:
     import StringIO
 except:
@@ -93,8 +94,7 @@ class Order_lodgeViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend,]
     filterset_class  = Order_lodgeSetFilter
 
-def DogovorView2(request,pk):
-    order = Order.objects.get(pk=pk)
+def DogovorView2(request,order):    
     steam = BytesIO()
     if order.ul:
         doc = DocxTemplate('ul.docx')
@@ -102,6 +102,8 @@ def DogovorView2(request,pk):
         doc = DocxTemplate('fl.docx')
 
     lodge_list=[]
+    service_list = []
+    total_cost = 0
     for lodge in  order.order_lodge_set.all():
         lodge_list.append({'name':lodge.lodge.name,
                            'id':lodge.lodge.id,
@@ -109,6 +111,15 @@ def DogovorView2(request,pk):
                            'cost':lodge.cost,
                            'start': lodge.start_date.strftime(u'%d %B  %Y'),
                            'end':lodge.end_date.strftime(u'%d %B %Y')})
+        total_cost += decimal.Decimal(lodge.cost)
+    for service in  order.services.all():
+        service_list.append({
+            'name': service.get_name_display(),
+            'cost': service.cost,
+            'start_date': service.start_date.strftime(u'%d %B %Y %H:%M'),
+            'end_date': service.end_date.strftime(u'%d %B %Y %H:%M'),
+        })
+        total_cost += service.cost
     context = {'company_name' : u"Строгановские просторы",
                'pasport': R(order.pasport),
                'addres':order.addres,
@@ -120,6 +131,8 @@ def DogovorView2(request,pk):
                'number':order.number,
                'facimile':order.facimile,
                'lodge_list':lodge_list,
+               'service_list':service_list,
+               'total_cost': total_cost,
             #    'cost':u'%.0f' %order.get_cost(),
             #    'cost_avans':u'%.0f' %(order.get_cost()/2),
             #    'text_cost_avans':(order.get_text_cost_avans()),

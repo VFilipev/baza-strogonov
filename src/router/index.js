@@ -6,8 +6,18 @@ import UslugiPage from '../views/UslugiPage.vue'
 import HousePage from '../views/HousePage.vue'
 import sandBox from '../components/sandBox.vue'
 
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    if (to.hash) {
+      return {
+        selector: to.hash,
+        behavior: 'smooth',
+      }
+    }
+  },
   routes: [
     {
       path: '/',
