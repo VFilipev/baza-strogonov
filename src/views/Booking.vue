@@ -191,7 +191,8 @@ export default {
           }
           else{
             let indexOfWeek = moment(dayOrder, 'DD-MM-YYYY').isoWeekday()
-            totalPrice += orderStore.orderlodge_set[0].lodge.price[indexOfWeek]
+            console.log(orderStore.orderlodge_set[0].lodge.price_set);
+            totalPrice += orderStore.orderlodge_set[0].lodge.price_set[indexOfWeek]
           }
         }
       }

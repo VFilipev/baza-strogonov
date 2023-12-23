@@ -40,19 +40,21 @@ class LodgeViewSet(viewsets.ModelViewSet):
                 else:
                     availList.append(False)
             if all(availList):
-                # p = Price.objects.filter(lodge=l.id).values('days', 'cost')
-                # tmp = {}
-                # for k in p:
-                #     for d in k['days']:
-                #         if d.isdigit():
-                #             tmp[d] = k['cost'] 
+                p = Price.objects.filter(lodge=l.id).values('days', 'cost')
+                tmp = {}
+                for k in p:
+                    for d in k['days']:
+                        if d.isdigit():
+                            tmp[d] = k['cost'] 
                 serializer = self.get_serializer(l)
                 serializer_lodge = serializer.data
                 # return (Response(serializer.data))                
                 # price_set = Special_price.objects.filter(lodge=l.id).values('name','cost')                
                 # photo_gallery_set = Photos.objects.filter(lodge=l.id).values('img','name')                
+                house = serializer_lodge
+                house['price_set'] = tmp
                 lodge_list.append(
-                    serializer_lodge
+                    house
                     ) 
             availList = []    
         return Response(lodge_list)
