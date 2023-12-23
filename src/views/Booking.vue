@@ -130,19 +130,15 @@ div.container
         .d-flex.justify-content-between(style="width: 500px")
           .order_item__cost {{ service.cost }}
           .order_item__duration {{ getDuration(service) }}
-          .order_item__date {{ parserDate(service.start_date) }}
-    //- div {{ totalCost }}
+          .order_item__date {{ parserDate(service.start_date) }}    
   section.confirm(style="margin-top:25px; height: 1080px" )
     div.d-flex.justify-content-between  
       .confirm__checkbox-wrapper
         .confirm__checkbox
           .confirm__checkbox-box-wrapper 
-            .confirm__checkbox-box(@click="isConfirm = !isConfirm" :class="{icon_check : isConfirm}")
-              //- .confirm__checkbox-icon(v-if="filter.isHouse")
-              //-     img(src="../assets/images/checkbox.svg")
+            .confirm__checkbox-box(@click="isConfirm = !isConfirm" :class="{icon_check : isConfirm}")              
         span.confirm__checkbox__label Я согласен с условиями <a style="color:#005D4B" href="./src/assets/politica.pdf" target="_blank"> политики конфиденциальности</a> и даю разрешение на обработку персональных данных    
-      button.confirm__btn(:disabled="!isConfirm" @click="toBooking") забронировать
-  div {{ orderStore }}
+      button.confirm__btn(:disabled="!isConfirm" @click="toBooking") забронировать  
 
 
 </template>
@@ -159,7 +155,7 @@ import { useOrderStore } from '../stores/orderStore'
 
 import { useRouter } from 'vue-router'
 
-import { Service, Order, SpecialPrice } from '../api'
+import { Service, SpecialPrice } from '../api'
 
 export default {
   name: 'booking',
