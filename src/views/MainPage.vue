@@ -5,7 +5,10 @@ div
         .first_page__wrapper
             .overlay
             template(v-for="(photo, index) in photoList" ) 
-                img.photo(:src="photo" :class="{ active : index == selPhoto }")                
+                picture.photo(:class="{ active : index == selPhoto }")
+                    source(type="image/webp" :srcset="photo['webp']")
+                    source(type="image/png" :srcset="photo['png']")
+                    img(:src="photo['png']")                
             .first_page__wrapper_content
                 .container
                     .first_page__header
@@ -36,7 +39,7 @@ div
             .row.align-items-center(style="margin-bottom: 47px")
                 .col-6
                     .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
-                        .about_us__card__header комфорт
+                        .about_us__card__header комфорт                        
                         img.about_us__card__img(src="../assets/images/i-m-yoga.svg")
                     .about_us__card__text высокий уровень обслуживания <br>
                         |и внимание к деталям: сотрудники клуба <br> стремятся удовлетворить все потребности <br> и пожелания гостей,
@@ -84,11 +87,17 @@ div
                     img.about_us__card__img(src="../assets/images/bed.svg")
                     .about_us__card__header Уют
                     .about_us__card__text проживание в просторных и уютных <br> домиках, которые оборудованы всем <br> необходимым для идеального отдыха
-                .col-4.offset-1 
-                    img(src="../assets/images/about-as-winter-1.png" style="border-radius: 30px")
+                .col-4.offset-1
+                    picture
+                        source(type="image/webp" srcset="../assets/images/about-as-winter-1.webp")
+                        source(type="image/png" srcset="../assets/images/about-as-winter-1.png")
+                        img(src="../assets/images/about-as-winter-1.png" style="border-radius: 30px")
             .row.about_as__container_row
                 .col-4 
-                    img(src="../assets/images/about-as-winter-2.png" style="border-radius: 30px")
+                    picture
+                        source(type="image/webp" srcset="../assets/images/about-as-winter-2.webp")
+                        source(type="image/png" srcset="../assets/images/about-as-winter-2.png")
+                        img(src="../assets/images/about-as-winter-2.png" style="border-radius: 30px")
                 .about_us__card_container.col-3   
                     img.about_us__card__img(src="../assets/images/uslugi.svg")
                     .about_us__card__header Услуги
@@ -110,7 +119,11 @@ div
                     .about_us__card__text отдых в Строгановских Просторах оставит множество положительных впечатлений: об уникальной природе, спокойствии 
                         |и уединении с ней, комфорте, развлечениях и релаксе, а также о драгоценном времени, проведённом друг с другом
                 .col-4.offset-1 
-                    .about_us__wrapper_img                     
+                    .about_us__wrapper_img 
+                        picture
+                            source(type="image/webp" srcset="../assets/images/diana.webp")
+                            source(type="image/jpeg" srcset="../assets/images/diana.jpeg")
+                            img(src="../assets/images/diana.jpeg" alt="")
     section.placement(id="booking")
         .container           
             h4.about_us__header размещение
@@ -124,7 +137,7 @@ div
                     DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
                         template(#default="{ inputValue, inputEvents }")                        
                             input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input-m") 
-            
+
                 .col-4
                     .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
                         .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
@@ -197,7 +210,11 @@ div
             .row.placement__cantainer_card
                 .col-xs-12.col-sm-4(v-for="(house, index) in houseList")
                     .placement__card 
+                        //- .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
                         .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
+                            picture
+                                source(type="image/webp" :srcset="house.img")
+                                img(:src="house.img")
                             //- .btn_house_detail(@click="showModalHouse(house)")
                         .container_info-graph
                             .house_name {{ house.name }}
@@ -272,9 +289,12 @@ div
                     .map_wrapper
                         button.info__button 
                             a(href="https://yandex.ru/maps/-/CDq0rB9Q" target="_blank") построить маршрут
-                    
+
             .container_map.d-none.d-sm-flex
-                img(src="../assets/images/map.jpg")
+                picture
+                    source(type="image/webp" srcset="../assets/images/map.webp")
+                    source(type="image/jpg" srcset="../assets/images/map.jpg")
+                    img(src="../assets/images/map.jpg")
                 .container_map_info
                     .info_header как добраться
                     .container_adress 
@@ -331,10 +351,10 @@ div
                 //-         .form__label Номер телефона или адрес электронной почты, куда направить ответ:
                 //-         input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px" name="contact_form")
                 //-         button.contact__button отправить 
-    //- footerComponent
-    //- Transition(name="modalBottom")
-    //-     div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
-    //-         house-detail(:house="selectedHouse" @modalClose="closeModal")
+                //- footerComponent
+                //- Transition(name="modalBottom")
+                //-     div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
+                //-         house-detail(:house="selectedHouse" @modalClose="closeModal")
 
 </template>
 
@@ -367,12 +387,12 @@ export default {
         // headerSticky,
         // footerComponent
     },
-    setup() {        
+    setup() {
         const orderStore = useOrderStore()
         const router = useRouter()
 
-        let toBooking = (lodge) => {            
-            if (orderStore.orderlodge_set.length > 0){
+        let toBooking = (lodge) => {
+            if (orderStore.orderlodge_set.length > 0) {
                 orderStore.orderlodge_set = []
             }
             let tmp = {
@@ -380,15 +400,24 @@ export default {
                 start_date: filter.value.dateStart,
                 end_date: filter.value.dateEnd,
             }
-            orderStore.orderlodge_set.push(tmp)            
+            orderStore.orderlodge_set.push(tmp)
             router.push({
                 name: 'booking',
             })
         }
         const photoList = [
-            'src/assets/images/main-page-winter.png',
-            'src/assets/images/main-page-winter2-source.png',
-            'src/assets/images/main-page-winter3-source.png',
+            {
+                webp: 'src/assets/images/main-page-winter.webp',
+                png: 'src/assets/images/main-page-winter.png'
+            },
+            {
+                webp: 'src/assets/images/main-page-winter2-source.webp',
+                png: 'src/assets/images/main-page-winter2-source.png'
+            },
+            {
+                webp: 'src/assets/images/main-page-winter3-source.webp',
+                png: 'src/assets/images/main-page-winter3-source.png'
+            },            
         ]
         let datePicker = ref({
             dateStart: false,
@@ -468,29 +497,29 @@ export default {
         const validateFeedBack = () => {
             if (feedback.value.userName && feedback.value.text && feedback.value.rating) {
                 isCreateFeedBack.value = true
-            }else{
+            } else {
                 return false
             }
-            
+
         }
-        const saveFeedBack = async() => {
+        const saveFeedBack = async () => {
             validateFeedBack()
-            if(feedback.value.userPhoto){
+            if (feedback.value.userPhoto) {
                 let formData = new FormData();
                 formData.append('user_name', feedback.value.userName)
                 formData.append('rating', feedback.value.rating)
                 formData.append('img', feedback.value.userPhoto)
                 formData.append('text', feedback.value.text)
                 await Comment.save(formData)
-            }else{
+            } else {
                 let tmp = {}
                 tmp.user_name = feedback.value.userName
                 tmp.rating = feedback.value.rating
                 tmp.text = feedback.value.text
                 await Comment.save(tmp)
             }
-            
-            
+
+
         }
         let houseList = ref([])
         const getAvailableLodge = async () => {
@@ -511,12 +540,12 @@ export default {
             isShowModalHouse.value = false
         }
         const getLodgeList = async () => {
-            let tmp = (await Lodge.getList({'avalible': true})).results
+            let tmp = (await Lodge.getList({ 'avalible': true })).results
             houseList.value = tmp
         }
         const commentList = ref([])
-        const getComment = async() => {
-            commentList.value = (await Comment.getList({'avalible': true})).results
+        const getComment = async () => {
+            commentList.value = (await Comment.getList({ 'avalible': true })).results
         }
         const isEval = (index) => {
             if (index % 2 == 0) {
@@ -573,7 +602,7 @@ export default {
             isShowModalHouse,
             getAvailableLodge,
             toBooking,
-            formatNumber,  
+            formatNumber,
             getComment,
             commentList,
             isEval,
@@ -589,24 +618,36 @@ export default {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
-.first_page__header{
+picture {
+  width: 100%;
+  height: 100%;
+  display: flex;
+ 
+}
+picture img {
+ object-fit: cover; 
+    height: auto;
+    width:100%;
+}
+
+.first_page__header {
     padding-top: 42px;
     margin-bottom: 384px;
 }
 
 section.placement:before {
-  display: block;
-  content: " ";
-  margin-top: -100px;
-  height: 100px;
-  visibility: hidden;
+    display: block;
+    content: " ";
+    margin-top: -100px;
+    height: 100px;
+    visibility: hidden;
 }
 
-p.card__text.text_black{
+p.card__text.text_black {
     color: #000;
 }
 
-.card.feedback_card_background{
+.card.feedback_card_background {
     background-color: #F5F3F1;
 }
 
@@ -907,10 +948,13 @@ a.header__nav__link:after {
     border-radius: 30px;
     width: 400px;
     height: 248px;
-    background-repeat: no-repeat;
+    /* background-repeat: no-repeat;
     background-size: cover;
-    background-position: center;
+    background-position: center; */
     position: relative;
+}
+.wrapper_img picture img{
+    border-radius: 30px;
 }
 
 .placement__cantainer_card {
@@ -1050,16 +1094,18 @@ ul {
     padding-left: 0;
 }
 
-.about_us__wrapper_img{
+.about_us__wrapper_img {
     width: 400px;
     height: 272px;
-    border-radius: 30px;
-    background-image: url(../assets/images/diana.jpeg);
+    /* background-image: url(../assets/images/diana.jpeg);
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: 0px -135px;
+    background-position: 0px -135px; */
 }
-
+.about_us__wrapper_img picture img{
+    border-radius: 30px;
+    object-position: 0px -135px;
+}
 .about_as__container_row {
     margin-bottom: 32px;
 }
@@ -1114,12 +1160,14 @@ button.header__nav__button {
     border-radius: 35px;
     transition: background-color 0.4s ease-in-out, border 250ms ease-in-out;
     text-decoration: none;
+
     &:hover {
         background-color: #003731;
         border: 1px solid transparent
-    } 
+    }
 }
-button.header__nav__button a{
+
+button.header__nav__button a {
     color: #fff;
     text-decoration: none;
 }
@@ -1146,7 +1194,7 @@ button.header__nav__button a{
     position: relative;
 }
 
-img.photo {
+picture.photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1157,7 +1205,7 @@ img.photo {
     transition: opacity .8s ease-in-out;
 }
 
-img.photo.active {
+picture.photo.active {
     opacity: 1;
 }
 
@@ -1318,6 +1366,7 @@ input.card__input_user_name:focus-visible {
     margin-top: 183px;
     width: 840px;
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: 41px;
     margin-bottom: 183px;
@@ -1364,10 +1413,12 @@ button.info__button {
     margin-top: 43px;
     cursor: default;
 }
-button.info__button a{
+
+button.info__button a {
     text-decoration: none;
     color: #005D4B;
 }
+
 .container_questions {
     margin-top: 61px;
     margin-bottom: 179px;
@@ -1542,341 +1593,416 @@ li.footer__item_line-height {
     cursor: pointer;
 }
 
-@media (min-width: 1200px) { 
-.first_page__header{
-    margin-bottom: 200px;
-}
-}
-@media (max-width: 1200px) { 
-.first_page__header{
-    margin-bottom: 200px;
-}
+@media (min-width: 1200px) {
+    .first_page__header {
+        margin-bottom: 200px;
+    }
 }
 
-@media (max-width: 1440px) { 
-.first_page__header{
-    margin-bottom: 320px;
-}
-.first_page__h1{
-    font-size: 25px;
-    margin-bottom: 32px;
-}
-.first_page__h2{
-    font-size: 15px;
-}
-img.logo{
-    width: 80%;
-    display: block;
-    margin: 0 auto;
-}
-.header__nav__link{
-    font-size: 15px;
-}
-button.header__nav__button a{
-    font-size: 15px;
-}
-.about_us{
-    padding-top: 34px;
-    padding-bottom: 47px;
-}
-.about_us__header{
-    font-weight: 400;
-    font-size: 23px;
-    line-height: 27px;
-    margin-bottom: 21px;
-}
-.about_us__card__header{
-    font-weight: 400;
-    margin-bottom: 0;
-    font-size: 10px;
-}
-.about_us__card__text{
-    font-size: 8px;
-}
-.about_us__card__img{
-    height: 12px;
-    margin-bottom: -4px;
-}
-.about_us__wrapper_img{
-    width: 100%;
-    height: 126px;
-    background-position: 0px -70px;
-}
-.about_us__wrapper_img-1{
-    width: 100%;
-    height: 126px;    
-    border-radius: 15px;
-    background-image: url(../assets/images/about-us-mb-1.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-.about_us__wrapper_img-2{
-    width: 100%;
-    height: 126px;    
-    border-radius: 15px;
-    background-image: url(../assets/images/about-us-mb-2.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    /* background-position: 0px -110px; */
-}
-.about_us__wrapper_img-3{
-    width: 100%;
-    height: 126px;    
-    border-radius: 15px;
-    background-image: url(../assets/images/about-as-winter-1.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    /* background-position: 0px -110px; */
-}
-.about_us__wrapper_img-4{
-    width: 100%;
-    height: 126px;    
-    border-radius: 15px;
-    background-image: url(../assets/images/about-as-winter-3.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    /* background-position: 0px -110px; */
-}
-.container {
-    padding-right: calc(var(--bs-gutter-x) * 0.5);
-    padding-left: calc(var(--bs-gutter-x) * 0.5);
-}
-.placement{
-    padding-top: 35px;
-}
-.date_time__input{
-    width: 100%;
-    height: 27px;
-    font-size: 10px;
-    font-family: Lato;
-    font-weight: 300;
-    padding-left: 17px;
-}
-.date_time__text::after{
-    font-size: 10px;
-    content: 'дата заезда';
-    transform: translateY(-35px);
-}
-.date_time_end__text::after{
-    font-size: 10px;
-    content: 'дата выезда';
-    transform: translateY(-35px);
-}
-.date_time__icon::before{
-    left: 170px;
-    content: url(/src/assets/images/i-m-calendar.svg);
-}
-.quantity_guests{
-    width: 100%;
-}
-.quantity_guests__text::before{
-    transform: translate(-5px, -9px);
-    font-size: 10px;
-}
-.input_number_wrapper{
-    width: 100%;
-    height: 27px;
-}
-.input_number__in{
-    width: 52px;
-    height: 20px;
-}
-.checkbox_container{
-    width: 100%;
-    margin-left: 0;    
-}
-.checkbox__header{
-    font-size: 10px;
-    margin-bottom: 0;
-}
-.checkbox{
-    width: 16px;
-    height: 16px;
-}
-.checkbox-box-wrapper{
-    width: 16px;
-    height: 16px;
-}
-.checkbox-box{
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-}
-.checkbox__label{
-    font-size: 10px;
-}
-.placement__form__button_search{
-    width: 100%;
-    margin-left: 0;
-}
-.checkbox-icon{
-    width: 16px;
-    height: 16px;
-}
-.checkbox-icon img{
-    width: 80%;
-}
-.placement__card{
-    width: 100%;
-}
-.wrapper_img{
-    width: 100%;
-}
-.card__input{
-    width: 100%;
-}
-.card{
-    border-radius: 15px;
-    padding: 7px 7px;
-    height: 200px;
-}
-.card__header{
-    width: 100%;
-    border-radius: 15px;
-    margin: 0;
-    height: 40px;
-}
-.card__input_user_name{
-    width: 99%;
-    color: black;
-    font-size: 10px;
-    font-family: Lato;
-    font-weight: 400;
-}
-.card__user_photo-form{
-    margin-left: 6px;
-    height: 25px;
-    width: 25px;
-}
-.input-file span{
-    height: 25px;
-    padding: 0px 13px;
-    background-size: 52%;
-    transform: translateY(-2px);
-}
-.card__user_name{
-    display: flex;
-    align-items: center;
-}
-.card__body.card_form{
-    margin-right: 0;
-    align-items: center;
-}
-.card__body{
-    margin-left: 0;
-}
-.card_button{
-    width: 130px;
-    height: 25px;
-    font-size: 14px;
-}
-.feedback_section .section_header{
-    margin-top: 40px;
-}
-.section_header{
-    margin-bottom: 14px;
-}
-.card__user_photo img{
-    width: 25px;
-}
-.card__user_name{
-    font-size: 10px;
-}
-.card__user_photo{
-    margin-left: 6px;
-}
-.card__text{
-    font-size: 10px;
-}
-.info_header{
-    font-size: 23px;
-}
-.adress__header, .attention__header{
-    font-size: 10px;
-}
-.adress__text, .attention__text{
-    font-size: 10px;
-}
-.container_adress{
-    margin-top: 27px;
-}
-.container_attention{
-    margin-top: 5px;
-}
-.map_wrapper{
-    height: 145px;
-    position: relative;
-    background-image: url(../assets/images/map.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: 15px;
-    padding: 0 12px;
-}
-button.info__button{
-    border: 1px #fff solid;
-    font-size: 10px;
-    padding: 7px 0px;
-    position: absolute;
-    bottom: 13px;
-    left: 15px;
-    right: 15px;
-    width: 152px;
-}
-button.info__button a{
-    color: #fff;
-}
-.section_header{
-    font-size: 23px;
-    font-weight: 400;
-}
-.faq__questions{
-    padding: 7px 0px;
-    font-size: 10px;
-}
-.faq__reply{
-    font-size: 10px;
-    height: 94px;
-}
-.container_questions{
-    margin-top: 0;
-    margin-bottom: 79px;
-}
-.contact__container{
-    font-size: 10px;
-    margin-top: 0px;
-}
-.container__phone{
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0;
-    margin: 0;
-}
-}
-@media (max-width: 390px) { 
-.date_time__icon::before{
-    left: 160px;
-}
-.container_info-graph{
-    width: 340px;
-    font-size: 15px;
-}
-.container_footer{
-    width: 342px;
-}
-.footer_text{
-    width: 195px;
-    font-size: 13px;
-}
-button.info__button{
-    width: 143px;
-}
-.first_page__header{
-    margin-bottom: 240px;
-}
-}
-@media (min-width: 1600px) { 
-.first_page__header{
-    margin-bottom: 384px;
-}
-}
-</style>
+@media (max-width: 1200px) {
+    .first_page__header {
+        margin-bottom: 200px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .first_page__header {
+        margin-bottom: 320px;
+    }
+
+    .first_page__h1 {
+        font-size: 25px;
+        margin-bottom: 32px;
+    }
+
+    .first_page__h2 {
+        font-size: 15px;
+    }
+
+    img.logo {
+        width: 80%;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .header__nav__link {
+        font-size: 15px;
+    }
+
+    button.header__nav__button a {
+        font-size: 15px;
+    }
+
+    .about_us {
+        padding-top: 34px;
+        padding-bottom: 47px;
+    }
+
+    .about_us__header {
+        font-weight: 400;
+        font-size: 23px;
+        line-height: 27px;
+        margin-bottom: 21px;
+    }
+
+    .about_us__card__header {
+        font-weight: 400;
+        margin-bottom: 0;
+        font-size: 10px;
+    }
+
+    .about_us__card__text {
+        font-size: 8px;
+    }
+
+    .about_us__card__img {
+        height: 12px;
+        margin-bottom: -4px;
+    }
+
+    .about_us__wrapper_img {
+        width: 100%;
+        height: 126px;
+        background-position: 0px -70px;
+    }
+
+    .about_us__wrapper_img-1 {
+        width: 100%;
+        height: 126px;
+        border-radius: 15px;
+        background-image: url(../assets/images/about-us-mb-1.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .about_us__wrapper_img-2 {
+        width: 100%;
+        height: 126px;
+        border-radius: 15px;
+        background-image: url(../assets/images/about-us-mb-2.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        /* background-position: 0px -110px; */
+    }
+
+    .about_us__wrapper_img-3 {
+        width: 100%;
+        height: 126px;
+        border-radius: 15px;
+        background-image: url(../assets/images/about-as-winter-1.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        /* background-position: 0px -110px; */
+    }
+
+    .about_us__wrapper_img-4 {
+        width: 100%;
+        height: 126px;
+        border-radius: 15px;
+        background-image: url(../assets/images/about-as-winter-3.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        /* background-position: 0px -110px; */
+    }
+
+    .container {
+        padding-right: calc(var(--bs-gutter-x) * 0.5);
+        padding-left: calc(var(--bs-gutter-x) * 0.5);
+    }
+
+    .placement {
+        padding-top: 35px;
+    }
+
+    .date_time__input {
+        width: 100%;
+        height: 27px;
+        font-size: 10px;
+        font-family: Lato;
+        font-weight: 300;
+        padding-left: 17px;
+    }
+
+    .date_time__text::after {
+        font-size: 10px;
+        content: 'дата заезда';
+        transform: translateY(-35px);
+    }
+
+    .date_time_end__text::after {
+        font-size: 10px;
+        content: 'дата выезда';
+        transform: translateY(-35px);
+    }
+
+    .date_time__icon::before {
+        left: 170px;
+        content: url(/src/assets/images/i-m-calendar.svg);
+    }
+
+    .quantity_guests {
+        width: 100%;
+    }
+
+    .quantity_guests__text::before {
+        transform: translate(-5px, -9px);
+        font-size: 10px;
+    }
+
+    .input_number_wrapper {
+        width: 100%;
+        height: 27px;
+    }
+
+    .input_number__in {
+        width: 52px;
+        height: 20px;
+    }
+
+    .checkbox_container {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .checkbox__header {
+        font-size: 10px;
+        margin-bottom: 0;
+    }
+
+    .checkbox {
+        width: 16px;
+        height: 16px;
+    }
+
+    .checkbox-box-wrapper {
+        width: 16px;
+        height: 16px;
+    }
+
+    .checkbox-box {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+    }
+
+    .checkbox__label {
+        font-size: 10px;
+    }
+
+    .placement__form__button_search {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .checkbox-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .checkbox-icon img {
+        width: 80%;
+    }
+
+    .placement__card {
+        width: 100%;
+    }
+
+    .wrapper_img {
+        width: 100%;
+    }
+
+    .card__input {
+        width: 100%;
+    }
+
+    .card {
+        border-radius: 15px;
+        padding: 7px 7px;
+        height: 200px;
+    }
+
+    .card__header {
+        width: 100%;
+        border-radius: 15px;
+        margin: 0;
+        height: 40px;
+    }
+
+    .card__input_user_name {
+        width: 99%;
+        color: black;
+        font-size: 10px;
+        font-family: Lato;
+        font-weight: 400;
+    }
+
+    .card__user_photo-form {
+        margin-left: 6px;
+        height: 25px;
+        width: 25px;
+    }
+
+    .input-file span {
+        height: 25px;
+        padding: 0px 13px;
+        background-size: 52%;
+        transform: translateY(-2px);
+    }
+
+    .card__user_name {
+        display: flex;
+        align-items: center;
+    }
+
+    .card__body.card_form {
+        margin-right: 0;
+        align-items: center;
+    }
+
+    .card__body {
+        margin-left: 0;
+    }
+
+    .card_button {
+        width: 130px;
+        height: 25px;
+        font-size: 14px;
+    }
+
+    .feedback_section .section_header {
+        margin-top: 40px;
+    }
+
+    .section_header {
+        margin-bottom: 14px;
+    }
+
+    .card__user_photo img {
+        width: 25px;
+    }
+
+    .card__user_name {
+        font-size: 10px;
+    }
+
+    .card__user_photo {
+        margin-left: 6px;
+    }
+
+    .card__text {
+        font-size: 10px;
+    }
+
+    .info_header {
+        font-size: 23px;
+    }
+
+    .adress__header,
+    .attention__header {
+        font-size: 10px;
+    }
+
+    .adress__text,
+    .attention__text {
+        font-size: 10px;
+    }
+
+    .container_adress {
+        margin-top: 27px;
+    }
+
+    .container_attention {
+        margin-top: 5px;
+    }
+
+    .map_wrapper {
+        height: 145px;
+        position: relative;
+        background-image: url(../assets/images/map.jpg);
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 15px;
+        padding: 0 12px;
+    }
+
+    button.info__button {
+        border: 1px #fff solid;
+        font-size: 10px;
+        padding: 7px 0px;
+        position: absolute;
+        bottom: 13px;
+        left: 15px;
+        right: 15px;
+        width: 152px;
+    }
+
+    button.info__button a {
+        color: #fff;
+    }
+
+    .section_header {
+        font-size: 23px;
+        font-weight: 400;
+    }
+
+    .faq__questions {
+        padding: 7px 0px;
+        font-size: 10px;
+    }
+
+    .faq__reply {
+        font-size: 10px;
+        height: 94px;
+    }
+
+    .container_questions {
+        margin-top: 0;
+        margin-bottom: 79px;
+    }
+
+    .contact__container {
+        font-size: 10px;
+        margin-top: 0px;
+    }
+
+    .container__phone {
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0;
+        margin: 0;
+    }
+}
+
+@media (max-width: 390px) {
+    .date_time__icon::before {
+        left: 160px;
+    }
+
+    .container_info-graph {
+        width: 340px;
+        font-size: 15px;
+    }
+
+    .container_footer {
+        width: 342px;
+    }
+
+    .footer_text {
+        width: 195px;
+        font-size: 13px;
+    }
+
+    button.info__button {
+        width: 143px;
+    }
+
+    .first_page__header {
+        margin-bottom: 240px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .first_page__header {
+        margin-bottom: 384px;
+    }
+}</style>
