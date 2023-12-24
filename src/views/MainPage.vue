@@ -138,7 +138,7 @@ div
                                 button.suffix_btn(@click="inc") 
                                     img(v-if="filter.personQuantity == 0" src="../assets/images/suffix.svg")
                                     img(v-else src="../assets/images/suffix-active.svg")
-                .col-4.d-flex.align-items-center
+                .col-4.d-flex.align-items-center(style="padding-left:0")
                     .checkbox_container
                         div.checkbox__header показать свободные:
                         .checkbox-wrapper
@@ -312,7 +312,7 @@ div
                 .col-12.col-sm-6 
                     .row.mb-3.mb-sm-0
                         .col-8 Если у вас остались вопросы, вы можете задать их менеджеру в этой форме, или связаться с ним по следующим номерам телефона 
-                        .container__phone.col-4.d-block
+                        .container__phone.col-4.d-flex
                             div
                                 a.contact__phone(href="tel:+79026439294") 8-902-64-39-294
                             div
@@ -1547,6 +1547,11 @@ li.footer__item_line-height {
     margin-bottom: 200px;
 }
 }
+@media (max-width: 1200px) { 
+.first_page__header{
+    margin-bottom: 200px;
+}
+}
 
 @media (max-width: 1440px) { 
 .first_page__header{
@@ -1845,6 +1850,28 @@ button.info__button a{
     justify-content: space-between;
     gap: 0;
     margin: 0;
+}
+}
+@media (max-width: 390px) { 
+.date_time__icon::before{
+    left: 160px;
+}
+.container_info-graph{
+    width: 340px;
+    font-size: 15px;
+}
+.container_footer{
+    width: 342px;
+}
+.footer_text{
+    width: 195px;
+    font-size: 13px;
+}
+button.info__button{
+    width: 143px;
+}
+.first_page__header{
+    margin-bottom: 240px;
 }
 }
 @media (min-width: 1600px) { 
