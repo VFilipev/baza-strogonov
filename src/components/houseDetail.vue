@@ -113,7 +113,7 @@ export default {
 
 .photogalery__image {
     border-radius: 30px;
-    width: 291px;
+    width: 100%;
     height: 204px;
     background-repeat: no-repeat;
     background-size: cover;

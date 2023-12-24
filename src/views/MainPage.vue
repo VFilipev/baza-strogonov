@@ -1,33 +1,73 @@
 <template lang="pug"> 
 div     
-    header-sticky
+    //- header-sticky
     section.first_page        
         .first_page__wrapper
             .overlay
             template(v-for="(photo, index) in photoList" ) 
                 img.photo(:src="photo" :class="{ active : index == selPhoto }")                
-            .first_page__header
+            .first_page__wrapper_content
                 .container
-                    div(style="padding-top: 42px;margin-bottom: 384px;")
+                    .first_page__header
                         .row.align-items-center
-                            .logo.col-5
-                                img(src="../assets/images/logo.png")
-                            .header__nav.d-flex.col-3.offset-2
+                            .col-xs-12.col-sm-5.col-xxl-5
+                                img.logo(src="../assets/images/logo.png")
+                            .header__nav.d-flex.col-3.offset-2.d-none.d-sm-flex
                                 router-link(to="/house", tag="a", class="header__nav__link") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
-                            .header__nav.d-flex.col-2     
+                            .header__nav.d-flex.col-2.d-none.d-sm-flex
                                 a(@click="toRefContact" style="cursor:pointer")                       
                                     img(src='../assets/images/telefon.svg')
                                 button.header__nav__button 
                                     a(@click="toRefBooking") забронировать
-                    .row.d-flex.justify-content-between
-                        .first_page__h1.col-4 уютные коттеджи 
+                    .row.d-flex.justify-content-between.m-0
+                        .first_page__h1.col-xs-12.col-sm-4.col-xxl-4 уютные коттеджи 
                             |и глемпинг хвойном лесу
                             |на берегу камского моря
-                        .first_page__h2.col-4 Уединеный отдых в уютном историческом месте Пермского края. 
+                        .first_page__h2.col-xs-12.col-sm-4.col-xxl-4 Уединеный отдых в уютном историческом месте Пермского края. 
                             |Насладитесь первозданой природой и европейским уровнем комфорта размещения в уютных коттеджах и номерах. 
                             |Зарядитесь эмоциямиот прогулки на квадроциклах, а после отдахните душой и телом в традиционной русской бане.                                     
-    section.about_us(id="aboutUs")
+    section.about_us.d-block(id="aboutUs")
+        .container
+            .row
+                .col-6
+                    h4.about_us__header нас выбирают, <br> потому что:                    
+            .row.align-items-center(style="margin-bottom: 47px")
+                .col-6
+                    .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
+                        .about_us__card__header комфорт
+                        img.about_us__card__img(src="../assets/images/i-m-yoga.svg")
+                    .about_us__card__text высокий уровень обслуживания <br>
+                        |и внимание к деталям: сотрудники клуба <br> стремятся удовлетворить все потребности <br> и пожелания гостей,
+                        |чтобы каждый момент проведенного времени был приятным 
+                        |и незабываемым
+                .col-6
+                    .about_us__wrapper_img-1
+            .row.align-items-center(style="margin-bottom: 47px")
+                .col-6
+                    .about_us__wrapper_img-2
+                .col-6
+                    .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
+                        .about_us__card__header услуги
+                        img.about_us__card__img(src="../assets/images/i-m-playlistadd.svg")
+                    .about_us__card__text благодаря широкому спектру услуг <br> каждый найдёт себе развлечение <br> по душе: будь то релакс в бане, <br> или драйв на квадроцикле  
+            .row.align-items-center(style="margin-bottom: 47px")
+                .col-6
+                    .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
+                        .about_us__card__header уют
+                        img.about_us__card__img(src="../assets/images/i-m-bed.svg")
+                    .about_us__card__text проживание в просторных и уютных <br> домиках, которые оборудованы всем <br> необходимым для идеального отдыха
+                .col-6
+                    .about_us__wrapper_img-3
+            .row.align-items-center(style="margin-bottom: 47px")
+                .col-6
+                    .about_us__wrapper_img-4
+                .col-6
+                    .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
+                        .about_us__card__header впечатления
+                        img.about_us__card__img(src="../assets/images/icon_emoji.svg")
+                    .about_us__card__text отдых в Строгановских Просторах  оставит множество положительных впечатлений: <br> об уникальной природе, спокойствии и уединении с ней, комфорте, развлечениях и релаксе, а также <br> о драго-ценном времени, проведённом<br> друг с другом
+    section.about_us.d-none(id="aboutUs")
         .container
             h4.about_us__header нас выбирают, <br> потому что 
             .row.about_as__container_row
@@ -69,168 +109,168 @@ div
                         |и уединении с ней, комфорте, развлечениях и релаксе, а также о драгоценном времени, проведённом друг с другом
                 .col-4.offset-1 
                     .about_us__wrapper_img                     
-    section.placement(id="booking")
-        .container           
-            h4.about_us__header размещение
-            .placement__form.row
-                .date_time.date_time__icon.date_time__text.col-3
-                    DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
-                        template(#default="{ inputValue, inputEvents }")                        
-                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" id="inputDateStart")
-                .date_time.date_time__icon.date_time_end__text.col-3
-                    DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
-                        template(#default="{ inputValue, inputEvents }")                        
-                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input") 
-                    .date_picker_wrapper
-                .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
-                    .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
-                        .input_number__prefix
-                            button.prefix_btn(@click="dec")
-                                img(v-if="filter.personQuantity == 0" alt="" src="../assets/images/prefix.svg")
-                                img(v-else alt="" src="../assets/images/prefix-active.svg")
-                        .input_number__input 
-                            input.input_number__in(type="text" :class="{active : filter.personQuantity > 0}" v-model="filter.personQuantity" name="person_quantity")
-                        .input_number__suffix
-                            button.suffix_btn(@click="inc") 
-                                img(v-if="filter.personQuantity == 0" src="../assets/images/suffix.svg")
-                                img(v-else src="../assets/images/suffix-active.svg")
-                .checkbox_container
-                    div.checkbox__header показать свободные:
-                    .checkbox-wrapper
-                        .checkbox
-                            .checkbox-box-wrapper 
-                                .checkbox-box(@click="filter.isHouse = !filter.isHouse" :class="{ active : filter.isHouse == true}")
-                                    .checkbox-icon(v-if="filter.isHouse")
-                                        img(src="../assets/images/checkbox.svg")
-                        span.checkbox__label(style="margin-right: 15px" :class="{ active: filter.isHouse == true}") дома                    
-                        .checkbox 
-                            .checkbox-box-wrapper 
-                                .checkbox-box(@click="filter.isGlamping = !filter.isGlamping" :class="{ active : filter.isGlamping == true}")
-                                    .checkbox-icon(v-if="filter.isGlamping")
-                                        img(src="../assets/images/checkbox.svg")
-                        span.checkbox__label(:class="{ active: filter.isGlamping == true}") глэмпинг                    
-                button.placement__form__button_search(@click="getAvailableLodge") найти
-            .row.placement__cantainer_card
-                .col-4(v-for="(house, index) in houseList")
-                    .placement__card 
-                        .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
-                            .btn_house_detail(@click="showModalHouse(house)")
-                        .container_info-graph
-                            .house_name {{ house.name }}
-                            .wrapper_cost_capacity
-                                .house_cost {{ '₽ ' + formatNumber(house.cost_per_unit) }}
-                                .house_capacity
-                                    .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
-                                    .house_capacity__text до {{ house.maxP }} чел
-                        .container_footer 
-                            .footer_text {{ house.short_description }}
-                            .footer_button(@click="toBooking(house)") забронировать                
-    section.service_section
-        .container         
-            .row.service     
-                .service__header.col-2 услуги
-            .row(style="padding-bottom: 94px") 
-                .col-6
-                    p.service__name_typ Активный отдых                    
-                    .service__item(v-for="item in recreation")
-                        .service__name {{ item.name }}
-                        .service__cost {{ item.cost }}                    
-                .col-6
-                    p Банные процедуры
-                    .service__item(v-for="item in bathProcedures") 
-                        .service__name {{ item.name }}
-                        .service__cost {{ item.cost }}                              
-    section.feedback_section(style="height: 1080px")
-        .container
-            .section_header ваши отзывы
-            .row 
-                .col-3(v-for="(comment, index) in commentList")
-                    .card.rotate(:class="{ 'feedback_card_background' : isEval(index + 1)}")
-                        .card__header
-                            .card__user_photo
-                                img(:src="comment.img")
-                            .card__user_container
-                                .card__user_name {{ comment.user_name }}
-                                star-rating(:star-size="13" :readOnly="true" :rating="comment.rating" :show-rating="false")                                
-                        .card__body
-                            p.card__text(:class="{'text_black' : isEval(index + 1)}") {{ comment.text }}
-                .col-3
-                    .card(style="background: #F5F3F1;")               
-                        .card__header
-                            .card__user_photo-form
-                                label(class="input-file")
-                                    input(type="file" name="file" @change="handleFileUpload" id="user_img" ref="user_img")
-                                    span(:style="[feedback.userPhoto ? {'background-image': 'url(' + previewFilePath + ')', 'background-size': 'cover'} :'']")
-                            .card__user_container
-                                .card__user_name 
-                                    input.card__input_user_name(v-if="!isCreateFeedBack" placeholder="ФИО" v-model="feedback.userName" name="user_name")
-                                    .card__user_name(v-else) {{ feedback.userName }}
-                                star-rating(:star-size="13" :animate="true" :show-rating="false" @update:rating ="setRating")
-                        .card__body(:class="{card_form : !isCreateFeedBack}")
-                            textarea.card__input(v-if="!isCreateFeedBack" placeholder="Введите текст..." rows="4" v-model="feedback.text"
-                            name="card_text")
-                            p.card__text(v-else style="color: black") {{ feedback.text }}
-                            button.card_button(v-if="!isCreateFeedBack" @click="saveFeedBack") оставить отзыв
-            .container_map
-                img(src="../assets/images/map.jpg")
-                .container_map_info
-                    .info_header как добраться
-                    .container_adress 
-                        .adress__header Адрес
-                        .adress__text п. Ильинский, с. Дмитриевское
-                    .container_attention 
-                        .attention__header Внимание!
-                        .attention__text в связи с ремонтными работами путь 
-                            |к нашей базе теперь пролегает через село Мироны.
-                    button.info__button 
-                        a(href="https://yandex.ru/maps/-/CDq0rB9Q" target="_blank") построить маршрут
-    section.faq__section
-        .container
-            .section_header FAQ - часто задаваемые вопросы
-            .row.container_questions
-                .col-4 
-                    .faq__questions Во сколько заселение и выезд? 
-                    .faq__reply Расчетные часы: <br>
-                        |Время заезда: с 15:00 ; Время выезда: до 13:00*
-                        |*Независимо от фактического времени прибытия 
-                        |на базу отдыха. О возможности продления времени прибывания в доме необходимо уточнять накануне заезда.
-                .col-4 
-                    .faq__questions Можно ли арендовать весь загородный клуб?
-                    .faq__reply Да, в нашем загородном клубе предусмотрена аренда всей территории. Для более подробной информации 
-                        |о доступности и стоимости аренды, пожалуйста, свяжитесь с нашим менеджером через форму ниже.
-                .col-4 
-                    .faq__questions Можно ли со своим питомцем?
-                    .faq__reply У нас разрешено проживать со своим питомцем, 
-                        |однако существуют некоторые ограничения по размеру, породе или числу питомцев, а также важно наличие прививочных сертификатов и соблюдение правил поведения.
-    section.contact__section(id="contact") 
-        .container 
-            .section_header контакты
-            .row.contact__container
-                .col-6 
-                    .col-10 Если у вас остались вопросы, вы можете задать их менеджеру 
-                        |<br>в этой форме, или связаться с ним по следующим номерам телефона 
-                    .container__phone 
-                        a.contact__phone(href="tel:+79026439294") 8-902-64-39-294
-                        a.contact__phone(href="tel:+73422880089") 8-(342) 288-00-89
-                    .col-12(style="margin-bottom: 18px") Также вы можете найти нас в соцсетях
-                    .container__social_network
-                        .social_network__name Телеграмм-канал:
-                        a.social_network__link(href="https://t.me/stroganovskie_prostory" target="_blank") t.me/stroganovskie_prostory
-                    .container__social_network
-                        .social_network__name Вконтакте:
-                        a.social_network__link(href="https://vk.com/stroganovskie_prostory" target="_blank") vk.com/stroganovskie_prostory
-                .col-6 
-                    .contact__form 
-                        .form__label Задать вопрос менеджеру
-                        input.form__input(placeholder="Напишите что-нибудь" type="text" style="margin-bottom: 37px" name="contact_form")
-                        .form__label Номер телефона или адрес электронной почты, куда направить ответ:
-                        input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px" name="contact_form")
-                        button.contact__button отправить 
-    footerComponent
-    Transition(name="modalBottom")
-        div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
-            house-detail(:house="selectedHouse" @modalClose="closeModal")
+    //- section.placement(id="booking")
+    //-     .container           
+    //-         h4.about_us__header размещение
+    //-         .placement__form.row
+    //-             .date_time.date_time__icon.date_time__text.col-3
+    //-                 DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
+    //-                     template(#default="{ inputValue, inputEvents }")                        
+    //-                         input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" id="inputDateStart")
+    //-             .date_time.date_time__icon.date_time_end__text.col-3
+    //-                 DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
+    //-                     template(#default="{ inputValue, inputEvents }")                        
+    //-                         input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input") 
+    //-                 .date_picker_wrapper
+    //-             .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
+    //-                 .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
+    //-                     .input_number__prefix
+    //-                         button.prefix_btn(@click="dec")
+    //-                             img(v-if="filter.personQuantity == 0" alt="" src="../assets/images/prefix.svg")
+    //-                             img(v-else alt="" src="../assets/images/prefix-active.svg")
+    //-                     .input_number__input 
+    //-                         input.input_number__in(type="text" :class="{active : filter.personQuantity > 0}" v-model="filter.personQuantity" name="person_quantity")
+    //-                     .input_number__suffix
+    //-                         button.suffix_btn(@click="inc") 
+    //-                             img(v-if="filter.personQuantity == 0" src="../assets/images/suffix.svg")
+    //-                             img(v-else src="../assets/images/suffix-active.svg")
+    //-             .checkbox_container
+    //-                 div.checkbox__header показать свободные:
+    //-                 .checkbox-wrapper
+    //-                     .checkbox
+    //-                         .checkbox-box-wrapper 
+    //-                             .checkbox-box(@click="filter.isHouse = !filter.isHouse" :class="{ active : filter.isHouse == true}")
+    //-                                 .checkbox-icon(v-if="filter.isHouse")
+    //-                                     img(src="../assets/images/checkbox.svg")
+    //-                     span.checkbox__label(style="margin-right: 15px" :class="{ active: filter.isHouse == true}") дома                    
+    //-                     .checkbox 
+    //-                         .checkbox-box-wrapper 
+    //-                             .checkbox-box(@click="filter.isGlamping = !filter.isGlamping" :class="{ active : filter.isGlamping == true}")
+    //-                                 .checkbox-icon(v-if="filter.isGlamping")
+    //-                                     img(src="../assets/images/checkbox.svg")
+    //-                     span.checkbox__label(:class="{ active: filter.isGlamping == true}") глэмпинг                    
+    //-             button.placement__form__button_search(@click="getAvailableLodge") найти
+    //-         .row.placement__cantainer_card
+    //-             .col-4(v-for="(house, index) in houseList")
+    //-                 .placement__card 
+    //-                     .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
+    //-                         .btn_house_detail(@click="showModalHouse(house)")
+    //-                     .container_info-graph
+    //-                         .house_name {{ house.name }}
+    //-                         .wrapper_cost_capacity
+    //-                             .house_cost {{ '₽ ' + formatNumber(house.cost_per_unit) }}
+    //-                             .house_capacity
+    //-                                 .house_capacity__icon 
+    //-                                     img(src="../assets/images/icon_emoji.svg")
+    //-                                 .house_capacity__text до {{ house.maxP }} чел
+    //-                     .container_footer 
+    //-                         .footer_text {{ house.short_description }}
+    //-                         .footer_button(@click="toBooking(house)") забронировать                
+    //- section.service_section
+    //-     .container         
+    //-         .row.service     
+    //-             .service__header.col-2 услуги
+    //-         .row(style="padding-bottom: 94px") 
+    //-             .col-6
+    //-                 p.service__name_typ Активный отдых                    
+    //-                 .service__item(v-for="item in recreation")
+    //-                     .service__name {{ item.name }}
+    //-                     .service__cost {{ item.cost }}                    
+    //-             .col-6
+    //-                 p Банные процедуры
+    //-                 .service__item(v-for="item in bathProcedures") 
+    //-                     .service__name {{ item.name }}
+    //-                     .service__cost {{ item.cost }}                              
+    //- section.feedback_section(style="height: 1080px")
+    //-     .container
+    //-         .section_header ваши отзывы
+    //-         .row 
+    //-             .col-3(v-for="(comment, index) in commentList")
+    //-                 .card.rotate(:class="{ 'feedback_card_background' : isEval(index + 1)}")
+    //-                     .card__header
+    //-                         .card__user_photo
+    //-                             img(:src="comment.img")
+    //-                         .card__user_container
+    //-                             .card__user_name {{ comment.user_name }}
+    //-                             star-rating(:star-size="13" :readOnly="true" :rating="comment.rating" :show-rating="false")                                
+    //-                     .card__body
+    //-                         p.card__text(:class="{'text_black' : isEval(index + 1)}") {{ comment.text }}
+    //-             .col-3
+    //-                 .card(style="background: #F5F3F1;")               
+    //-                     .card__header
+    //-                         .card__user_photo-form
+    //-                             label(class="input-file")
+    //-                                 input(type="file" name="file" @change="handleFileUpload" id="user_img" ref="user_img")
+    //-                                 span(:style="[feedback.userPhoto ? {'background-image': 'url(' + previewFilePath + ')', 'background-size': 'cover'} :'']")
+    //-                         .card__user_container
+    //-                             .card__user_name 
+    //-                                 input.card__input_user_name(v-if="!isCreateFeedBack" placeholder="ФИО" v-model="feedback.userName" name="user_name")
+    //-                                 .card__user_name(v-else) {{ feedback.userName }}
+    //-                             star-rating(:star-size="13" :animate="true" :show-rating="false" @update:rating ="setRating")
+    //-                     .card__body(:class="{card_form : !isCreateFeedBack}")
+    //-                         textarea.card__input(v-if="!isCreateFeedBack" placeholder="Введите текст..." rows="4" v-model="feedback.text"
+    //-                         name="card_text")
+    //-                         p.card__text(v-else style="color: black") {{ feedback.text }}
+    //-                         button.card_button(v-if="!isCreateFeedBack" @click="saveFeedBack") оставить отзыв
+    //-         .container_map
+    //-             img(src="../assets/images/map.jpg")
+    //-             .container_map_info
+    //-                 .info_header как добраться
+    //-                 .container_adress 
+    //-                     .adress__header Адрес
+    //-                     .adress__text п. Ильинский, с. Дмитриевское
+    //-                 .container_attention 
+    //-                     .attention__header Внимание!
+    //-                     .attention__text в связи с ремонтными работами путь 
+    //-                         |к нашей базе теперь пролегает через село Мироны.
+    //-                 button.info__button 
+    //-                     a(href="https://yandex.ru/maps/-/CDq0rB9Q" target="_blank") построить маршрут
+    //- section.faq__section
+    //-     .container
+    //-         .section_header FAQ - часто задаваемые вопросы
+    //-         .row.container_questions
+    //-             .col-4 
+    //-                 .faq__questions Во сколько заселение и выезд? 
+    //-                 .faq__reply Расчетные часы: <br>
+    //-                     |Время заезда: с 15:00 ; Время выезда: до 13:00*
+    //-                     |*Независимо от фактического времени прибытия 
+    //-                     |на базу отдыха. О возможности продления времени прибывания в доме необходимо уточнять накануне заезда.
+    //-             .col-4 
+    //-                 .faq__questions Можно ли арендовать весь загородный клуб?
+    //-                 .faq__reply Да, в нашем загородном клубе предусмотрена аренда всей территории. Для более подробной информации 
+    //-                     |о доступности и стоимости аренды, пожалуйста, свяжитесь с нашим менеджером через форму ниже.
+    //-             .col-4 
+    //-                 .faq__questions Можно ли со своим питомцем?
+    //-                 .faq__reply У нас разрешено проживать со своим питомцем, 
+    //-                     |однако существуют некоторые ограничения по размеру, породе или числу питомцев, а также важно наличие прививочных сертификатов и соблюдение правил поведения.
+    //- section.contact__section(id="contact") 
+    //-     .container 
+    //-         .section_header контакты
+    //-         .row.contact__container
+    //-             .col-6 
+    //-                 .col-10 Если у вас остались вопросы, вы можете задать их менеджеру 
+    //-                     |<br>в этой форме, или связаться с ним по следующим номерам телефона 
+    //-                 .container__phone 
+    //-                     a.contact__phone(href="tel:+79026439294") 8-902-64-39-294
+    //-                     a.contact__phone(href="tel:+73422880089") 8-(342) 288-00-89
+    //-                 .col-12(style="margin-bottom: 18px") Также вы можете найти нас в соцсетях
+    //-                 .container__social_network
+    //-                     .social_network__name Телеграмм-канал:
+    //-                     a.social_network__link(href="https://t.me/stroganovskie_prostory" target="_blank") t.me/stroganovskie_prostory
+    //-                 .container__social_network
+    //-                     .social_network__name Вконтакте:
+    //-                     a.social_network__link(href="https://vk.com/stroganovskie_prostory" target="_blank") vk.com/stroganovskie_prostory
+    //-             .col-6 
+    //-                 .contact__form 
+    //-                     .form__label Задать вопрос менеджеру
+    //-                     input.form__input(placeholder="Напишите что-нибудь" type="text" style="margin-bottom: 37px" name="contact_form")
+    //-                     .form__label Номер телефона или адрес электронной почты, куда направить ответ:
+    //-                     input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px" name="contact_form")
+    //-                     button.contact__button отправить 
+    //- footerComponent
+    //- Transition(name="modalBottom")
+    //-     div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
+    //-         house-detail(:house="selectedHouse" @modalClose="closeModal")
 
 </template>
 
@@ -239,13 +279,13 @@ import { ref, onMounted, watch, computed, onUnmounted } from "vue"
 import { Calendar, DatePicker } from 'v-calendar';
 import { formatNumber } from '../components/formatNumber'
 
-import headerSticky from "../components/headerSticky.vue";
+// import headerSticky from "../components/headerSticky.vue";
 
-import 'v-calendar/style.css';
-import StarRating from 'vue-star-rating'
+// import 'v-calendar/style.css';
+// import StarRating from 'vue-star-rating'
 
-import houseDetail from "../components/houseDetail.vue";
-import footerComponent from "../components/footerComponent.vue";
+// import houseDetail from "../components/houseDetail.vue";
+// import footerComponent from "../components/footerComponent.vue";
 import { useRouter } from 'vue-router'
 import { useOrderStore } from "../stores/orderStore";
 
@@ -258,10 +298,10 @@ export default {
     components: {
         Calendar,
         DatePicker,
-        StarRating,
-        houseDetail,
-        headerSticky,
-        footerComponent
+        // StarRating,
+        // houseDetail,
+        // headerSticky,
+        // footerComponent
     },
     setup() {        
         const orderStore = useOrderStore()
@@ -282,9 +322,9 @@ export default {
             })
         }
         const photoList = [
-            '/static/main-page-winter.png',
-            '/static/main-page-winter2-source.png',
-            '/static/main-page-winter3-source.png',
+            'src/assets/images/main-page-winter.png',
+            'src/assets/images/main-page-winter2-source.png',
+            'src/assets/images/main-page-winter3-source.png',
         ]
         let datePicker = ref({
             dateStart: false,
@@ -438,12 +478,12 @@ export default {
             getLodgeList()
             getComment()
             isScroll.value = true
-            window.addEventListener('scroll', (event) => { fil() });
+            // window.addEventListener('scroll', (event) => { fil() });
             setTimeout(sliderPhoto, 5000)
         })
         onUnmounted(() => {
             isScroll.value = false
-            window.removeEventListener('scroll', (event) => { fil() });
+            // window.removeEventListener('scroll', (event) => { fil() });
         })
         return {
             photoList,
@@ -484,6 +524,11 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+.first_page__header{
+    padding-top: 42px;
+    margin-bottom: 384px;
+}
 
 section.placement:before {
   display: block;
@@ -1026,13 +1071,13 @@ button.header__nav__button a{
     z-index: 10;
 }
 
-.first_page__header {
+.first_page__wrapper_content {
     position: relative;
     z-index: 100;
 }
 
 .first_page__wrapper {
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
     position: relative;
 }
@@ -1431,5 +1476,106 @@ li.footer__item_line-height {
 
 .footer__link:hover {
     cursor: pointer;
+}
+
+@media (min-width: 1200px) { 
+.first_page__header{
+    margin-bottom: 200px;
+}
+}
+
+@media (max-width: 1440px) { 
+.first_page__header{
+    margin-bottom: 320px;
+}
+.first_page__h1{
+    font-size: 25px;
+    margin-bottom: 32px;
+}
+.first_page__h2{
+    font-size: 15px;
+}
+img.logo{
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+}
+.header__nav__link{
+    font-size: 15px;
+}
+button.header__nav__button a{
+    font-size: 15px;
+}
+.about_us{
+    padding-top: 34px;
+}
+.about_us__header{
+    font-weight: 400;
+    font-size: 23px;
+    line-height: 27px;
+    margin-bottom: 21px;
+}
+.about_us__card__header{
+    font-weight: 400;
+    margin-bottom: 0;
+    font-size: 10px;
+}
+.about_us__card__text{
+    font-size: 8px;
+}
+.about_us__card__img{
+    height: 12px;
+    margin-bottom: -4px;
+}
+.about_us__wrapper_img{
+    width: 191px;
+    height: 126px;
+    background-position: 0px -70px;
+}
+.about_us__wrapper_img-1{
+    width: 191px;
+    height: 126px;    
+    border-radius: 15px;
+    background-image: url(../assets/images/about-us-mb-1.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0px -110px;
+}
+.about_us__wrapper_img-2{
+    width: 191px;
+    height: 126px;    
+    border-radius: 15px;
+    background-image: url(../assets/images/about-us-mb-2.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* background-position: 0px -110px; */
+}
+.about_us__wrapper_img-3{
+    width: 191px;
+    height: 126px;    
+    border-radius: 15px;
+    background-image: url(../assets/images/about-as-winter-1.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* background-position: 0px -110px; */
+}
+.about_us__wrapper_img-4{
+    width: 191px;
+    height: 126px;    
+    border-radius: 15px;
+    background-image: url(../assets/images/about-as-winter-3.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* background-position: 0px -110px; */
+}
+.container {
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
+}
+}
+@media (min-width: 1600px) { 
+.first_page__header{
+    margin-bottom: 384px;
+}
 }
 </style>
