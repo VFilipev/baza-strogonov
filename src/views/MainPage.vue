@@ -46,7 +46,6 @@ div
                         |чтобы каждый момент проведенного времени был приятным 
                         |и незабываемым
                 .col-6
-                    //- .about_us__wrapper_img-1
                     picture
                         source(type="image/webp" srcset="../assets/images/about-us-mb-1.webp")
                         source(type="image/png" srcset="../assets/images/about-us-mb-1.png")
@@ -1679,46 +1678,7 @@ li.footer__item_line-height {
         width: 100%;
         height: 126px;
         background-position: 0px -70px;
-    }
-
-    .about_us__wrapper_img-1 {
-        width: 100%;
-        height: 126px;
-        border-radius: 15px;
-        background-image: url(../assets/images/about-us-mb-1.png);
-        background-repeat: no-repeat;
-        background-size: cover;
-    }
-
-    .about_us__wrapper_img-2 {
-        width: 100%;
-        height: 126px;
-        border-radius: 15px;
-        background-image: url(../assets/images/about-us-mb-2.png);
-        background-repeat: no-repeat;
-        background-size: cover;
-        /* background-position: 0px -110px; */
-    }
-
-    .about_us__wrapper_img-3 {
-        width: 100%;
-        height: 126px;
-        border-radius: 15px;
-        background-image: url(../assets/images/about-as-winter-1.png);
-        background-repeat: no-repeat;
-        background-size: cover;
-        /* background-position: 0px -110px; */
-    }
-
-    .about_us__wrapper_img-4 {
-        width: 100%;
-        height: 126px;
-        border-radius: 15px;
-        background-image: url(../assets/images/about-as-winter-3.png);
-        background-repeat: no-repeat;
-        background-size: cover;
-        /* background-position: 0px -110px; */
-    }
+    }    
 
     .container {
         padding-right: calc(var(--bs-gutter-x) * 0.5);
