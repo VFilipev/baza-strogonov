@@ -46,10 +46,17 @@ div
                         |чтобы каждый момент проведенного времени был приятным 
                         |и незабываемым
                 .col-6
-                    .about_us__wrapper_img-1
+                    //- .about_us__wrapper_img-1
+                    picture
+                        source(type="image/webp" srcset="../assets/images/about-us-mb-1.webp")
+                        source(type="image/png" srcset="../assets/images/about-us-mb-1.png")
+                        img(src="../assets/images/about-us-mb-1.png" style="border-radius: 15px")
             .row.align-items-center(style="margin-bottom: 47px")
                 .col-6
-                    .about_us__wrapper_img-2
+                    picture
+                        source(type="image/webp" srcset="../assets/images/about-us-mb-2.webp")
+                        source(type="image/png" srcset="../assets/images/about-us-mb-2.png")
+                        img(src="../assets/images/about-us-mb-2.png" style="border-radius: 15px")
                 .col-6
                     .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
                         .about_us__card__header услуги
@@ -62,10 +69,16 @@ div
                         img.about_us__card__img(src="../assets/images/i-m-bed.svg")
                     .about_us__card__text проживание в просторных и уютных <br> домиках, которые оборудованы всем <br> необходимым для идеального отдыха
                 .col-6
-                    .about_us__wrapper_img-3
+                    picture
+                        source(type="image/webp" srcset="../assets/images/about-as-winter-1.webp")
+                        source(type="image/png" srcset="../assets/images/about-as-winter-1.png")
+                        img(src="../assets/images/about-as-winter-1.png" style="border-radius: 15px")
             .row.align-items-center
                 .col-6
-                    .about_us__wrapper_img-4
+                    picture
+                        source(type="image/webp" srcset="../assets/images/about-as-winter-3.webp")
+                        source(type="image/png" srcset="../assets/images/about-as-winter-3.png")
+                        img(src="../assets/images/about-as-winter-3.png" style="border-radius: 15px")
                 .col-6
                     .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
                         .about_us__card__header впечатления
