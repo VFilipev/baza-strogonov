@@ -3,9 +3,9 @@
 header.header_sticky(:class="{'active' : isHeaderShow()}")         
     .container
         .header_sticky__container.row.align-items-center
-            .header_sticky__logo.col-5
+            .header_sticky__logo.col-2.col-sm-5
                 img(src="../assets/images/logo2.svg")
-            ul.header_sticky__nav.col-3.offset-2.d-flex
+            ul.header_sticky__nav.col-6.col-sm-3.offset-sm-2.d-flex
                 router-link(to="/house" tag="li" class="header_sticky__nav_link") дома                    
                 router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых / услуги
             .header_sticky__icon_feed_back.col-2
@@ -22,7 +22,12 @@ let isScroll = ref(false)
 let distance = ref(0)
 const isHeaderShow = () => {
     if (isScroll.value == true) {
-        const el = document.getElementById('aboutUs')
+        let el
+        if(window.innerWidth < 600 || /Mobi/i.test(navigator.userAgent)){        
+            el = document.getElementById('aboutUsMobile')
+        }else{
+            el = document.getElementById('aboutUs')
+        }            
         distance.value = el.offsetTop - window.scrollY        
         if (distance.value <= 300) {
             return true
@@ -34,12 +39,14 @@ const isHeaderShow = () => {
     return false
 }
 onMounted(() => {
+    if(window.innerWidth < 600 || /Mobi/i.test(navigator.userAgent)){        
+    }    
     isScroll.value = true
     window.addEventListener('scroll', (event) => { isHeaderShow() });    
 })
 onUnmounted(() => {
     isScroll.value = false
-    // window.removeEventListener('scroll', (event) => { fil() });
+    window.removeEventListener('scroll', (event) => { fil() });
 })
 </script>
 
@@ -116,5 +123,32 @@ onUnmounted(() => {
     color: #fff;
     border: 0px;
     border-radius: 35px;
+}
+
+@media (max-width: 1440px){
+.header_sticky__logo img{
+    width: 68px;
+    height: 26px;
+}
+.header_sticky {
+    /* width: 100wh; */
+    &.active{
+        padding-top: 15px;
+        padding-bottom: 15px;
+
+    }
+}
+.header_sticky__nav_link{
+    font-size: 10px;
+}
+.header_sticky__icon_feed_back{
+    font-size: 10px;
+}
+.header_sticky__icon_feed_back a img{
+    width: 16px;
+}
+.header_sticky__icon_feed_back{
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+}
 }
 </style>

@@ -1,6 +1,6 @@
 <template lang="pug"> 
 div     
-    //- header-sticky
+    header-sticky
     section.first_page        
         .first_page__wrapper
             .overlay
@@ -31,7 +31,7 @@ div
                             |Насладитесь первозданой природой и европейским уровнем комфорта размещения в уютных коттеджах и номерах. 
                             |Зарядитесь эмоциямиот прогулки на квадроциклах, а после отдахните душой и телом в традиционной русской бане.                                     
     //- НАС ВЫБИРАЮТ ДЛЯ МОБИЛКИ
-    section.about_us.d-block.d-sm-none(id="aboutUs")
+    section.about_us.d-block.d-sm-none(id="aboutUsMobile")
         .container
             .row
                 .col-6
@@ -215,7 +215,7 @@ div
                             picture
                                 source(type="image/webp" :srcset="house.img")
                                 img(:src="house.img")
-                            //- .btn_house_detail(@click="showModalHouse(house)")
+                            .btn_house_detail(@click="showModalHouse(house)")
                         .container_info-graph
                             .house_name {{ house.name }}
                             .wrapper_cost_capacity
@@ -351,10 +351,10 @@ div
                 //-         .form__label Номер телефона или адрес электронной почты, куда направить ответ:
                 //-         input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px" name="contact_form")
                 //-         button.contact__button отправить 
-                //- footerComponent
-                //- Transition(name="modalBottom")
-                //-     div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
-                //-         house-detail(:house="selectedHouse" @modalClose="closeModal")
+    //- footerComponent
+    Transition(name="modalBottom")
+        div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
+            house-detail(:house="selectedHouse" @modalClose="closeModal")
 
 </template>
 
@@ -363,13 +363,13 @@ import { ref, onMounted, watch, computed, onUnmounted } from "vue"
 import { Calendar, DatePicker } from 'v-calendar';
 import { formatNumber } from '../components/formatNumber'
 
-// import headerSticky from "../components/headerSticky.vue";
+import headerSticky from "../components/headerSticky.vue";
 
 // import 'v-calendar/style.css';
 import StarRating from 'vue-star-rating'
 
-// import houseDetail from "../components/houseDetail.vue";
-// import footerComponent from "../components/footerComponent.vue";
+import houseDetail from "../components/houseDetail.vue";
+import footerComponent from "../components/footerComponent.vue";
 import { useRouter } from 'vue-router'
 import { useOrderStore } from "../stores/orderStore";
 
@@ -383,9 +383,9 @@ export default {
         Calendar,
         DatePicker,
         StarRating,
-        // houseDetail,
-        // headerSticky,
-        // footerComponent
+        houseDetail,
+        headerSticky,
+        footerComponent
     },
     setup() {
         const orderStore = useOrderStore()
@@ -571,12 +571,12 @@ export default {
             getLodgeList()
             getComment()
             isScroll.value = true
-            // window.addEventListener('scroll', (event) => { fil() });
+            window.addEventListener('scroll', (event) => { fil() });
             setTimeout(sliderPhoto, 5000)
         })
         onUnmounted(() => {
             isScroll.value = false
-            // window.removeEventListener('scroll', (event) => { fil() });
+            window.removeEventListener('scroll', (event) => { fil() });
         })
         return {
             photoList,
