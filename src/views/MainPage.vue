@@ -243,7 +243,7 @@ div
     section.service_section
         .container         
             .row.service     
-                .service__header.col-2 услуги
+                .service__header.col-4.col-sm-2 услуги
             .row(style="padding-bottom: 94px") 
                 .col-xs-12.mb-5.mb-sm-0.col-sm-6
                     p.service__name_typ Активный отдых                    
@@ -357,14 +357,15 @@ div
                     .container__social_network
                         .social_network__name Вконтакте:
                         a.social_network__link(href="https://vk.com/stroganovskie_prostory" target="_blank") vk.com/stroganovskie_prostory
-                //- .col-12.col-sm-6
-                //-     .contact__form 
-                //-         .form__label Задать вопрос менеджеру
-                //-         input.form__input(placeholder="Напишите что-нибудь" type="text" style="margin-bottom: 37px" name="contact_form")
-                //-         .form__label Номер телефона или адрес электронной почты, куда направить ответ:
-                //-         input.form__input(placeholder="Email или телефон" type="email" style="margin-bottom: 30px" name="contact_form")
-                //-         button.contact__button отправить 
+                .col-12.col-sm-6
+                    .contact__form 
+                        .form__label Задать вопрос менеджеру
+                        input.form__input(placeholder="Напишите что-нибудь" type="text" name="contact_form")
+                        .form__label Номер телефона или адрес электронной почты, куда направить ответ:
+                        input.form__input(placeholder="Email или телефон" type="email" name="contact_form")
+                        button.contact__button отправить 
     //- footerComponent
+    div(style="height: 50px")
     Transition(name="modalBottom")
         div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
             house-detail(:house="selectedHouse" @modalClose="closeModal")
@@ -1512,6 +1513,7 @@ a.contact__phone {
     border: 1px #A4A4A4 solid;
     width: 594px;
     height: 57px;
+    margin-bottom: 37px;
 }
 
 .card__input {
@@ -1887,7 +1889,7 @@ li.footer__item_line-height {
     }
 
     .section_header {
-        margin-bottom: 14px;
+        margin-bottom: 0px;
     }
 
     .card__user_photo img {
@@ -1983,6 +1985,42 @@ li.footer__item_line-height {
         justify-content: space-between;
         gap: 0;
         margin: 0;
+    }
+    .service_section{
+        padding-top: 34px;
+    }
+    .service__header{
+        font-size: 25px;
+        line-height: 30px;
+        margin-bottom: 14px;
+    }
+    .service__name_typ{
+        font-size: 15px;
+    }
+    .contact__form{
+        width: 100%;
+        height: 100%;
+        margin-top: 14px;  
+        padding: 7px 14px;      
+    }
+    .form__input{
+        width: 100%;
+        height: 29px;
+        margin-bottom: 8px;
+        border-radius: 14px;
+    }
+    input.form__input::placeholder{
+        padding-left: 8px;
+        font-size: 10px;
+        font-family: Lato;
+        font-weight: 300;
+    }
+    button.contact__button{
+        width: 88px;
+        height: 28px;
+    }
+    .contact__form{
+        border-radius: 15px;
     }
 }
 
