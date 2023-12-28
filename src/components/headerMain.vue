@@ -1,16 +1,16 @@
 <template lang="pug">
 header.p-20    
     .container
-        .row.align-items-center
-            .col-5
+        .row.align-items-center.justify-content-between
+            .header_logo.col-2.col-sm-5
                 router-link(to="/")
                     img(src="../assets/images/logo2.svg")
-            ul.header_sticky__nav.col-3.offset-2.d-flex
-                router-link(to="/house" tag="li" class="header_sticky__nav_link") дома
-                //- router-link(to="/" tag="li" class="header_sticky__nav_link") активный отдых
+            ul.header_sticky__nav.col-6.col-sm-3.offset-sm-2.d-flex
+                router-link(to="/house" tag="li" class="header_sticky__nav_link") дома                
                 router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых/услуги
             .header_sticky__icon_feed_back.col-2
-                img(src="../assets/images/telefon2.svg")
+                a(href="tel:+79026439294")
+                    img(src="../assets/images/telefon2.svg")
                 button забронировать
 </template>
 
@@ -65,4 +65,31 @@ header.p-20
     border: 0px;
     border-radius: 35px;
 }
+@media (max-width: 1440px){
+    .header_logo img{
+        width: 68px;
+        height: 26px;
+    }
+    .header_sticky {
+    /* width: 100wh; */
+    &.active{
+        padding-top: 15px;
+        padding-bottom: 15px;
+
+    }
+}
+.header_sticky__nav_link{
+    font-size: 10px;
+}
+.header_sticky__icon_feed_back{
+    font-size: 10px;
+}
+.header_sticky__icon_feed_back a img{
+    width: 16px;
+}
+.header_sticky__icon_feed_back{
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+}
+}
+
 </style>

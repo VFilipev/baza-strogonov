@@ -8,6 +8,7 @@ import router from './router'
 import axios from "axios"
 
 import { setupCalendar } from 'v-calendar';
+import 'swiper/css';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken' 

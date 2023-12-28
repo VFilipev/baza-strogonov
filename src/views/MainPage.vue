@@ -222,8 +222,7 @@ div
             .row.placement__cantainer_card
                 .col-xs-12.col-sm-4(v-for="(house, index) in houseList")
                     .placement__card 
-                        //- .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
-                        .wrapper_img(:style="{ backgroundImage: `url(${house.img})` }")
+                        .wrapper_img()
                             picture
                                 source(type="image/webp" :srcset="house.img")
                                 img(:src="house.img")
@@ -238,7 +237,7 @@ div
                                     .house_capacity__text до {{ house.maxP }} чел
                         .container_footer 
                             .footer_text {{ house.short_description }}
-                            .footer_button(@click="toBooking(house)") забронировать              
+                            button.footer_button(:disabled="notFilter()" @click="toBooking(house)") забронировать              
     section.service_section
         .container         
             .row.service     
@@ -343,14 +342,14 @@ div
             .row.contact__container
                 .col-12.col-sm-6 
                     .row.mb-3.mb-sm-0
-                        .col-8 Если у вас остались вопросы, вы можете задать их менеджеру в этой форме, или связаться с ним по следующим номерам телефона 
-                        .container__phone.col-4.d-flex
+                        .col-8.col-sm-10 Если у вас остались вопросы, вы можете задать их менеджеру в этой форме, или связаться с ним по следующим номерам телефона 
+                        .container__phone.col-4.col-sm-12.d-flex
                             div
                                 a.contact__phone(href="tel:+79026439294") 8-902-64-39-294
                             div
                                 a.contact__phone(href="tel:+73422880089") 8-(342) 288-00-89
-                    .col-12.mb-0(style="margin-bottom: 18px") Также вы можете найти нас в соцсетях
-                    .container__social_network
+                    .col-12.mb-0.mb-sm-3 Также вы можете найти нас в соцсетях
+                    .container__social_network.mb-sm-2
                         .social_network__name Телеграмм-канал:
                         a.social_network__link(href="https://t.me/stroganovskie_prostory" target="_blank") t.me/stroganovskie_prostory
                     .container__social_network
@@ -363,8 +362,8 @@ div
                         .form__label Номер телефона или адрес электронной почты, куда направить ответ:
                         input.form__input(placeholder="Email или телефон" type="email" name="contact_form")
                         button.contact__button отправить 
-    //- footerComponent
-    div(style="height: 50px")
+    footerComponent
+    //- div(style="height: 50px")
     Transition(name="modalBottom")
         div.modal-mask(v-show="isShowModalHouse" :class="{active : isShowModalHouse}")  
             house-detail(:house="selectedHouse" @modalClose="closeModal")
@@ -378,8 +377,8 @@ import { formatNumber } from '../components/formatNumber'
 
 import headerSticky from "../components/headerSticky.vue";
 
-// import 'v-calendar/style.css';
-import StarRating from 'vue-star-rating'
+import 'v-calendar/style.css';
+import StarRating from 'vue-star-rating';
 
 import houseDetail from "../components/houseDetail.vue";
 import footerComponent from "../components/footerComponent.vue";
@@ -404,7 +403,7 @@ export default {
         const orderStore = useOrderStore()
         const router = useRouter()
 
-        let toBooking = (lodge) => {
+        let toBooking = (lodge) => {            
             if (orderStore.orderlodge_set.length > 0) {
                 orderStore.orderlodge_set = []
             }
@@ -430,7 +429,7 @@ export default {
             {
                 webp: 'src/assets/images/main-page-winter3-source.webp',
                 png: 'src/assets/images/main-page-winter3-source.png'
-            },            
+            },
         ]
         let datePicker = ref({
             dateStart: false,
@@ -536,10 +535,12 @@ export default {
         }
         let houseList = ref([])
         const getAvailableLodge = async () => {
-            let start = moment(filter.value.dateStart).format('DD.MM.YYYY')
-            let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')
-            let tmp = (await Lodge.get_available_house({ 'date_start': start, 'date_end': end })).data
-            houseList.value = tmp
+            if(checkDate()){
+                let start = moment(filter.value.dateStart).format('DD.MM.YYYY')
+                let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')
+                let tmp = (await Lodge.get_available_house({ 'date_start': start, 'date_end': end })).data
+                houseList.value = tmp
+            }            
         }
         let selectedHouse = ref({})
         let isShowModalHouse = ref(false)
@@ -574,11 +575,26 @@ export default {
             const el = document.getElementById('contact')
             el.scrollIntoView({ behavior: 'smooth' })
         }
+        const notFilter = () => {
+            if (!filter.value.dateStart || !filter.value.dateEnd) { return true }
+            else { return false }
+        }
+        const checkDate = () => {
+            let start = moment(filter.value.dateStart)
+            let end = moment(filter.value.dateEnd)
+            let diff = end.diff(start, 'day')
+            if (diff <= 0) {
+                filter.value.dateEnd = ''
+                return false
+            } else {
+                return true
+            }
+        }
         watch(() => filter.value.dateStart, () => {
             datePicker.value.dateStart = false
         })
         watch(() => filter.value.dateEnd, () => {
-            datePicker.value.dateEnd = false
+            datePicker.value.dateEnd = false                
         })
         onMounted(() => {
             getLodgeList()
@@ -622,25 +638,27 @@ export default {
             recreation,
             bathProcedures,
             toRefBooking,
-            toRefContact
+            toRefContact,
+            notFilter
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 picture {
-  width: 100%;
-  height: 100%;
-  display: flex;
- 
+    width: 100%;
+    height: 100%;
+    display: flex;
+
 }
+
 picture img {
- object-fit: cover; 
+    object-fit: cover;
     height: auto;
-    width:100%;
+    width: 100%;
 }
 
 .first_page__header {
@@ -905,7 +923,7 @@ a.header__nav__link:after {
     height: 60px;
 }
 
-.footer_button {
+button.footer_button {
     display: flex;
     color: #FCF2EA;
     font-size: 15px;
@@ -918,10 +936,17 @@ a.header__nav__link:after {
     height: 35px;
     align-items: center;
     justify-content: center;
+    border: 0;
 
     &:hover {
         cursor: pointer;
     }
+}
+
+button.footer_button:disabled {
+    background-color: #333333;
+    cursor: not-allowed;
+    opacity: .8;
 }
 
 .container_info-graph {
@@ -966,7 +991,8 @@ a.header__nav__link:after {
     background-position: center; */
     position: relative;
 }
-.wrapper_img picture img{
+
+.wrapper_img picture img {
     border-radius: 30px;
 }
 
@@ -984,7 +1010,7 @@ a.header__nav__link:after {
 
 .placement__form__button_search {
     width: 180px;
-    margin-left: 26px;
+    margin-left: 0px;
     color: #005D4B;
     font-size: 17px;
     font-family: Lato;
@@ -1115,10 +1141,12 @@ ul {
     background-size: cover;
     background-position: 0px -135px; */
 }
-.about_us__wrapper_img picture img{
+
+.about_us__wrapper_img picture img {
     border-radius: 30px;
     object-position: 0px -135px;
 }
+
 .about_as__container_row {
     margin-bottom: 32px;
 }
@@ -1572,41 +1600,6 @@ button.contact__button {
     color: #005D4B;
 }
 
-footer.footer {
-    background-color: #F5F3F1;
-    color: rgba(0, 0, 0, 0.40);
-    font-size: 20px;
-    font-family: 'Lato';
-    font-weight: 300;
-}
-
-.footer_container {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 182px;
-    padding-bottom: 20px;
-}
-
-ul.footer__item {
-    font-size: 13px;
-}
-
-ul.footer__item li {
-    margin-top: 6px;
-}
-
-li.footer__item_line-height {
-    line-height: 23px;
-}
-
-.footer__item_bold {
-    font-weight: 400;
-}
-
-.footer__link:hover {
-    cursor: pointer;
-}
-
 @media (min-width: 1200px) {
     .first_page__header {
         margin-bottom: 200px;
@@ -1678,7 +1671,7 @@ li.footer__item_line-height {
         width: 100%;
         height: 126px;
         background-position: 0px -70px;
-    }    
+    }
 
     .container {
         padding-right: calc(var(--bs-gutter-x) * 0.5);
@@ -1946,41 +1939,53 @@ li.footer__item_line-height {
         gap: 0;
         margin: 0;
     }
-    .service_section{
+
+    .service_section {
         padding-top: 34px;
     }
-    .service__header{
+
+    .service__header {
         font-size: 25px;
         line-height: 30px;
         margin-bottom: 14px;
     }
-    .service__name_typ{
+
+    .service__name_typ {
         font-size: 15px;
     }
-    .contact__form{
+
+    .contact__form {
         width: 100%;
         height: 100%;
-        margin-top: 14px;  
-        padding: 7px 14px;      
+        margin-top: 14px;
+        padding: 7px 14px;
     }
-    .form__input{
+
+    .form__input {
         width: 100%;
         height: 29px;
         margin-bottom: 8px;
         border-radius: 14px;
     }
-    input.form__input::placeholder{
+
+    input.form__input::placeholder {
         padding-left: 8px;
         font-size: 10px;
         font-family: Lato;
         font-weight: 300;
     }
-    button.contact__button{
+
+    button.contact__button {
         width: 88px;
         height: 28px;
     }
-    .contact__form{
+
+    .contact__form {
         border-radius: 15px;
+    }
+
+    .modal-mask.active {
+        overflow-y: scroll;
     }
 }
 
