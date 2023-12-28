@@ -945,8 +945,10 @@ button.footer_button {
 
 button.footer_button:disabled {
     background-color: #333333;
-    cursor: not-allowed;
     opacity: .8;
+}
+button.footer_button:disabled:hover{
+    cursor: not-allowed;
 }
 
 .container_info-graph {
