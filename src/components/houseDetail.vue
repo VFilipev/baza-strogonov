@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+div.focus-none(tabindex='-1' id="modal" @keyup.right="next" @keyup.left="prev" @keyup.esc="show = false")
     .container 
         .row.d-flex.justify-content-between.align-items-center.modal-header
             .col-6.col-sm-4.house_name {{ house.name }}
@@ -25,9 +25,9 @@ div
                 .row.row_swiper
                     .swiper__wrapper(style="position: relative")                  
                         swiper(slidesPerView="2" :spaceBetween="spaceBetweenSlider" @slideChange="showSliderIcon = false")
-                            swiper-slide(v-for="card in house.photo_gallery_set")
+                            swiper-slide(v-for="(card, index) in house.photo_gallery_set")
                                 .photogalery__card 
-                                    .photogalery__image(:style="{ backgroundImage: `url(${card.img})`}")
+                                    .photogalery__image(@click="selectPhoto(index)" :style="{ backgroundImage: `url(${card.img})`}")
                                     .photogalery__name {{ card.name }}                            
                         img.slider_icon(v-if="showSliderIcon" src="../assets/images/slider-icon.svg")
             .col-12.col-sm-6
@@ -55,12 +55,22 @@ div
                     .col-6 
                         .house__name_description Включено в проживание
                         .house__text_description {{ house.include }}
+    transition(name="modal")
+        .modal-mask(v-if="show" aria-hidden="true")
+           .modal-wrapper( ref="modal" @click="show=false"  role="dialog" aria-hidden="true")
+                .modal-container-photo(@click.stop="" role="document")
+                  .modal-body2-photo
+                    svg(v-if='activIndex>0' @click="prev" width="36px" height="36px" class="next-btn" viewBox="0 0 24 24") 
+                        path(d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z")
+                    img(:src='activPhoto?.img' class="active-photo mx-auto d-block" )
+                    svg(v-if='house.photo_gallery_set.length > activIndex+1' @click="next" width="36px" height="36px" class="next-btn" viewBox="0 0 24 24") <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"></path>
 </template>
 
 <script>
-import { ref, onMounted } from "vue"
-import { formatNumber } from './formatNumber'
+import { ref, onMounted } from "vue";
+import { formatNumber } from './formatNumber';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+
 
 export default {
     name: "house-detail",
@@ -69,24 +79,106 @@ export default {
         Swiper,
         SwiperSlide,
     },
-    setup() {
+    setup(props) {
         let showSliderIcon = ref(true)       
         let spaceBetweenSlider = ref(40) 
+        let activIndex = ref(-1)
+        let activPhoto = ref({})
+        let show = ref(false)
+        const prev = () =>{
+            if (activIndex.value > 0){
+                activIndex.value -= 1
+                activPhoto.value = props.house.photo_gallery_set[activIndex.value]
+            }
+            
+        }
+        const next = () =>{
+            if (activIndex.value < props.house.photo_gallery_set.length - 1){
+                activIndex.value+=1
+                activPhoto.value = props.house.photo_gallery_set[activIndex.value]
+            }            
+        }
+        const selectPhoto = (index) => {
+            show.value = true
+            let el = document.getElementById('modal')
+            el.focus()
+            activIndex.value = index
+            activPhoto.value = props.house.photo_gallery_set[activIndex.value]
+        }        
         onMounted(() => {
             if(window.innerWidth < 600 || /Mobi/i.test(navigator.userAgent)){
                 spaceBetweenSlider.value = 20
             }
+            console.log();
         })
         return {
             showSliderIcon,
             formatNumber,
-            spaceBetweenSlider
+            spaceBetweenSlider,
+            selectPhoto,
+            show,
+            prev,
+            next,
+            activPhoto,
+            activIndex
+            
         }
     }
 }
 </script>
 
 <style scoped>
+.focus-none{
+  outline: none;
+  box-shadow: none;
+}
+.next-btn {
+    background: #fff;
+    border-radius: 20px;
+    z-index: 999;
+}
+.active-photo{
+    max-width:90%;
+    max-height:100%
+}
+.modal-body2-photo
+{
+    height: calc(95vh );
+    min-height: 600px;
+    overflow-y: auto;
+    overflow-x:hidden;
+    padding:0px;
+    align-items: center;
+    display: flex;
+}
+.modal-container-photo{
+
+    max-width:1000px;
+    margin:15px auto;
+}
+.next-btn{
+background: white;
+border-radius: 20px;
+z-index:10
+}
+.galery-title{
+    margin-top:50px;
+    margin-left:5px
+}
+.modal-mask{
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.5);
+    display: table;
+
+}
+.modal-wrapper {
+    display: table-cell;
+}
 .row_cost {
     display: flex;
     justify-content: space-between;
@@ -151,6 +243,9 @@ export default {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    &:hover{
+        cursor: pointer;
+    }
 }
 
 .photogalery__card {
@@ -164,7 +259,7 @@ export default {
 
 .house__image {
     border-radius: 30px;
-    width: 621px;
+    width: 100%;
     height: 354px;
     background-repeat: no-repeat;
     background-size: cover;
@@ -200,7 +295,13 @@ button.btn_close {
 .row_info{
     margin-bottom: 31px;
 }
-@media (max-width: 1440px) {
+@media (max-width: 1200px) {
+    .modal-header{
+        padding-top: 0;
+    }
+}
+
+@media (max-width: 1200px) {
 .house_name{
     font-size: 25px;
 }

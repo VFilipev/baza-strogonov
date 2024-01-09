@@ -52,7 +52,7 @@ class LodgeViewSet(viewsets.ModelViewSet):
                 # price_set = Special_price.objects.filter(lodge=l.id).values('name','cost')                
                 # photo_gallery_set = Photos.objects.filter(lodge=l.id).values('img','name')                
                 house = serializer_lodge
-                house['price_set'] = tmp
+                house['price_set_by_day'] = tmp
                 lodge_list.append(
                     house
                     ) 

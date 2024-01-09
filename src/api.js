@@ -86,9 +86,13 @@ export let Lodge = apiConstructor(lodgeUrl)
 Lodge.get_available_house = async function(filter){
     return (await axios.get(lodgeUrl + "get_free_lodge/?" + toURLParams(filter)))
 }
+export let Order = apiConstructor(orderUrl)
+Order.last = async()=>{
+    const response = await axios.get(orderUrl+'last/')
+    return response
+}
 
 export let Service = apiConstructor(serviceUrl)
-export let Order = apiConstructor(orderUrl)
 export let SpecialPrice = apiConstructor(specialPriceUrl)
 export let Price = apiConstructor(priceUrl)
 export let Comment = apiConstructor(commentUrl)

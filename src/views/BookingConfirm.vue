@@ -8,19 +8,18 @@ div
     section.order_info(style="margin-top:13px")
         .container
             .order_info__wrapper.p-18
-
-                .order_info__header(style="margin-top:28px") Подтверждение №20200123
-                .d-flex(style="margin-top:38px")
-                    .order_info__input_wrapper.order_info__date_start__text
+                .order_info__header.order_number Подтверждение №20200123
+                .row.p-0.d-flex.main_info
+                    .col-6.col-sm-4.order_info__input_wrapper.order_info__date_start__text.p-sm-0
                         .order_info__input_date {{getDate(orderStore.orderlodge_set[0].start_date)}}
-                    .order_info__input_wrapper.order_info__date_end__text
+                    .col-6.col-sm-4.order_info__input_wrapper.order_info__date_end__text.p-sm-0
                         .order_info__input_date {{getDate(orderStore.orderlodge_set[0].end_date)}}
-                    .order_info__input_wrapper.order_info__day__text
+                    .col-6.col-sm-1.order_info__input_wrapper.order_info__day__text.p-sm-0
                         .order_info__input_day {{ getDurationOrder() }}
-                    .order_info__input_wrapper.order_info__lodge__text
+                    .col-6.col-sm-3.order_info__input_wrapper.order_info__lodge__text.p-sm-0
                         .order_info__input_lodge {{ orderStore.orderlodge_set[0].lodge.name }}
-                .order_info__header(style="margin-top:32px;margin-bottom:35px") Детали бронирования
-                .order_info__item 
+                .order_info__header.detail_info Детали бронирования
+                .order_info__item.mt-0
                     .item__name ФИО
                     .item__value {{ orderStore.customer }}
                 .order_info__item 
@@ -43,14 +42,14 @@ div
                     .order_info__item(v-for="service in orderStore.services_set")
                         .item__name {{ serviceList[service.name] }}                
                         .item__value {{ getTime(service) }}                
-                .row
-                    .col-6.order_info__header(style="margin-top:34px;margin-bottom:13px") Итоговая стоимость:
-                    .col-6.order_info__header(style="margin-top:34px") Стоимость предоплаты:
+                .row.row_cost
+                    .col-6.order_info__header Итоговая стоимость:
+                    .col-6.order_info__header Стоимость предоплаты:
                 .d-flex(style="margin-bottom:24px")
                     .order_info__input_wrapper(style="width:50%")
-                        .order_info__input_cost {{ orderStore.cost }}
+                        .order_info__input_cost {{ orderStore.cost + ' р.' }}
                     .order_info__input_wrapper(style="width:50%")
-                        .order_info__input_pay {{ orderStore.cost * 0.5 }}
+                        .order_info__input_pay {{ orderStore.cost * 0.5 + ' р.' }}
     section.order_info-contract(style="margin-top:13px")
         .container
             .order_info__wrapper.p-18
@@ -75,7 +74,7 @@ div
 
 <script>
 import { useOrderStore } from '../stores/orderStore';
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import moment from 'moment-with-locales-es6';
 import { Order } from '../api'
 import { useRouter } from 'vue-router'
@@ -128,12 +127,18 @@ export default {
         }
         let isShowModalConfirm = ref(false)
         const router = useRouter()
-
+        const getOrderId = async() =>{
+            let orderId = (await Order.last()).data
+            console.log(orderId);
+        }
         const toMainPage = () => {
             router.push({
                 name: 'main-page',
             })
         }
+        onMounted(() =>{
+            getOrderId()
+        })
         return {
             orderStore,
             isFeedback,
@@ -305,34 +310,33 @@ button.modal-button {
     padding-left: 9px;
     padding-bottom: 27px;
     border-bottom: 1px #A4A4A4 solid;
-
-    &:not(:first-child) {
+}
+.order_info__item:not(:first-child) {
         margin-top: 28px;
     }
-}
 
 .item__name {
     width: 176px;
 }
 
 .order_info__input_date {
-    border-radius: 10px;
+    border-radius: 20px;
     border: 1px #A4A4A4 solid;
-    width: 402.5px;
+    width: 100%;
     height: 67px;
     color: #003731;
     font-size: 20px;
     font-family: 'Lato';
     font-weight: 400;
-    padding-left: 30px;
+    padding-left: 20px;
     display: flex;
     align-items: center;
 }
 
 .order_info__input_day {
-    border-radius: 10px;
+    border-radius: 20px;
     border: 1px #A4A4A4 solid;
-    width: 126.5px;
+    width: 100%;
     height: 67px;
     color: #003731;
     font-size: 20px;
@@ -344,9 +348,9 @@ button.modal-button {
 }
 
 .order_info__input_lodge {
-    border-radius: 10px;
+    border-radius: 20px;
     border: 1px #A4A4A4 solid;
-    width: 298.5px;
+    width: 100%;
     height: 67px;
     color: #003731;
     font-size: 20px;
@@ -358,7 +362,7 @@ button.modal-button {
 }
 
 .order_info__input_cost {
-    border-radius: 10px;
+    border-radius: 20px;
     border: 1px #A4A4A4 solid;
     /* width: 50%; */
     height: 67px;
@@ -372,7 +376,7 @@ button.modal-button {
 }
 
 .order_info__input_pay {
-    border-radius: 10px;
+    border-radius: 20px;
     border: 1px #A4A4A4 solid;
     /* width: 50%; */
     height: 67px;
@@ -397,7 +401,7 @@ button.modal-button {
     position: absolute;
     display: flex;
     align-items: center;
-    left: 1.625rem;
+    left: 15px;
     background-color: #fff;
     z-index: 10;
     transform: translateY(-80px);
@@ -413,7 +417,7 @@ button.modal-button {
     position: absolute;
     display: flex;
     align-items: center;
-    left: 1.925rem;
+    left: 1.125rem;
     background-color: #fff;
     z-index: 10;
     transform: translateY(-80px);
@@ -445,7 +449,7 @@ button.modal-button {
     position: absolute;
     display: flex;
     align-items: center;
-    left: 1.625rem;
+    left: 15px;
     background-color: #fff;
     z-index: 10;
     transform: translateY(-80px);
@@ -488,4 +492,108 @@ button.modal-button {
     font-size: 20px;
     font-family: 'Lato';
     font-weight: 400;
-}</style>
+}
+.order_number{
+    margin-top:28px
+}
+.main_info{
+    margin-top:38px
+}
+.detail_info{
+    margin-top:32px;
+    margin-bottom:35px;
+}
+.row_cost{
+    margin-top:34px;
+    margin-bottom:13px;
+}
+@media (max-width: 1200px) {
+    .top__header p{
+        font-size: 25px;
+        font-weight: 400;
+    }
+    .top__header{
+        width: 80%;
+        display: flex;
+        text-align: center;
+    }
+    .top__wrapper{
+        height: 125px;
+    }
+    .order_info__header{
+        font-size: 12px;
+    }
+    .order_info__input_date{
+        height: 30px;
+        width: 100%;
+        font-size: 12px;
+        padding-left: 15px;
+    }
+    .order_info__date_start__text::after{
+        font-size: 12px;
+        left: 10px;
+        transform: translateY(-39px);
+    }
+    .order_info__date_start__text{
+        margin-bottom: 10px;
+    }
+    .order_info__date_end__text::after{
+        font-size: 12px;
+        left: 10px;
+        transform: translateY(-39px);
+    }
+    .order_number{
+        margin-top: 15px;
+    }
+    .main_info{
+        margin-top: 15px;
+    }
+    .order_info__input_day{
+        height: 30px;
+        width: 100%;
+        font-size: 12px;
+        padding-left: 15px;
+        justify-content: start;
+    }
+    .order_info__day__text::after{
+        font-size: 12px;
+        left: 10px;
+        transform: translateY(-39px);
+    }
+    .order_info__input_lodge{
+        height: 30px;
+        width: 100%;
+        font-size: 12px;
+        padding-left: 15px;
+    }
+    .order_info__lodge__text::after{
+        font-size: 12px;
+        left: 10px;
+        transform: translateY(-39px);
+    }
+    .detail_info{
+        margin: 15px 0px;
+    }
+    .order_info__item{
+        padding-bottom: 18px;   
+        align-items: center;     
+    }
+    .order_info__item:not(:first-child) {
+        margin-top: 18px;
+    }
+    .row_cost{        
+        margin: 19px 0px 15px 0px;
+    }
+    .order_info__input_cost,.order_info__input_pay{
+        height: 30px;
+        font-size: 12px;
+        padding-left: 15px;
+    }
+    .confirm__checkbox__label{
+        font-size: 10px;
+    }
+    .confirm__btn{
+        font-size: 10px;
+    }
+}
+</style>

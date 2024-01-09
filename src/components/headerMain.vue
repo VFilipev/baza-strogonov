@@ -6,7 +6,7 @@ header.p-20
                 router-link(to="/")
                     img(src="../assets/images/logo2.svg")
             ul.header_sticky__nav.col-6.col-sm-3.offset-sm-2.d-flex
-                router-link(to="/house" tag="li" class="header_sticky__nav_link") дома                
+                router-link(to="/house/dom-kuznetsa" tag="li" class="header_sticky__nav_link") дома                
                 router-link(to="/uslugi" tag="li" class="header_sticky__nav_link") активный отдых/услуги
             .header_sticky__icon_feed_back.col-2
                 a(href="tel:+79026439294")
@@ -65,7 +65,7 @@ header.p-20
     border: 0px;
     border-radius: 35px;
 }
-@media (max-width: 1440px){
+@media (max-width: 1200px){
     .header_logo img{
         width: 68px;
         height: 26px;

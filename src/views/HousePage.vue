@@ -76,10 +76,10 @@ import footerComponent from "../components/footerComponent.vue";
 // import houseList from '../components/houseList'
 import headerMain from "../components/headerMain.vue";
 import { Lodge } from '../api'
-
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
-    name: 'house-page',
+    name: 'house',
     components: {
         Swiper,
         SwiperSlide,
@@ -94,14 +94,19 @@ export default {
         let showSliderIcon = ref(true)
         let selectLodge = ref({})
         let isShowModalHouse = ref(false)
+        const route = useRoute()
+        const router = useRouter()
         let selLodge = (lodge) => {
             selectLodge.value = lodge
             isShowModalHouse.value = true
         }
         let houseList = ref([])
         const getLodgeList = async () => {
-            let tmp = (await Lodge.getList({ 'avalible': true })).results
-            houseList.value = tmp
+            let res = (await Lodge.getList({ 'avalible': true })).results
+            houseList.value = res
+            let slug = route.params.slug
+            let findIndex = houseList.value.findIndex(l => l.slug == slug)
+            selectHouseIndex.value = findIndex
         }
         const closeModal = () => {
             document.body.classList.remove('modal-open')
@@ -121,7 +126,9 @@ export default {
                 selectHouseIndex.value++
             }
         }
+        watch(()=>selectHouseIndex.value,()=>router.push({name:'house', params:{slug:houseList.value[selectHouseIndex.value]?.slug}}))
         onMounted(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
             if (window.innerWidth < 600 || /Mobi/i.test(navigator.userAgent)) {
                 spaceBetweenSlider.value = 20
             }
@@ -386,7 +393,7 @@ export default {
     background-color: #F5F3F1;
 }
 
-@media (max-width: 1440px) {
+@media (max-width: 1200px) {
     .section_name {
         font-size: 25px;
     }

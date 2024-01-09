@@ -11,16 +11,16 @@ div.color_bg
                             .logo.col-5
                                 router-link(to="/")
                                     img(src="../assets/images/logo.png")
-                            .header__nav.d-flex.col-3.offset-2
-                                router-link(to="/house", tag="a", class="header__nav__link") дома
+                            .header__nav.d-flex.col-3.offset-2.d-none.d-sm-flex
+                                router-link(to="/house/dom-kuznetsa", tag="a", class="header__nav__link") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
-                            .header__nav.d-flex.col-2     
+                            .header__nav.d-flex.col-2.d-none.d-sm-flex     
                                 a(href="tel:+79026439294")                       
                                     img(src='../assets/images/telefon.svg')
                                 button.header__nav__link.header__nav__button забронировать
                     .row.d-flex.justify-content-between(style="margin-top: 11px")
-                        .col-4.first_page__h1 зимние <br> развлечения
-                        .col-4.first_page__h2 {{ photoWinterList[selPhoto].text }}                     
+                        .first_page__h1.col-xs-12.col-sm-4.col-xxl-4 зимние <br> развлечения
+                        .first_page__h2.col-xs-12.col-sm-4.col-xxl-4 {{ photoWinterList[selPhoto].text }}                     
     section.uslugi_list
         .container(style="margin-top:93px; padding-bottom: 95px")
             .row                
@@ -49,96 +49,23 @@ div.color_bg
                             .uslugi_card__img(:style="{ backgroundImage: `url(${uslugi.photo})` }")
                             .uslugi_card__text {{ uslugi.text }}
     section.service_section
-        .container         
-            .row.service     
-                .service__header.col-2 услуги
-            .row(style="padding-bottom: 94px") 
-                .col-6
-                    p.service__name_typ Активный отдых                    
-                    .service__item(v-for="item in recreation")
-                        .service__name {{ item.name }}
-                        .service__cost {{ item.cost }}                    
-                .col-6
-                    p Банные процедуры
-                    .service__item(v-for="item in bathProcedures") 
-                        .service__name {{ item.name }}
-                        .service__cost {{ item.cost }}    
+        serviceList
     footerComponent
 </template>
 
 <script>
 import { ref, onMounted } from "vue"
 import footerComponent from "../components/footerComponent.vue"
-import { recreation, bathProcedures } from "../components/serviceList";
+import serviceList from "../components/serviceList.vue"
+import { uslugiList, uslugiSummerList, photoWinterList, photoSummerList  } from "../components/serviceList"
 
 export default {
     name: 'uslugi-page',
     components: {
-        footerComponent
+        footerComponent,
+        serviceList
     },
-    setup() {
-        const photoWinterList = [
-            {photo: 'src/assets/images-uslugi/main-page-1.png',
-            text: 'по заснеженным полям тут и там: получите незабываемые впечатления от зимнего катания — аренда снегохода от 30 минут'
-            },
-            {photo: 'src/assets/images-uslugi/main-page-7.png',
-            text: 'чан — идеальный вариант для расслабления и рефреша в сердце природы после трудовых будней'
-            },
-            {photo: 'src/assets/images-uslugi/main-page-3.png',
-            text: 'почувствуйте себя искусным фигуристом, прокатившись с ветерком на нашем катке — аренда коньков от 150 рублей'
-            },
-        ]        
-        const photoSummerList = [
-            {photo: 'src/assets/images-uslugi/main-page-4.png',
-            text: 'увлекательный поход за грибами на квадроцикле: познайте удивительную природу Пермсокого края — аренда квадроцикла от 30 минут'
-            },
-            {photo: 'src/assets/images-uslugi/main-page-5.png',
-            text: 'настоящее уединение с природой — это определённо про катание на сапах по  реке  Каме,  у вас будет захватывать дух, но мы общаем, что вам понравится'
-            },
-            {photo: 'src/assets/images-uslugi/main-page-6.png',
-            text: '“Душистый пар не только тело, но и душу лечит”. Наша баня  это место, где все ваши заботы — и усталость обязательно испарятся'
-            },
-        ]
-        const uslugiList = [
-            {photo: 'src/assets/images-uslugi/images-1.png',
-            text: 'снегоход'
-            },
-            {photo: 'src/assets/images-uslugi/images-2.png',
-            text: 'чан'
-            },
-            {photo: 'src/assets/images-uslugi/images-3.png',
-            text: 'баня'
-            },
-            {photo: 'src/assets/images-uslugi/images-4.png',
-            text: 'лыжи'
-            },
-            {photo: 'src/assets/images-uslugi/images-5.png',
-            text: 'коньки'
-            },
-            {photo: 'src/assets/images-uslugi/images-6.png',
-            text: 'каток'
-            },
-        ]
-        const uslugiSummerList = [
-            {photo: 'src/assets/images-uslugi/images-7.png',
-            text: 'баня и чан'
-            },
-            {photo: 'src/assets/images-uslugi/images-8.png',
-            text: 'спортивные игры'
-            },
-            {photo: 'src/assets/images-uslugi/images-9.png',
-            text: 'квадроциклы'
-            },
-            {photo: 'src/assets/images-uslugi/images-10.png',
-            text: 'сапы'
-            },
-            {photo: 'src/assets/images-uslugi/images-11.png',
-            text: 'контактный зоопарк'
-            },
-            {photo: 'src/assets/images-uslugi/images-12.png',
-            text: 'гидроциклы'
-            },
-        ]
+    setup() {        
         let selPhoto = ref(0)
         let selPhotoSummer = ref(0)
         let timerId
@@ -168,8 +95,14 @@ export default {
             incSelPhoto()
             timerId = setTimeout(sliderPhoto, 8000)
         }
+        const sliderPhotoSummer = () => {
+            incSelPhotoSummer()
+            timerId = setTimeout(sliderPhotoSummer, 8000)
+        }
         onMounted(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
             setTimeout(sliderPhoto, 8000)
+            setTimeout(sliderPhotoSummer, 8000)
         })
         return {
             photoWinterList, 
@@ -180,20 +113,75 @@ export default {
             selPhotoSummer,
             photoSummerList,
             incSelPhotoSummer,
-            uslugiSummerList,
-            recreation, 
-            bathProcedures
+            uslugiSummerList
         }
     }
 }
 </script>
 
 <style scoped>
+.first_page__h2 {
+    font-family: 'Lato';
+    font-size: 17px;
+    color: #fff;
+    line-height: 23px;
+}
+.first_page__h1 {
+    font-family: 'Apoc Normal';
+    font-weight: 400;
+    font-size: 30px;
+    color: #fff;
+    line-height: 35px;
+    letter-spacing: 2px;
+}
+a.header__nav__link {
+    text-decoration: none;
+    color: #fff;
+    opacity: .8;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &:hover:after {
+        transform: scaleX(1);
+    }
+}
+a.header__nav__link:after {
+    display: block;
+    content: '';
+    border-bottom: solid 1px #fff;
+    transform: scaleX(0);
+    transition: transform 250ms ease-in-out;
+}
+.header__nav {
+    color: #fff;
+    gap: 15px;
+}
+
+.header__nav__link {
+    font-family: 'Lato';
+    font-size: 17px;
+}
+button.header__nav__button {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 35px;
+    transition: background-color 0.4s ease-in-out, border 250ms ease-in-out;
+    text-decoration: none;
+
+    &:hover {
+        background-color: #003731;
+        border: 1px solid transparent
+    }
+}
 .container__header{
     position: relative;
     z-index: 100;
 }
 .service_section{
+    padding-top: 75px;
     background-color: #fff;
 }
 .description{
@@ -201,7 +189,7 @@ export default {
     bottom: 100px;
 }
 .container__second_page{
-    min-height: 100vh;
+    min-height: 100svh;
     width: 100%;
     position: relative;
 }
@@ -241,7 +229,7 @@ a.header__nav__link {
     margin-bottom: 481px;
 }
 .container__first_page {
-min-height: 100vh;
+min-height: 100svh;
 min-width: 100%;
 position: relative;
 }

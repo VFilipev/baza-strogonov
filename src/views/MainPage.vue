@@ -16,7 +16,7 @@ div
                             .col-xs-12.col-sm-5.col-xxl-5
                                 img.logo(src="../assets/images/logo.png")
                             .header__nav.d-flex.col-3.offset-2.d-none.d-sm-flex
-                                router-link(to="/house", tag="a", class="header__nav__link") дома
+                                router-link(to="/house/dom-kuznetsa", tag="a", class="header__nav__link" @click.native="$scrollToTop") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
                             .header__nav.d-flex.col-2.d-none.d-sm-flex
                                 a(@click="toRefContact" style="cursor:pointer")                       
@@ -27,8 +27,8 @@ div
                         .first_page__h1.col-xs-12.col-sm-4.col-xxl-4 уютные коттеджи 
                             |и глемпинг хвойном лесу
                             |на берегу камского моря
-                        .first_page__h2.col-xs-12.col-sm-4.col-xxl-4 Уединеный отдых в уютном историческом месте Пермского края. 
-                            |Насладитесь первозданой природой и европейским уровнем комфорта размещения в уютных коттеджах и номерах. 
+                        .first_page__h2.col-xs-12.col-sm-4.col-xxl-5 Уединеный отдых в уютном историческом месте Пермского края. 
+                            |Насладитесь первозданой природой и европейским уровнем комфорта размещения в уютных коттеджах <br> и номерах. 
                             |Зарядитесь эмоциямиот прогулки на квадроциклах, а после отдахните душой и телом в традиционной русской бане.                                     
     //- НАС ВЫБИРАЮТ ДЛЯ МОБИЛКИ
     section.about_us.d-block.d-sm-none(id="aboutUsMobile")
@@ -182,14 +182,14 @@ div
                 .col-4
                     button.placement__form__button_search(@click="getAvailableLodge") найти 
             .placement__form.row.d-none.d-sm-flex
-                .date_time.date_time__icon.date_time__text.col-3
+                .col-3.date_time.date_time__icon.date_time__text(:class="{active : filter.dateStart}")
                     DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
                         template(#default="{ inputValue, inputEvents }")                        
-                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" id="inputDateStart")
-                .date_time.date_time__icon.date_time_end__text.col-3
+                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" id="inputDateStart" :class="{active : filter.dateStart}")
+                .col-3.date_time.date_time__icon.date_time_end__text(:class="{active : filter.dateEnd}")
                     DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
                         template(#default="{ inputValue, inputEvents }")                        
-                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input") 
+                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" :class="{active : filter.dateEnd}") 
                     .date_picker_wrapper
                 .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
                     .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
@@ -225,7 +225,7 @@ div
                         .wrapper_img()
                             picture
                                 source(type="image/webp" :srcset="house.img")
-                                img(:src="house.img")
+                                img(:src="house.img" :class="{gray : isAvailableHouse == false }")
                             .btn_house_detail(@click="showModalHouse(house)")
                         .container_info-graph
                             .house_name {{ house.name }}
@@ -237,22 +237,23 @@ div
                                     .house_capacity__text до {{ house.maxP }} чел
                         .container_footer 
                             .footer_text {{ house.short_description }}
-                            button.footer_button(:disabled="notFilter()" @click="toBooking(house)") забронировать              
+                            button.footer_button(:disabled="isAvailableHouse == false" @click="toBooking(house)") забронировать              
     section.service_section
-        .container         
-            .row.service     
-                .service__header.col-4.col-sm-2 услуги
-            .row(style="padding-bottom: 94px") 
-                .col-xs-12.mb-5.mb-sm-0.col-sm-6
-                    p.service__name_typ Активный отдых                    
-                    .service__item(v-for="item in recreation")
-                        .service__name {{ item.name }}
-                        .service__cost {{ item.cost }}                    
-                .col-xs-12.col-sm-6
-                    p Банные процедуры
-                    .service__item(v-for="item in bathProcedures") 
-                        .service__name {{ item.name }}
-                        .service__cost {{ item.cost }}                              
+        serviceList
+        //- .container         
+        //-     .row.service     
+        //-         .service__header.col-4.col-sm-2 услуги
+        //-     .row(style="padding-bottom: 94px") 
+        //-         .col-xs-12.mb-5.mb-sm-0.col-sm-6
+        //-             p.service__name_typ Активный отдых                    
+        //-             .service__item(v-for="item in recreation")
+        //-                 .service__name {{ item.name }}
+        //-                 .service__cost {{ item.cost }}                    
+        //-         .col-xs-12.col-sm-6
+        //-             p Банные процедуры
+        //-             .service__item(v-for="item in bathProcedures") 
+        //-                 .service__name {{ item.name }}
+        //-                 .service__cost {{ item.cost }}                              
     section.feedback_section
         .container
             .section_header ваши отзывы
@@ -386,7 +387,7 @@ import { useRouter } from 'vue-router'
 import { useOrderStore } from "../stores/orderStore";
 
 import { Lodge, Comment } from '../api'
-import { recreation, bathProcedures } from "../components/serviceList";
+import serviceList from "../components/serviceList.vue";
 import moment from "moment";
 export default {
 
@@ -397,7 +398,8 @@ export default {
         StarRating,
         houseDetail,
         headerSticky,
-        footerComponent
+        footerComponent,
+        serviceList
     },
     setup() {
         const orderStore = useOrderStore()
@@ -540,7 +542,8 @@ export default {
                 let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')
                 let tmp = (await Lodge.get_available_house({ 'date_start': start, 'date_end': end })).data
                 houseList.value = tmp
-            }            
+                isAvailableHouse.value = true
+            }
         }
         let selectedHouse = ref({})
         let isShowModalHouse = ref(false)
@@ -575,10 +578,7 @@ export default {
             const el = document.getElementById('contact')
             el.scrollIntoView({ behavior: 'smooth' })
         }
-        const notFilter = () => {
-            if (!filter.value.dateStart || !filter.value.dateEnd) { return true }
-            else { return false }
-        }
+        const isAvailableHouse = ref(false)
         const checkDate = () => {
             let start = moment(filter.value.dateStart)
             let end = moment(filter.value.dateEnd)
@@ -635,11 +635,9 @@ export default {
             getComment,
             commentList,
             isEval,
-            recreation,
-            bathProcedures,
             toRefBooking,
             toRefContact,
-            notFilter
+            isAvailableHouse
         }
     }
 }
@@ -647,6 +645,10 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+.gray{
+    filter: grayscale(100%);
+}
 
 picture {
     width: 100%;
@@ -693,7 +695,7 @@ p.card__text.text_black {
 .modal-mask {
     position: fixed;
     top: 0;
-    height: 100vh;
+    height: 100svh;
     width: 100%;
     background-color: #ECE8E3;
     z-index: 200;
@@ -1077,8 +1079,11 @@ input:focus-visible {
     width: 289px;
     height: 57px;
     color: #003731;
+    padding-left: 18px;
 }
-
+.date_time__input.active{
+    outline: 1px #005D4B solid;
+}
 .date_time {
     position: relative;
 }
@@ -1109,6 +1114,9 @@ input:focus-visible {
     padding-left: 5px;
     padding-right: 5px;
 }
+.date_time__text.active::after{
+    color:#005D4B
+}
 
 .date_time_end__text::after {
     font-family: 'Montserrat';
@@ -1124,6 +1132,9 @@ input:focus-visible {
     transform: translateY(-69px);
     padding-left: 5px;
     padding-right: 5px;
+}
+.date_time_end__text.active::after{
+    color:#005D4B
 }
 
 li {
@@ -1232,7 +1243,7 @@ button.header__nav__button a {
 }
 
 .first_page__wrapper {
-    min-height: 100vh;
+    min-height: 100svh;
     width: 100%;
     position: relative;
 }
@@ -1266,7 +1277,7 @@ picture.photo.active {
     /* background-image: url(../assets/images/main-page.png); */
     background-repeat: no-repeat;
     background-size: cover;
-    height: 100vh;
+    height: 100svh;
 }
 
 .about_us__header {
@@ -1286,40 +1297,6 @@ picture.photo.active {
 
 .container {
     padding: 0;
-}
-
-.service_section {
-    background-color: #ECE8E380;
-    padding-top: 84px;
-}
-
-.service__header {
-    font-family: 'Apoc Normal';
-    font-weight: 300;
-    font-size: 47px;
-    line-height: 49px;
-    color: #003731;
-    margin-bottom: 60px;
-}
-
-.service__name_typ {
-    font-family: 'Lato';
-    font-size: 17px;
-    font-weight: 400;
-}
-
-.service__item {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'Lato';
-    font-size: 15px;
-    font-weight: 300;
-    border-bottom: 1px #005D4B solid;
-    padding-bottom: 13px;
-}
-
-.service__item:not(:first-child) {
-    margin-top: 14px;
 }
 
 .section_header {
@@ -1614,7 +1591,7 @@ button.contact__button {
     }
 }
 
-@media (max-width: 1440px) {
+@media (max-width: 1200px) {
     .first_page__header {
         margin-bottom: 320px;
     }
@@ -1940,20 +1917,6 @@ button.contact__button {
         justify-content: space-between;
         gap: 0;
         margin: 0;
-    }
-
-    .service_section {
-        padding-top: 34px;
-    }
-
-    .service__header {
-        font-size: 25px;
-        line-height: 30px;
-        margin-bottom: 14px;
-    }
-
-    .service__name_typ {
-        font-size: 15px;
     }
 
     .contact__form {

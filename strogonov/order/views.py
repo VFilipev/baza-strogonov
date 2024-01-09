@@ -20,6 +20,8 @@ from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import FilterSet, DateFilter
 from . serializers import OrderSerializer, Order_lodgeSerializer, ProductSetSerializer, UslugiSerializer, ServiceSerializer
+from django.http import JsonResponse
+from rest_framework.decorators import action
 
 # Create your views here.
 class ServiceSetFilter(FilterSet):
@@ -60,7 +62,13 @@ class OrderViewSet(viewsets.ModelViewSet):
     model = Order
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_class  = OrderSetFilter    
+    filterset_class  = OrderSetFilter  
+
+    @action(detail=False, methods=['get'],permission_classes=[])
+    def last(self, request):        
+        order = Order.objects.all().last()
+        tmp = {'order_id': order.id + 1}
+        return JsonResponse(tmp,safe=False)
 
 class ProductFilter(FilterSet):
     class Meta:

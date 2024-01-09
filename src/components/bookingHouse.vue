@@ -489,6 +489,7 @@ input:focus-visible {
     width: 289px;
     height: 57px;
     color: #003731;
+    padding-left: 18px;
 }
 
 .date_time {

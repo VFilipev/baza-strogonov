@@ -103,7 +103,7 @@ li.footer__item_line-height {
 .footer-bottom{
     margin-top: 50px;
 }
-@media (max-width: 1440px) {
+@media (max-width: 1200px) {
     ul.footer__item {
         font-size: 8px;
     }
