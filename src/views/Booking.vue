@@ -266,12 +266,12 @@ export default {
     })
     let servicesList = ref([
       {
-        photo: 'src/assets/images-uslugi/images-2.png',
+        photo: 'static/uslugi/images-2.webp',
         name: 'чан',
         cost: '3000р/2ч',
       },
       {
-        photo: 'src/assets/images-uslugi/images-3.png',
+        photo: 'static/uslugi/images-3.webp',
         name: 'баня',
         cost: '2400р/2ч',
       },
@@ -279,31 +279,31 @@ export default {
     let productsList = ref([
       {
         id: 1,
-        photo: 'src/assets/images-uslugi/images-1.png',
+        photo: 'static/uslugi/images-1.webp',
         name: 'Снегоход',
         cost: 3200,
       },
       {
         id: 2,
-        photo: 'src/assets/images-uslugi/images-11.png',
+        photo: 'static/uslugi/images-11.webp',
         name: 'Зоопарк',
         cost: 150,
       },
       {
         id: 3,
-        photo: 'src/assets/images-uslugi/images-10.png',
+        photo: 'static/uslugi/images-10.webp',
         name: 'Сапы',
         cost: 1000,
       },
       {
         id: 4,
-        photo: 'src/assets/images-uslugi/images-6.png',
+        photo: 'static/uslugi/images-6.webp',
         name: 'Каток',
         cost: 150,
       },
       {
         id: 5,
-        photo: 'src/assets/images-uslugi/images-4.png',
+        photo: 'static/uslugi/images-4.webp',
         name: 'Лыжи',
         cost: 150,
       },
