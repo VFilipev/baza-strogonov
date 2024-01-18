@@ -7,9 +7,9 @@ div
                 .col-12.col-sm-6
                     .d-flex.justify-content-between.align-items-center
                         h4.section_name виды домов 
-                        .d-flex.container_icon.align-items-center
+                        .d-flex.container_icon.align-items-center.gap-2
                             .circle-left(@click="decSelectHouseIndex")   
-                            div(style="display:flex; flex-direction: column; align-items: center" )
+                            div(style="display:flex; flex-direction: column; align-items: center; gap: 0.5rem" )
                                 p.house__name {{ houseList[selectHouseIndex]?.name }}                      
                                 .d-flex.gap-2
                                     .house_point(v-for="(house, index) in houseList" :class="{active : index == selectHouseIndex}" @click="selectHouseIndex = index")

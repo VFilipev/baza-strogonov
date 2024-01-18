@@ -134,8 +134,8 @@ div.container
     template(v-if="orderStore.services_set.length > 0")
       .row
         .order_item.col-12(v-for="service in orderStore.services_set") 
-          .order_item__name.col-6 {{ preOrder[service.name].name }}
-          .d-flex.justify-content-between.col-6
+          .order_item__name.col-4 {{ preOrder[service.name].name }}
+          .d-flex.justify-content-between.col-8
             .order_item__cost {{ formatNumber(service.cost) + ' р.'}}
             .order_item__duration {{ getDuration(service) }}
             .order_item__date {{ parserDate(service.start_date) }}    

@@ -8,25 +8,23 @@ div
                 picture.photo(:class="{ active : index == selPhoto }")
                     source(type="image/webp" :srcset="photo['webp']")
                     source(type="image/png" :srcset="photo['png']")
-                    img(:src="photo['png']")                
+                    img(:src="photo['png']" alt="image for main page")                
             .first_page__wrapper_content
                 .container
                     .first_page__header
                         .row.align-items-center
                             .col-xs-12.col-sm-5.col-xxl-5
-                                img.logo(src="../assets/images/logo.png")
+                                img.logo(src="../assets/images/logo.png" alt="logo")
                             .header__nav.d-flex.col-3.offset-2.d-none.d-sm-flex
                                 router-link(to="/house/dom-kuznetsa", tag="a", class="header__nav__link" @click.native="$scrollToTop") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
                             .header__nav.d-flex.col-2.d-none.d-sm-flex
                                 a(@click="toRefContact" style="cursor:pointer")                       
-                                    img(src='../assets/images/telefon.svg')
+                                    img(src='../assets/images/telefon.svg' alt="забронировать")
                                 button.header__nav__button 
                                     a(@click="toRefBooking") забронировать
                     .row.d-flex.justify-content-between.m-0
-                        .first_page__h1.col-xs-12.col-sm-4.col-xxl-4 уютные коттеджи 
-                            |и глемпинг хвойном лесу
-                            |на берегу камского моря
+                        .first_page__h1.col-xs-12.col-sm-4.col-xxl-4 Уютные коттеджи <br> в сердце Пермского края, <br> на берегу камского моря
                         .first_page__h2.col-xs-12.col-sm-4.col-xxl-5 Уединеный отдых в уютном историческом месте Пермского края. 
                             |Насладитесь первозданой природой и европейским уровнем комфорта размещения в уютных коттеджах <br> и номерах. 
                             |Зарядитесь эмоциямиот прогулки на квадроциклах, а после отдахните душой и телом в традиционной русской бане.                                     
@@ -40,7 +38,7 @@ div
                 .col-6
                     .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
                         .about_us__card__header комфорт                        
-                        img.about_us__card__img(src="../assets/images/i-m-yoga.svg")
+                        img.about_us__card__img(src="../assets/images/i-m-yoga.svg" alt="высокий уровень обслуживания")
                     .about_us__card__text высокий уровень обслуживания <br>
                         |и внимание к деталям: сотрудники клуба <br> стремятся удовлетворить все потребности <br> и пожелания гостей,
                         |чтобы каждый момент проведенного времени был приятным 
@@ -49,39 +47,39 @@ div
                     picture
                         source(type="image/webp" srcset="../assets/images/about-us-mb-1.webp")
                         source(type="image/png" srcset="../assets/images/about-us-mb-1.png")
-                        img(src="../assets/images/about-us-mb-1.png" style="border-radius: 15px")
+                        img(src="../assets/images/about-us-mb-1.png" style="border-radius: 15px" alt="высокий уровень обслуживания")
             .row.align-items-center(style="margin-bottom: 47px")
                 .col-6
                     picture
                         source(type="image/webp" srcset="../assets/images/about-us-mb-2.webp")
                         source(type="image/png" srcset="../assets/images/about-us-mb-2.png")
-                        img(src="../assets/images/about-us-mb-2.png" style="border-radius: 15px")
+                        img(src="../assets/images/about-us-mb-2.png" style="border-radius: 15px" alt="услуги")
                 .col-6
                     .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
                         .about_us__card__header услуги
-                        img.about_us__card__img(src="../assets/images/i-m-playlistadd.svg")
+                        img.about_us__card__img(src="../assets/images/i-m-playlistadd.svg" alt="каждый найдёт себе развлечение")
                     .about_us__card__text благодаря широкому спектру услуг <br> каждый найдёт себе развлечение <br> по душе: будь то релакс в бане, <br> или драйв на квадроцикле  
             .row.align-items-center(style="margin-bottom: 47px")
                 .col-6
                     .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
                         .about_us__card__header уют
-                        img.about_us__card__img(src="../assets/images/i-m-bed.svg")
+                        img.about_us__card__img(src="../assets/images/i-m-bed.svg" alt="уют")
                     .about_us__card__text проживание в просторных и уютных <br> домиках, которые оборудованы всем <br> необходимым для идеального отдыха
                 .col-6
                     picture
                         source(type="image/webp" srcset="../assets/images/about-as-winter-1.webp")
                         source(type="image/png" srcset="../assets/images/about-as-winter-1.png")
-                        img(src="../assets/images/about-as-winter-1.png" style="border-radius: 15px")
+                        img(src="../assets/images/about-as-winter-1.png" style="border-radius: 15px" alt="проживание в уютных домиках")
             .row.align-items-center
                 .col-6
                     picture
                         source(type="image/webp" srcset="../assets/images/about-as-winter-3.webp")
                         source(type="image/png" srcset="../assets/images/about-as-winter-3.png")
-                        img(src="../assets/images/about-as-winter-3.png" style="border-radius: 15px")
+                        img(src="../assets/images/about-as-winter-3.png" style="border-radius: 15px" alt="впечатления")
                 .col-6
                     .d-flex.align-items-center.gap-1(style="margin-bottom: 7px")
                         .about_us__card__header впечатления
-                        img.about_us__card__img(src="../assets/images/icon_emoji.svg")
+                        img.about_us__card__img(src="../assets/images/icon_emoji.svg" alt="множество положительных впечатлений")
                     .about_us__card__text отдых в Строгановских Просторах  оставит множество положительных впечатлений: <br> об уникальной природе, спокойствии и уединении с ней, комфорте, развлечениях и релаксе, а также <br> о драго-ценном времени, проведённом<br> друг с другом
     //- НАС ВЫБИРАЮТ ДЛЯ ДЕСКТОПА
     section.about_us.d-none.d-sm-block(id="aboutUs")
@@ -89,44 +87,44 @@ div
             h4.about_us__header нас выбирают, <br> потому что 
             .row.about_as__container_row
                 .about_us__card_container.col-3                    
-                    img.about_us__card__img(src="../assets/images/yoga.svg")
+                    img.about_us__card__img(src="../assets/images/yoga.svg" alt="Комфорт")
                     .about_us__card__header Комфорт
                     .about_us__card__text высокий уровень обслуживания <br>
                         |и внимание к деталям: сотрудники клуба стремятся удовлетворить все потребности и пожелания гостей,
                         |чтобы каждый момент проведенного времени <br> был приятным 
                         |и незабываемым
                 .about_us__card_container.col-3.offset-1                   
-                    img.about_us__card__img(src="../assets/images/bed.svg")
+                    img.about_us__card__img(src="../assets/images/bed.svg" alt="Уют")
                     .about_us__card__header Уют
                     .about_us__card__text проживание в просторных и уютных <br> домиках, которые оборудованы всем <br> необходимым для идеального отдыха
                 .col-4.offset-1
                     picture
                         source(type="image/webp" srcset="../assets/images/about-as-winter-1.webp")
                         source(type="image/png" srcset="../assets/images/about-as-winter-1.png")
-                        img(src="../assets/images/about-as-winter-1.png" style="border-radius: 30px")
+                        img(src="../assets/images/about-as-winter-1.png" style="border-radius: 30px" alt="проживание в уютных домиках")
             .row.about_as__container_row
                 .col-4 
                     picture
                         source(type="image/webp" srcset="../assets/images/about-as-winter-2.webp")
                         source(type="image/png" srcset="../assets/images/about-as-winter-2.png")
-                        img(src="../assets/images/about-as-winter-2.png" style="border-radius: 30px")
+                        img(src="../assets/images/about-as-winter-2.png" style="border-radius: 30px" alt="Услуги")
                 .about_us__card_container.col-3   
                     img.about_us__card__img(src="../assets/images/uslugi.svg")
                     .about_us__card__header Услуги
                     .about_us__card__text благодаря широкому спектру услуг каждый <br> найдёт себе развлечение по душе: будь <br>
                         |то релакс в бане, или драйв на квадроцикле
                 .about_us__card_container.col-3.offset-1                   
-                    img.about_us__card__img(src="../assets/images/donate.svg")
+                    img.about_us__card__img(src="../assets/images/donate.svg" alt="Семейность")
                     .about_us__card__header Семейность
                     .about_us__card__text мы приветствуем семейность <br> и ориентацию на семейные ценности, <br> поэтому создали атмосферу, где каждый член семьи может насладиться отдыхом,  развлечениями и обществом друг друга
             .row.about_as__container_row
                 .about_us__card_container.col-3                    
-                    img.about_us__card__img(src="../assets/images/pine.svg")
+                    img.about_us__card__img(src="../assets/images/pine.svg" alt="Природа")
                     .about_us__card__header Природа
                     .about_us__card__text у нас вы сможете насладиться и прочувствовать энергию богатой природы Пермского края, 
                         |ведь, благодаря расположению отеля вдали городской суеты, невозможно не проникнуться окружающим нас живописным миром  
                 .about_us__card_container.col-3.offset-1                 
-                    img.about_us__card__img(src="../assets/images/emoji.svg")
+                    img.about_us__card__img(src="../assets/images/emoji.svg" alt="Впечатления")
                     .about_us__card__header Впечатления
                     .about_us__card__text отдых в Строгановских Просторах оставит множество положительных впечатлений: об уникальной природе, спокойствии 
                         |и уединении с ней, комфорте, развлечениях и релаксе, а также о драгоценном времени, проведённом друг с другом
@@ -135,11 +133,10 @@ div
                         picture
                             source(type="image/webp" srcset="../assets/images/diana.webp")
                             source(type="image/jpeg" srcset="../assets/images/diana.jpeg")
-                            img(src="../assets/images/diana.jpeg" alt="")
+                            img(src="../assets/images/diana.jpeg" alt="множество положительных впечатлений")
     section.placement(id="booking")
         .container           
             h4.about_us__header размещение
-
             .row.placement__form.d-flex.d-sm-none
                 .date_time.date_time__icon.date_time__text.col-6(style="margin-bottom:13px")
                     DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
@@ -149,20 +146,19 @@ div
                     DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
                         template(#default="{ inputValue, inputEvents }")                        
                             input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input-m") 
-
                 .col-4
                     .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
                         .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
                             .input_number__prefix
                                 button.prefix_btn(@click="dec")
-                                    img(v-if="filter.personQuantity == 0" alt="" src="../assets/images/prefix.svg")
-                                    img(v-else alt="" src="../assets/images/prefix-active.svg")
+                                    img(v-if="filter.personQuantity == 0" alt="prefix" src="../assets/images/prefix.svg")
+                                    img(v-else alt="prefix-active" src="../assets/images/prefix-active.svg")
                             .input_number__input 
                                 input.input_number__in(type="text" :class="{active : filter.personQuantity > 0}" v-model="filter.personQuantity" name="person_quantity-m")
                             .input_number__suffix
                                 button.suffix_btn(@click="inc") 
-                                    img(v-if="filter.personQuantity == 0" src="../assets/images/suffix.svg")
-                                    img(v-else src="../assets/images/suffix-active.svg")
+                                    img(v-if="filter.personQuantity == 0" alt="suffix" src="../assets/images/suffix.svg")
+                                    img(v-else alt="suffix-active" src="../assets/images/suffix-active.svg")
                 .col-4.d-flex.align-items-center(style="padding-left:0")
                     .checkbox_container
                         div.checkbox__header показать свободные:
@@ -171,13 +167,13 @@ div
                                 .checkbox-box-wrapper 
                                     .checkbox-box(@click="filter.isHouse = !filter.isHouse" :class="{ active : filter.isHouse == true}")
                                         .checkbox-icon(v-if="filter.isHouse")
-                                            img(src="../assets/images/checkbox.svg")
+                                            img(src="../assets/images/checkbox.svg" alt="checkbox")
                             span.checkbox__label(style="margin-right: 4px" :class="{ active: filter.isHouse == true}") дома                    
                             .checkbox 
                                 .checkbox-box-wrapper 
                                     .checkbox-box(@click="filter.isGlamping = !filter.isGlamping" :class="{ active : filter.isGlamping == true}")
                                         .checkbox-icon(v-if="filter.isGlamping")
-                                            img(src="../assets/images/checkbox.svg")
+                                            img(src="../assets/images/checkbox.svg" alt="checkbox")
                             span.checkbox__label(:class="{ active: filter.isGlamping == true}") глэмпинг                    
                 .col-4
                     button.placement__form__button_search(@click="getAvailableLodge") найти 
@@ -195,14 +191,14 @@ div
                     .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
                         .input_number__prefix
                             button.prefix_btn(@click="dec")
-                                img(v-if="filter.personQuantity == 0" alt="" src="../assets/images/prefix.svg")
-                                img(v-else alt="" src="../assets/images/prefix-active.svg")
+                                img(v-if="filter.personQuantity == 0" alt="prefix" src="../assets/images/prefix.svg")
+                                img(v-else alt="prefix-active" src="../assets/images/prefix-active.svg")
                         .input_number__input 
                             input.input_number__in(type="text" :class="{active : filter.personQuantity > 0}" v-model="filter.personQuantity" name="person_quantity")
                         .input_number__suffix
                             button.suffix_btn(@click="inc") 
-                                img(v-if="filter.personQuantity == 0" src="../assets/images/suffix.svg")
-                                img(v-else src="../assets/images/suffix-active.svg")
+                                img(v-if="filter.personQuantity == 0" alt="suffix" src="../assets/images/suffix.svg")
+                                img(v-else alt="suffix-active" src="../assets/images/suffix-active.svg")
                 .checkbox_container
                     div.checkbox__header показать свободные:
                     .checkbox-wrapper
@@ -210,13 +206,13 @@ div
                             .checkbox-box-wrapper 
                                 .checkbox-box(@click="filter.isHouse = !filter.isHouse" :class="{ active : filter.isHouse == true}")
                                     .checkbox-icon(v-if="filter.isHouse")
-                                        img(src="../assets/images/checkbox.svg")
+                                        img(src="../assets/images/checkbox.svg" alt="checkbox")
                         span.checkbox__label(style="margin-right: 15px" :class="{ active: filter.isHouse == true}") дома                    
                         .checkbox 
                             .checkbox-box-wrapper 
                                 .checkbox-box(@click="filter.isGlamping = !filter.isGlamping" :class="{ active : filter.isGlamping == true}")
                                     .checkbox-icon(v-if="filter.isGlamping")
-                                        img(src="../assets/images/checkbox.svg")
+                                        img(src="../assets/images/checkbox.svg" alt="checkbox")
                         span.checkbox__label(:class="{ active: filter.isGlamping == true}") глэмпинг                    
                 button.placement__form__button_search(@click="getAvailableLodge") найти
             .row.placement__cantainer_card
@@ -225,7 +221,7 @@ div
                         .wrapper_img()
                             picture
                                 source(type="image/webp" :srcset="house.img")
-                                img(:src="house.img" :class="{gray : isAvailableHouse == false }")
+                                img(:src="house.img" :class="{gray : isAvailableHouse == false }" :alt="house.name")
                             .btn_house_detail(@click="showModalHouse(house)")
                         .container_info-graph
                             .house_name {{ house.name }}
@@ -233,27 +229,13 @@ div
                                 .house_cost {{ '₽ ' + formatNumber(house.cost_per_unit) }}
                                 .house_capacity
                                     .house_capacity__icon 
-                                        img(src="../assets/images/icon_emoji.svg")
+                                        img(src="../assets/images/icon_emoji.svg" alt="вместительность")
                                     .house_capacity__text до {{ house.maxP }} чел
                         .container_footer 
                             .footer_text {{ house.short_description }}
                             button.footer_button(:disabled="isAvailableHouse == false" @click="toBooking(house)") забронировать              
     section.service_section
-        serviceList
-        //- .container         
-        //-     .row.service     
-        //-         .service__header.col-4.col-sm-2 услуги
-        //-     .row(style="padding-bottom: 94px") 
-        //-         .col-xs-12.mb-5.mb-sm-0.col-sm-6
-        //-             p.service__name_typ Активный отдых                    
-        //-             .service__item(v-for="item in recreation")
-        //-                 .service__name {{ item.name }}
-        //-                 .service__cost {{ item.cost }}                    
-        //-         .col-xs-12.col-sm-6
-        //-             p Банные процедуры
-        //-             .service__item(v-for="item in bathProcedures") 
-        //-                 .service__name {{ item.name }}
-        //-                 .service__cost {{ item.cost }}                              
+        serviceList                                 
     section.feedback_section
         .container
             .section_header ваши отзывы
@@ -262,7 +244,7 @@ div
                     .card.rotate(:class="{ 'feedback_card_background' : isEval(index + 1)}")
                         .card__header
                             .card__user_photo
-                                img(:src="comment.img")
+                                img(:src="comment.img" alt="фото")
                             .card__user_container
                                 .card__user_name {{ comment.user_name }}
                                 star-rating(:star-size="13" :readOnly="true" :rating="comment.rating" :show-rating="false")                                
@@ -306,7 +288,7 @@ div
                 picture
                     source(type="image/webp" srcset="../assets/images/map.webp")
                     source(type="image/jpg" srcset="../assets/images/map.jpg")
-                    img(src="../assets/images/map.jpg")
+                    img(src="../assets/images/map.jpg" alt="карта")
                 .container_map_info
                     .info_header как добраться
                     .container_adress 
@@ -1699,10 +1681,11 @@ button.contact__button {
     .input_number_wrapper {
         width: 100%;
         height: 27px;
+        justify-content: space-between;
     }
 
     .input_number__in {
-        width: 52px;
+        width: 28px;
         height: 20px;
     }
 
@@ -1960,12 +1943,16 @@ button.contact__button {
     }
 
     .container_info-graph {
-        width: 340px;
+        width: 100%;
         font-size: 15px;
+        margin-left: 0;
+        padding: 0px 14px;
     }
 
     .container_footer {
-        width: 342px;
+        width: 100%;
+        margin-left: 0;
+        padding: 0px 14px;
     }
 
     .footer_text {
