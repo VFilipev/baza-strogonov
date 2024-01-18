@@ -19,10 +19,10 @@ div
                                 router-link(to="/house/dom-kuznetsa", tag="a", class="header__nav__link" @click.native="$scrollToTop") дома
                                 router-link(to="/uslugi", tag="a", class="header__nav__link") активный отдых / услуги
                             .header__nav.d-flex.col-2.d-none.d-sm-flex
-                                a(@click="toRefContact" style="cursor:pointer")                       
+                                div(@click="toRefContact" style="cursor:pointer")                       
                                     img(src='../assets/images/telefon.svg' alt="забронировать")
                                 button.header__nav__button 
-                                    a(@click="toRefBooking") забронировать
+                                    div(@click="toRefBooking") забронировать
                     .row.d-flex.justify-content-between.m-0
                         .first_page__h1.col-xs-12.col-sm-4.col-xxl-4 Уютные коттеджи <br> в сердце Пермского края, <br> на берегу камского моря
                         .first_page__h2.col-xs-12.col-sm-4.col-xxl-5 Уединеный отдых в уютном историческом месте Пермского края. 
@@ -109,7 +109,7 @@ div
                         source(type="image/png" srcset="../assets/images/about-as-winter-2.png")
                         img(src="../assets/images/about-as-winter-2.png" style="border-radius: 30px" alt="Услуги")
                 .about_us__card_container.col-3   
-                    img.about_us__card__img(src="../assets/images/uslugi.svg")
+                    img.about_us__card__img(src="../assets/images/uslugi.svg" alt="Услуги")
                     .about_us__card__header Услуги
                     .about_us__card__text благодаря широкому спектру услуг каждый <br> найдёт себе развлечение по душе: будь <br>
                         |то релакс в бане, или драйв на квадроцикле

@@ -37,9 +37,9 @@ footer.footer
                     li
                         .d-flex.gap-sm-2
                             a(href="https://vk.com/stroganovskie_prostory" target="_blank")
-                                img.footer__link(src="../assets/images/icon-vk.svg")                        
+                                img.footer__link(src="../assets/images/icon-vk.svg" alt="Мы в социальных сетях")                        
                             a(href="https://t.me/stroganovskie_prostory" target="_blank")
-                                img.footer__link(src="../assets/images/icon-telegram.svg")                        
+                                img.footer__link(src="../assets/images/icon-telegram.svg" alt="Мы в социальных сетях")    
         .footer-bottom.d-flex.justify-content-between.pb-3
             div 2023 @ СТРОГАНОВСКИЕ ПРОСТОРЫ
             div Пермь. Официальный сайт.
