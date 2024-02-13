@@ -17,6 +17,6 @@ export const useOrderStore = defineStore('orderStore', {
       this.customer = newName
     }
   },
-  // persist: true,
+  persist: true,
   
 })

@@ -119,7 +119,7 @@ div.container
     .row 
       .name_subsection Добавлено:
     .row
-      .order_item.col-12
+      .order_item.col-12.mt-0
         .order_item__name.col-4 {{ orderStore.orderlodge_set[0].lodge.name }}
         .order_item__info.col-8.col-sm-6.offset-sm-2.justify-content-sm-between
           .order_item__cost {{ formatNumber(calcCost) + ' р.' }}
@@ -844,8 +844,6 @@ button.btn_close {
 
 .order_item__info {
   display: flex;
-  
-
 }
 
 .order_item {
@@ -859,7 +857,7 @@ button.btn_close {
   padding-bottom: 25px;
 }
 
-.order_item:not(:first-child) {
+.order_item {
   margin-top: 24px;
 }
 

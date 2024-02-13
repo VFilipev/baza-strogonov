@@ -10,6 +10,8 @@ import axios from "axios"
 import { setupCalendar } from 'v-calendar';
 import 'swiper/css';
 
+import VueLazyLoad from 'vue3-lazyload'
+
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken' 
 
@@ -20,7 +22,9 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(setupCalendar, {})
 app.use(router)
-
+app.use(VueLazyLoad, {
+    // options...
+  })
 app.mount('#app')
 
 // router.afterEach((to,from,next) => {

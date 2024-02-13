@@ -8,7 +8,7 @@ div
                 picture.photo(:class="{ active : index == selPhoto }")
                     source(type="image/webp" :srcset="photo['webp']")
                     source(type="image/png" :srcset="photo['png']")
-                    img(:src="photo['png']" alt="image for main page")                
+                    img(:src="photo['png']" alt="image for main page" @load="sliderLoad(photo.id)")                
             .first_page__wrapper_content
                 .container
                     .first_page__header
@@ -138,7 +138,7 @@ div
         .container           
             h4.about_us__header размещение
             .row.placement__form.d-flex.d-sm-none
-                .date_time.date_time__icon.date_time__text.col-6(style="margin-bottom:13px")
+                .date_time.date_time__icon.date_time__text.col-6(style="margin-bottom:13px" )
                     DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
                         template(#default="{ inputValue, inputEvents }")                        
                             input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input-m" id="inputDateStart-m")
@@ -178,14 +178,14 @@ div
                 .col-4
                     button.placement__form__button_search(@click="getAvailableLodge") найти 
             .placement__form.row.d-none.d-sm-flex
-                .col-3.date_time.date_time__icon.date_time__text(:class="{active : filter.dateStart}")
-                    DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor")
+                .col-3.date_time.date_time__icon.date_time__text(:class="{active : inputDateActive || filter.dateStart}")
+                    DatePicker(v-model="filter.dateStart" :masks="masks" :color="selectedColor" :min-date="new Date()" :attributes='attributes')
                         template(#default="{ inputValue, inputEvents }")                        
-                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" id="inputDateStart" :class="{active : filter.dateStart}")
-                .col-3.date_time.date_time__icon.date_time_end__text(:class="{active : filter.dateEnd}")
-                    DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor")
+                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" id="inputDateStart" :class="{active : inputDateActive || filter.dateStart}")
+                .col-3.date_time.date_time__icon.date_time_end__text(:class="{active : inputDateActive || filter.dateEnd}")
+                    DatePicker(v-model="filter.dateEnd" :masks="masks" :color="selectedColor" :min-date="new Date()" :attributes='attributes')
                         template(#default="{ inputValue, inputEvents }")                        
-                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" :class="{active : filter.dateEnd}") 
+                            input.date_time__input(:value="inputValue" v-on="inputEvents" name="date_time_input" :class="{active : inputDateActive || filter.dateEnd}")
                     .date_picker_wrapper
                 .quantity_guests.quantity_guests__text(:class="{active : filter.personQuantity > 0}") 
                     .input_number_wrapper(:class="{active : filter.personQuantity > 0}")
@@ -218,10 +218,12 @@ div
             .row.placement__cantainer_card
                 .col-xs-12.col-sm-4(v-for="(house, index) in houseList")
                     .placement__card 
-                        .wrapper_img()
+                        .wrapper_img
                             picture
-                                source(type="image/webp" :srcset="house.img")
-                                img(:src="house.img" :class="{gray : isAvailableHouse == false }" :alt="house.name")
+                                img(v-lazy="{ src: house.img, loading: house.img_small}" :class="{gray : isAvailableHouse == false }" :alt="house.name")  
+                            //- picture
+                            //-     source(type="image/webp" :srcset="house.img")
+                            //-     img(:src="house.img" :class="{gray : isAvailableHouse == false }" :alt="house.name")
                             .btn_house_detail(@click="showModalHouse(house)")
                         .container_info-graph
                             .house_name {{ house.name }}
@@ -233,7 +235,8 @@ div
                                     .house_capacity__text до {{ house.maxP }} чел
                         .container_footer 
                             .footer_text {{ house.short_description }}
-                            button.footer_button(:disabled="isAvailableHouse == false" @click="toBooking(house)") забронировать              
+                            //- button.footer_button(:disabled="isAvailableHouse == false" @click="toBooking(house)") забронировать              
+                            button.footer_button(:class="{notAlowed : isAvailableHouse == false}" @click="toBooking(house)") забронировать              
     section.service_section
         serviceList                                 
     section.feedback_section
@@ -386,33 +389,40 @@ export default {
     setup() {
         const orderStore = useOrderStore()
         const router = useRouter()
-
-        let toBooking = (lodge) => {            
-            if (orderStore.orderlodge_set.length > 0) {
-                orderStore.orderlodge_set = []
+        let inputDateActive = ref(false)
+        let toBooking = (lodge) => {
+            if (filter.value.dateStart && filter.value.dateEnd) {
+                if (orderStore.orderlodge_set.length > 0) {
+                    orderStore.orderlodge_set = []
+                }
+                let tmp = {
+                    lodge: lodge,
+                    start_date: filter.value.dateStart,
+                    end_date: filter.value.dateEnd,
+                }
+                orderStore.orderlodge_set.push(tmp)
+                router.push({
+                    name: 'booking',
+                })
+            } else {
+                inputDateActive.value = true
             }
-            let tmp = {
-                lodge: lodge,
-                start_date: filter.value.dateStart,
-                end_date: filter.value.dateEnd,
-            }
-            orderStore.orderlodge_set.push(tmp)
-            router.push({
-                name: 'booking',
-            })
         }
         const photoList = [
             {
                 webp: 'src/assets/images/main-page-winter.webp',
-                png: 'src/assets/images/main-page-winter.png'
+                png: 'src/assets/images/main-page-winter.png',
+                id: 1
             },
             {
                 webp: 'src/assets/images/main-page-winter2-source.webp',
-                png: 'src/assets/images/main-page-winter2-source.png'
+                png: 'src/assets/images/main-page-winter2-source.png',
+                id: 2
             },
             {
                 webp: 'src/assets/images/main-page-winter3-source.webp',
-                png: 'src/assets/images/main-page-winter3-source.png'
+                png: 'src/assets/images/main-page-winter3-source.png',
+                id: 3
             },
         ]
         let datePicker = ref({
@@ -519,7 +529,7 @@ export default {
         }
         let houseList = ref([])
         const getAvailableLodge = async () => {
-            if(checkDate()){
+            if (checkDate()) {
                 let start = moment(filter.value.dateStart).format('DD.MM.YYYY')
                 let end = moment(filter.value.dateEnd).format('DD.MM.YYYY')
                 let tmp = (await Lodge.get_available_house({ 'date_start': start, 'date_end': end })).data
@@ -572,24 +582,37 @@ export default {
                 return true
             }
         }
+        const sliderLoad = (id) => {
+            if (id == 3) {
+                setTimeout(sliderPhoto, 5000)
+            }
+        }
+        const attributes = ref([
+            {
+                key: 'today',
+                dot: true,
+                dates: new Date(),
+            },
+        ]);
         watch(() => filter.value.dateStart, () => {
             datePicker.value.dateStart = false
         })
         watch(() => filter.value.dateEnd, () => {
-            datePicker.value.dateEnd = false                
+            datePicker.value.dateEnd = false
         })
         onMounted(() => {
             getLodgeList()
             getComment()
             isScroll.value = true
             window.addEventListener('scroll', (event) => { fil() });
-            setTimeout(sliderPhoto, 5000)
         })
         onUnmounted(() => {
             isScroll.value = false
             window.removeEventListener('scroll', (event) => { fil() });
         })
         return {
+            attributes,
+            sliderLoad,
             photoList,
             distance,
             showHeader,
@@ -619,7 +642,8 @@ export default {
             isEval,
             toRefBooking,
             toRefContact,
-            isAvailableHouse
+            isAvailableHouse,
+            inputDateActive
         }
     }
 }
@@ -628,7 +652,13 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
-.gray{
+.footer_button.notAlowed {
+    cursor: not-allowed !important;
+    background-color: #333;
+    opacity: .8;
+}
+
+.gray {
     filter: grayscale(100%);
 }
 
@@ -718,7 +748,9 @@ p.card__text.text_black {
     width: 289px;
     z-index: 100;
 }
-
+input.input_number__in:focus{
+    outline: none;
+}
 .input_number__in {
     border: none;
     width: 91px;
@@ -931,7 +963,8 @@ button.footer_button:disabled {
     background-color: #333333;
     opacity: .8;
 }
-button.footer_button:disabled:hover{
+
+button.footer_button:disabled:hover {
     cursor: not-allowed;
 }
 
@@ -1063,9 +1096,11 @@ input:focus-visible {
     color: #003731;
     padding-left: 18px;
 }
-.date_time__input.active{
+
+.date_time__input.active {
     outline: 1px #005D4B solid;
 }
+
 .date_time {
     position: relative;
 }
@@ -1096,8 +1131,9 @@ input:focus-visible {
     padding-left: 5px;
     padding-right: 5px;
 }
-.date_time__text.active::after{
-    color:#005D4B
+
+.date_time__text.active::after {
+    color: #005D4B
 }
 
 .date_time_end__text::after {
@@ -1115,8 +1151,9 @@ input:focus-visible {
     padding-left: 5px;
     padding-right: 5px;
 }
-.date_time_end__text.active::after{
-    color:#005D4B
+
+.date_time_end__text.active::after {
+    color: #005D4B
 }
 
 li {
@@ -1973,4 +2010,5 @@ button.contact__button {
     .first_page__header {
         margin-bottom: 384px;
     }
-}</style>
+}
+</style>

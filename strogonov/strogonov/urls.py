@@ -36,7 +36,6 @@ router.register(r'price', PriceViewSet)
 router.register(r'comment', CommentViewSet)
 
 urlpatterns = [
-    path('',IndexView.as_view()),
     path('admin/', admin.site.urls),
     path('api/',include(router.urls)),
 ] +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+[

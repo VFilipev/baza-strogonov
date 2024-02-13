@@ -18,7 +18,7 @@ from datetime import date
 from jinja2 import Environment
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import FilterSet, DateFilter
+from django_filters import FilterSet, DateFilter, CharFilter
 from . serializers import OrderSerializer, Order_lodgeSerializer, ProductSetSerializer, UslugiSerializer, ServiceSerializer
 from django.http import JsonResponse
 from rest_framework.decorators import action
@@ -53,9 +53,10 @@ class Order_lodgeViewSet(viewsets.ModelViewSet):
 
 
 class OrderSetFilter(FilterSet):    
+    lodges = CharFilter(field_name='order_lodge',lookup_expr="lodge_id")
     class Meta:
         model = Order
-        fields = ['number','status','id']
+        fields = ['number','status','id', 'lodges']
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
