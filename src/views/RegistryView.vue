@@ -78,7 +78,7 @@ div(class="container-xxl")
                             td {{ order.order_lodge_set[0].cost }}
                             td() {{ order.dogovor_status ? getChoice(order.dogovor_status) : '---'}}                                        
         button(style="width: 60px; height: 60px" class="d-flex btn" @click="ExportExcel('xlsx')")
-            img(src="../assets/static/excel-svgrepo-com.svg" alt="")
+            img(src="../assets/excel-svgrepo-com.svg" alt="")
     modalDetailVue(:value="value" v-if="showDetails" @close="close()" @editing="editing()" @deleteOrder="deleteOrder()")
 </template>
 <script>
