@@ -76,7 +76,7 @@ div(class="container-xxl")
                                 td ---
                                 td(v-if="order.dogovor_status") {{ order.dogovor_status ? getChoice(order.dogovor_status) : ''}}                                        
             button(style="width: 60px; height: 60px" class="d-flex btn" @click="ExportExcel('xlsx')")
-                img(src="../assets/static/excel-svgrepo-com.svg" alt="")
+                img(src="../assets/excel-svgrepo-com.svg" alt="")
   
 </template>
 
