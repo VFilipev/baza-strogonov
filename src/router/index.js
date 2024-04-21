@@ -36,6 +36,37 @@ const router = createRouter({
       name: 'BookingConfirm',
       component: () => import( '../views/BookingConfirm.vue')
     },    
+    {
+      path: '/admin-vue',
+      name: 'admin',
+      component: () => import('../views/AdminView.vue'),
+      children:[
+        {
+          path: '',
+          redirect: '/admin-vue/order'
+        },
+        {
+          path: 'order',
+          name: 'order',
+          component: () => import('../views/OrderView.vue')
+        },
+        {   
+          path: '/sauna',
+          name: 'sauna',
+          component: () => import('../views/SaunaView.vue')
+        },
+        {
+          path: '/plan',
+          name: 'plan',
+          component: () => import('../views/PlanView.vue')
+        },
+        {
+          path: '/registry',
+          name: 'registry',
+          component: () => import('../views/RegistryView.vue')
+        },
+      ]
+    },    
   ]
 })
 

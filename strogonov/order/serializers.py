@@ -1,4 +1,4 @@
-from . models import Order, Order_lodge, Product, Uslugi, Service
+from . models import Order, Order_lodge, Product, Uslugi, Service, Lodge
 from lodge.models import Lodge
 from rest_framework import serializers
 from lodge.serializers import LodgeSerializer
@@ -41,6 +41,11 @@ class ProductSetSerializer(serializers.ModelSerializer):
         model = Product
         exclude = ('order',)
 
+class LodgeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Lodge
+        fields = '__all__'
 class Order_lodgeSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -51,7 +56,8 @@ class Order_lodgeSerializer(serializers.ModelSerializer):
 class OrderLodgeSetSerializer(serializers.ModelSerializer):
     start_date = serializers.DateField(input_formats=["%d.%m.%Y"])
     end_date = serializers.DateField(input_formats=["%d.%m.%Y"])
-    cost = serializers.CharField()           
+    cost = serializers.CharField()        
+    id = serializers.IntegerField(required=False)
         
     class Meta:
         model = Order_lodge
@@ -81,26 +87,28 @@ class OrderSerializer(serializers.ModelSerializer):
         depth = 1
 
     def create(self, validated_data):
-        # product_set = validated_data.pop('products_set')
-        # orderlodge_set = validated_data.pop('orderlodge_set')        
-        # services_set = validated_data.pop('services_set')
+        product_set = validated_data.pop('products_set')
+        orderlodge_set = validated_data.pop('orderlodge_set')        
+        print('orderlodge_set')
+        services_set = validated_data.pop('services_set')
+        order = Order.objects.create(**validated_data)
         # order = Order.objects.create(**validated_data)
-        # if services_set:
-        #     for services in services_set:
-        #         if services['start_date'] is not None:
-        #             Service.objects.create(order = order, **services)
-        # if product_set:
-        #     for product in product_set:
-        #         if product['value'] is not None:
-        #             Product.objects.create(order = order, **product)
-        # for orderlodge in orderlodge_set:
-        #     Order_lodge.objects.create(order = order,  **orderlodge)
+        if services_set:
+            for services in services_set:
+                if services['start_date'] is not None:
+                    Service.objects.create(order = order, **services)
+        if product_set:
+            for product in product_set:
+                if product['value'] is not None:
+                    Product.objects.create(order = order, **product)
+        for orderlodge in orderlodge_set:
+            Order_lodge.objects.create(order = order,  **orderlodge)
 
 
         from . views import DogovorView2
-        order = Order.objects.get(pk=1)
+        # order = Order.objects.get(pk=1)
         dogovor_pdf = DogovorView2({}, order)        
-        order = {}
+        # order = {}
         subject = 'Тема письма'
         message = 'Текст сообщения'
         from_email = settings.DEFAULT_FROM_EMAIL
@@ -117,25 +125,39 @@ class OrderSerializer(serializers.ModelSerializer):
         return order
     def update(self, instance, validated_data):
         orderlodge_set = validated_data.pop('orderlodge_set')
-        product_set = validated_data.pop('products_set')
+        for x in orderlodge_set:
+            test = x.get("lodge")
+            order_lodge_id = x.get("id")
+            print(order_lodge_id)
+            if test.id:
+                order_lodge = Order_lodge.objects.get(pk = order_lodge_id)
+                for key, value in x.items():
+                    setattr(order_lodge, key, value)
+                order_lodge.order = instance
+                order_lodge.save()
+                # print(order_lodge)
+                # order_lodge.save()
+        # product_set = validated_data.pop('products_set')
         services_set = validated_data.pop('services_set')
         instance = super().update(instance, validated_data)
         instance.save()
-        for x in orderlodge_set:
-            if 'id' in x:
-                lodge = Order_lodge.objects.get(pk = x['id'])
-                lodge = Order_lodge(order = instance, **x)
-                lodge.save()
-            else:
-                Order_lodge.objects.create(order = instance,  **x)
-        for x in product_set:
-            if 'id' in x:
-                product = Product.objects.get(pk = x['id'])
-                product = Product(order = instance, **x)
-                product.save()
-            else:
-                Product.objects.create(order = instance, **x)
+        # for x in orderlodge_set:
+        #     if 'id' in x:
+        #         lodge = Order_lodge.objects.get(pk = x['id'])
+        #         lodge = Order_lodge(order = instance, **x)
+        #         lodge.save()
+        #     else:
+        #         Order_lodge.objects.create(order = instance,  **x)
+        # for x in product_set:
+        #     if 'id' in x:
+        #         product = Product.objects.get(pk = x['id'])
+        #         product = Product(order = instance, **x)
+        #         product.save()
+        #     else:
+        #         Product.objects.create(order = instance, **x)
         for x in services_set:
+            # test = x.get("lodge")
+            # order_lodge_id = x.get("id")
             if 'id' in x:
                 service = Service.objects.get(pk = x['id'])
                 service = Service(order = instance, **x)

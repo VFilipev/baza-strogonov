@@ -2,6 +2,7 @@
 div
   //- Transition(name="fade" mode="out-in")
   RouterView
+  <notifications />
 </template>
 
 <script>

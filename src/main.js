@@ -6,6 +6,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 import axios from "axios"
+import Notifications from '@kyvg/vue3-notification'
 
 import { setupCalendar } from 'v-calendar';
 import 'swiper/css';
@@ -22,6 +23,7 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(setupCalendar, {})
 app.use(router)
+app.use(Notifications)
 app.use(VueLazyLoad, {
     // options...
   })
